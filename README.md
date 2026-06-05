@@ -1,2 +1,2 @@
-# gasora-assets
-Logo Gasora (aplikasi pembuat Google Apps Script)
+# up2digital-assets
+Logo UP2Digital Ecosystem 
