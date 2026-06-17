@@ -43,7 +43,7 @@
     <!-- DEMO WATERMARK -->
     <div class="demo-watermark"></div>
 
-    <!-- TOP NAVBAR (BRANDING STANDARD) -->
+    <!-- TOP NAVBAR (RESTORED TO ORIGINAL UI) -->
     <nav class="bg-gray-900 text-white shadow-md sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between min-h-[64px] py-2">
@@ -52,16 +52,14 @@
                     <button id="mobile-menu-btn" class="bo-nav-element lg:hidden p-2 rounded-md hover:bg-gray-800 focus:outline-none">
                         <i class="ph ph-list text-2xl"></i>
                     </button>
-                    <!-- Brand Indicator -->
-                    <div class="bo-nav-element bg-red-600 text-white font-bold px-2 py-1 rounded text-sm sm:text-base flex items-center justify-center">
-                        DEMO VERSION
-                    </div>
                     <!-- Public Mode Indicator -->
                     <div class="pub-nav-element hidden bg-teal-600 text-white font-bold px-2 py-1 rounded text-sm flex items-center justify-center">
                         PUBLIC
                     </div>
+                    <!-- Brand Identity Stack -->
                     <div class="flex flex-col justify-center leading-tight">
                         <span class="font-bold text-base sm:text-lg text-blue-400">UP2BOOKING LITE</span>
+                        <span class="text-[10px] sm:text-[11px] text-red-400 font-bold tracking-wider">DEMO VERSION</span>
                         <span class="text-[10px] sm:text-xs text-gray-400 tracking-wider">Booking Management v1.3</span>
                     </div>
                 </div>
@@ -220,8 +218,9 @@
 
             <div class="flex justify-between items-center mt-2">
                 <h2 class="text-xl font-bold text-gray-800">Dashboard</h2>
+                <!-- PREMIUM LOCK: Tombol Export CSV di Dashboard tetap ada, namun dikunci -->
                 <button onclick="showPremiumModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition">
-                    <i class="ph ph-download-simple text-lg"></i> Export CSV <i class="ph ph-lock-key text-white opacity-70"></i>
+                    <i class="ph ph-download-simple text-lg"></i> Export CSV <i class="ph ph-lock-key ml-1 text-white opacity-70"></i>
                 </button>
             </div>
 
@@ -437,65 +436,6 @@
                         <tbody id="book-table-body" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-
-        <!-- ==================== TOOLS & UTILITIES VIEW ==================== -->
-        <div id="view-tools" class="app-view max-w-7xl hidden space-y-6">
-            <h2 class="text-2xl font-bold text-gray-800">Tools & Utilities</h2>
-            <p class="text-sm text-gray-500 mb-4">Fitur pengelolaan tingkat lanjut dan laporan.</p>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-file-csv text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Export CSV</h3><p class="text-xs text-gray-500">Download rekap format CSV</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-file-xls text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Export Excel</h3><p class="text-xs text-gray-500">Download rekap format XLSX</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-file-pdf text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Export PDF</h3><p class="text-xs text-gray-500">Download laporan PDF</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-image text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Export PNG</h3><p class="text-xs text-gray-500">Download grafik & chart</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-download-simple text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Import Data</h3><p class="text-xs text-gray-500">Import data via Excel/CSV</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-database text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Backup Data</h3><p class="text-xs text-gray-500">Simpan cadangan database</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-clock-counter-clockwise text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Restore Data</h3><p class="text-xs text-gray-500">Kembalikan data backup</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-cloud-arrow-up text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Sinkronisasi Cloud</h3><p class="text-xs text-gray-500">Sync data antar perangkat</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-printer text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Cetak Booking</h3><p class="text-xs text-gray-500">Print tiket booking</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
-                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
-                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-receipt text-2xl"></i></div>
-                    <div><h3 class="font-bold text-gray-800">Cetak Invoice</h3><p class="text-xs text-gray-500">Generate invoice pembayaran</p></div>
-                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
-                </button>
             </div>
         </div>
 
@@ -885,7 +825,7 @@
         }
 
         // ==========================================
-        // VIEW NAVIGATION LOGIC
+        // VIEW NAVIGATION LOGIC (ORIGINAL NAVBAR STRUCTURE)
         // ==========================================
         const navItems = [
             { id: 'dashboard', icon: 'ph-squares-four', label: 'Dashboard' },
@@ -893,7 +833,6 @@
             { id: 'layanan', icon: 'ph-scissors', label: 'Layanan' },
             { id: 'resource', icon: 'ph-user-gear', label: 'Resource' },
             { id: 'booking', icon: 'ph-calendar-plus', label: 'Booking' },
-            { id: 'tools', icon: 'ph-toolbox', label: 'Tools & Utilities' },
             { id: 'profil', icon: 'ph-storefront', label: 'Profil Usaha' },
         ];
 
@@ -949,7 +888,7 @@
         // GLOBAL UI UPDATES (Dashboard & Public Identity)
         function updateIdentityProfile() {
             const prof = getObj(DB_KEY_PROF);
-            const nama = prof.nama || 'UP2BOOKING LITE DEMO';
+            const nama = prof.nama || 'UP2BOOKING LITE';
             const alamat = prof.alamat || 'Silakan lengkapi profil usaha.';
             const telp = prof.telp || '-';
             const jamBuka = prof.jamBuka || '08:00';
@@ -1182,7 +1121,6 @@
             if (viewId === 'booking') { loadBookings(); document.getElementById('book-search').value = ''; }
             if (viewId === 'profil') loadProfil();
             if (viewId === 'public') { resetPublicFlow(); loadPublicForm(); }
-            // tools view doesnt need specific load
         }
 
         // --- DASHBOARD ---
@@ -1780,7 +1718,7 @@
             if (getObj(DB_KEY_PROF).nama) return; // Prevent overwriting if already seeded
 
             saveObj(DB_KEY_PROF, {
-                nama: "UP2BOOKING Lite Demo",
+                nama: "UP2BOOKING LITE",
                 alamat: "Graha Gasora, Lt. 5, Jakarta Selatan",
                 telp: "081234567890",
                 jamBuka: "08:00",
