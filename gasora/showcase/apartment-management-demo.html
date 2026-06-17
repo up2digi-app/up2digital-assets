@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UP2 Apartment Demo | GASORA</title>
+    <meta name="author" content="UP2Digital">
+    <link rel="canonical" href="https://gasora-up2apartment-demo.up2digital.workers.dev">
+    <meta property="og:title" content="UP2 Apartment Demo | GASORA">
+    <meta property="og:url" content="https://gasora-up2apartment-demo.up2digital.workers.dev">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="GASORA">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UP2 Apartment Demo | GASORA">
+    <meta name="twitter:url" content="https://gasora-up2apartment-demo.up2digital.workers.dev">
+    <link rel="icon" type="image/png" href="https://up2digi-app.github.io/up2digital-assets/gasora/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .modal-active { overflow: hidden; }
+        
+        /* Watermark Global DEMO */
+        .demo-watermark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.08;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='150' height='150'><text x='50' y='50' fill='black' font-family='sans-serif' font-weight='bold' font-size='24' text-anchor='middle' transform='rotate(-45 50 50)'>DEMO</text></svg>");
+            background-repeat: repeat;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased h-screen flex overflow-hidden">
+
+    <!-- Watermark Layer -->
+    <div class="demo-watermark"></div>
+
+    <!-- Sidebar Overlay Mobile -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-slate-900 text-white w-64 flex-shrink-0 h-full flex flex-col transition-transform transform -translate-x-full lg:translate-x-0 absolute lg:relative z-30">
+        <div class="p-5 border-b border-slate-700 flex items-center justify-between">
+            <div class="leading-tight">
+                <h1 class="text-2xl font-bold text-blue-400">APT</h1>
+                <h2 class="text-sm font-bold tracking-wide text-white mt-1">UP2 APARTMENT</h2>
+                <p class="text-xs font-bold text-red-400 mb-1">DEMO VERSION</p>
+                <p class="text-xs text-slate-400">Apartment Management v1.0</p>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-slate-300 hover:text-white">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 hide-scroll">
+            <ul class="space-y-1">
+                <li><a href="#" onclick="switchMenu('dashboard')" id="nav-dashboard" class="nav-link flex items-center px-5 py-3 bg-blue-600 text-white"><i class="fas fa-chart-pie w-6 text-center mr-2"></i> Dashboard</a></li>
+                <li><a href="#" onclick="switchMenu('unit')" id="nav-unit" class="nav-link flex items-center px-5 py-3 text-slate-300 hover:bg-slate-800 hover:text-white"><i class="fas fa-building w-6 text-center mr-2"></i> Unit Apartment</a></li>
+                <li><a href="#" onclick="switchMenu('tenant')" id="nav-tenant" class="nav-link flex items-center px-5 py-3 text-slate-300 hover:bg-slate-800 hover:text-white"><i class="fas fa-users w-6 text-center mr-2"></i> Tenant</a></li>
+                <li><a href="#" onclick="switchMenu('billing')" id="nav-billing" class="nav-link flex items-center px-5 py-3 text-slate-300 hover:bg-slate-800 hover:text-white"><i class="fas fa-file-invoice-dollar w-6 text-center mr-2"></i> Billing IPL</a></li>
+                <li><a href="#" onclick="switchMenu('maintenance')" id="nav-maintenance" class="nav-link flex items-center px-5 py-3 text-slate-300 hover:bg-slate-800 hover:text-white"><i class="fas fa-tools w-6 text-center mr-2"></i> Maintenance</a></li>
+                <li><a href="#" onclick="switchMenu('company')" id="nav-company" class="nav-link flex items-center px-5 py-3 text-slate-300 hover:bg-slate-800 hover:text-white"><i class="fas fa-building-user w-6 text-center mr-2"></i> Profil Perusahaan</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+        <!-- Topbar -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between z-10">
+            <div class="flex items-center">
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-gray-700 focus:outline-none mr-3">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <div class="lg:hidden mr-4 border-r border-gray-200 pr-4">
+                    <div class="text-xs font-bold text-gray-800 leading-tight">UP2 APARTMENT</div>
+                    <div class="text-[10px] font-bold text-red-500 leading-tight">DEMO VERSION</div>
+                    <div class="text-[10px] text-gray-500 leading-tight">Apartment Management v1.0</div>
+                </div>
+                <h2 id="pageTitle" class="text-xl font-semibold text-gray-800">Dashboard</h2>
+            </div>
+            <div class="text-sm text-gray-500 hidden sm:block">
+                <i class="far fa-calendar-alt mr-1"></i> <span id="currentDate"></span>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Area -->
+        <div id="contentArea" class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 pb-24">
+            
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="view-section">
+                <!-- Hero Perusahaan -->
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-md p-6 text-white mb-6 flex flex-col md:flex-row md:justify-between md:items-center relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h2 id="heroCompanyName" class="text-2xl md:text-3xl font-bold mb-2">Nama Perusahaan</h2>
+                        <p id="heroCompanyAddress" class="text-blue-100 mb-1"><i class="fas fa-map-marker-alt w-5"></i> Alamat Perusahaan</p>
+                        <p id="heroCompanyPhone" class="text-blue-100"><i class="fas fa-phone w-5"></i> Telepon</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 text-left md:text-right relative z-10">
+                        <div class="text-sm font-bold tracking-wide">UP2 APARTMENT</div>
+                        <div class="text-xs text-blue-200">Apartment Management v1.0</div>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+                        <div class="text-gray-500 text-sm font-medium mb-1">Total Unit</div>
+                        <div id="sumTotalUnit" class="text-2xl font-bold text-gray-800">0</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                        <div class="text-emerald-500 text-sm font-medium mb-1">Unit Terisi</div>
+                        <div id="sumUnitTerisi" class="text-2xl font-bold text-gray-800">0</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                        <div class="text-amber-500 text-sm font-medium mb-1">Unit Kosong</div>
+                        <div id="sumUnitKosong" class="text-2xl font-bold text-gray-800">0</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+                        <div class="text-blue-500 text-sm font-medium mb-1">Tenant Aktif</div>
+                        <div id="sumTenantAktif" class="text-2xl font-bold text-gray-800">0</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                        <div class="text-red-500 text-sm font-medium mb-1">Belum Bayar</div>
+                        <div id="sumBillingUnpaid" class="text-2xl font-bold text-gray-800">0</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                        <div class="text-orange-500 text-sm font-medium mb-1">Tiket Open</div>
+                        <div id="sumTicketOpen" class="text-2xl font-bold text-gray-800">0</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <!-- Widget: Unit Terbaru -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                            <h3 class="font-semibold text-gray-700">Unit Terbaru</h3>
+                        </div>
+                        <div class="p-0">
+                            <ul id="widgetUnitList" class="divide-y divide-gray-100"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Widget: Billing Jatuh Tempo -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                            <h3 class="font-semibold text-gray-700">Billing Jatuh Tempo</h3>
+                        </div>
+                        <div class="p-0">
+                            <ul id="widgetBillingList" class="divide-y divide-gray-100"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Widget: Top Tenant -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-amber-50">
+                            <h3 class="font-semibold text-amber-800"><i class="fas fa-crown text-amber-500 mr-2"></i>Top Tenant</h3>
+                        </div>
+                        <div class="p-0">
+                            <ul id="widgetTopTenantList" class="divide-y divide-gray-100"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget: Tiket Maintenance Terbaru -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <h3 class="font-semibold text-gray-700">Tiket Maintenance Terbaru</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-600">
+                            <thead class="bg-gray-50 text-gray-700 text-xs uppercase">
+                                <tr>
+                                    <th class="px-4 py-3">Tiket</th>
+                                    <th class="px-4 py-3">Tgl</th>
+                                    <th class="px-4 py-3">Unit/Tenant</th>
+                                    <th class="px-4 py-3">Keluhan</th>
+                                    <th class="px-4 py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="widgetMaintenanceList" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MODULES LISTING (Generic structure reused via JS injection) -->
+            <div id="view-module" class="view-section hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full min-h-[500px]">
+                    <!-- Toolbar -->
+                    <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
+                        <div class="relative w-full sm:w-64">
+                            <input type="text" id="searchInput" class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Pencarian realtime...">
+                            <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
+                        </div>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <!-- Tombol Export Dikunci (Premium Lock) -->
+                            <button onclick="exportData()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                <i class="fas fa-file-csv mr-1"></i> Export
+                            </button>
+                            <button onclick="openModal()" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                <i class="fas fa-plus mr-1"></i> Tambah
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Table -->
+                    <div class="overflow-x-auto flex-1">
+                        <table class="w-full text-left text-sm text-gray-600">
+                            <thead id="tableHead" class="bg-gray-50 text-gray-700 text-xs uppercase sticky top-0 shadow-sm z-10">
+                                <!-- Injected via JS -->
+                            </thead>
+                            <tbody id="tableBody" class="divide-y divide-gray-100">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Empty State -->
+                    <div id="emptyState" class="hidden p-10 text-center flex flex-col items-center justify-center text-gray-500">
+                        <i class="fas fa-folder-open text-4xl mb-3 text-gray-300"></i>
+                        <p>Tidak ada data ditemukan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: PROFIL PERUSAHAAN -->
+            <div id="view-company" class="view-section hidden max-w-2xl mx-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-5 border-b border-gray-100 bg-gray-50/50">
+                        <h3 class="font-semibold text-gray-800">Informasi Perusahaan</h3>
+                        <p class="text-xs text-gray-500 mt-1">Data ini akan ditampilkan di Hero Dashboard.</p>
+                    </div>
+                    <div class="p-6">
+                        <form id="formCompany" onsubmit="saveCompany(event)">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Perusahaan</label>
+                                <input type="text" id="compName" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                                <textarea id="compAddress" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Telepon / WhatsApp</label>
+                                <input type="text" id="compPhone" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                Simpan Profil
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Ecosystem -->
+        <footer class="bg-white border-t border-gray-200 py-4 absolute bottom-0 w-full z-10 text-center">
+            <div class="flex flex-col items-center justify-center text-xs text-gray-500 space-y-1">
+                <div class="flex items-center space-x-2 font-medium text-gray-700">
+                    <img src="https://up2digi-app.github.io/up2digital-assets/gasora/logo.png" alt="Gasora" class="h-5">
+                    <span>UP2 Apartment Demo - Apartment Management v1.0</span>
+                </div>
+                <div>
+                    Built with Gasora • Part of <a href="https://wa.link/i8w855" target="_blank" class="text-blue-600 hover:underline font-semibold">UP2Digital</a> Ecosystem
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Modal Form CRUD -->
+    <div id="crudModal" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 id="modalTitle" class="text-lg font-bold text-gray-800">Form</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 custom-scroll">
+                <form id="crudForm" onsubmit="saveData(event)">
+                    <input type="hidden" id="formId">
+                    <div id="formFields" class="space-y-4">
+                        <!-- Dynamic Fields Injected Here -->
+                    </div>
+                </form>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
+                <button type="button" onclick="closeModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">Batal</button>
+                <button type="submit" form="crudForm" class="px-4 py-2 bg-blue-600 rounded-lg text-sm font-medium text-white hover:bg-blue-700 transition-colors">Simpan Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DEMO LIMIT -->
+    <div id="demoLimitModal" class="fixed inset-0 bg-black bg-opacity-60 z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all text-center p-6 border-t-4 border-red-500">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                <i class="fas fa-lock text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Batas Versi Demo</h3>
+            <p class="text-sm text-gray-600 mb-6 leading-relaxed">Anda telah mencapai batas versi Demo.<br>Upgrade ke UP2 Apartment Lite untuk penggunaan lebih lanjut.</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeDemoModal()" class="px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-colors">Tutup</button>
+                <a href="https://wa.link/i8w855" target="_blank" class="px-4 py-2 bg-blue-600 rounded-lg text-sm font-semibold text-white hover:bg-blue-700 transition-colors shadow-md">Hubungi UP2Digital</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PREMIUM LOCK -->
+    <div id="premiumModal" class="fixed inset-0 bg-black bg-opacity-60 z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all text-center p-6 border-t-4 border-amber-400">
+            <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                <i class="fas fa-crown text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Fitur Premium</h3>
+            <p class="text-sm text-gray-600 mb-6 leading-relaxed">Fitur ini tersedia pada versi UP2 Apartment Lite atau lebih tinggi.<br>Upgrade sekarang untuk membuka fitur premium dan meningkatkan kapasitas aplikasi.</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closePremiumModal()" class="px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-colors">Batal</button>
+                <a href="https://wa.link/i8w855" target="_blank" class="px-4 py-2 bg-blue-600 rounded-lg text-sm font-semibold text-white hover:bg-blue-700 transition-colors shadow-md">Hubungi UP2Digital</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Application -->
+    <script>
+        // === KONFIGURASI DATABASE & STATE (GASORA STANDARD) ===
+        const DB_KEYS = {
+            profile: 'gasora_apartment_profile',
+            units: 'gasora_apartment_units',
+            unittypes: 'gasora_apartment_unittypes',
+            tenants: 'gasora_apartment_tenants',
+            billings: 'gasora_apartment_billings',
+            maintenances: 'gasora_apartment_maintenances'
+        };
+
+        // === DEMO LIMIT STANDARD ===
+        const DEMO_LIMITS = {
+            Units: 10,
+            UnitTypes: 2,
+            Tenants: 5,
+            Billings: 10,
+            Maintenances: 5
+        };
+
+        const LIMIT_MAP = {
+            'unit': DEMO_LIMITS.Units,
+            'tenant': DEMO_LIMITS.Tenants,
+            'billing': DEMO_LIMITS.Billings,
+            'maintenance': DEMO_LIMITS.Maintenances
+        };
+
+        let currentModule = 'dashboard';
+        let moduleData = [];
+
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', () => {
+            initDate();
+            checkAndGenerateDummyData();
+            loadProfile();
+            switchMenu('dashboard');
+            
+            // Realtime Search Listener
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                renderTable(e.target.value);
+            });
+        });
+
+        function initDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('id-ID', options);
+        }
+
+        // === UTILITIES ===
+        function generateId() { return 'ID_' + Math.random().toString(36).substr(2, 9); }
+        function getLS(key) { return JSON.parse(localStorage.getItem(key)) || []; }
+        function setLS(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+        function formatRupiah(number) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number); }
+        function formatDate(dateStr) { if(!dateStr) return '-'; const d = new Date(dateStr); return d.toLocaleDateString('id-ID'); }
+
+        // === DATA RELATIONS & AUTOMATIONS ===
+        function getUnit(id) { return getLS(DB_KEYS.units).find(u => u.id === id); }
+        function getTenant(id) { return getLS(DB_KEYS.tenants).find(t => t.id === id); }
+        
+        function syncUnitStatus() {
+            let units = getLS(DB_KEYS.units);
+            let tenants = getLS(DB_KEYS.tenants);
+            let updated = false;
+
+            units.forEach(unit => {
+                // Lewati sinkronisasi jika status unit adalah Maintenance
+                if (unit.status === 'Maintenance') {
+                    return;
+                }
+
+                // Find active tenant for this unit
+                let activeTenant = tenants.find(t => t.unitId === unit.id && t.status === 'Aktif');
+                
+                if (activeTenant) {
+                    if(unit.status !== 'Terisi') { unit.status = 'Terisi'; updated = true; }
+                } else {
+                    if(unit.status === 'Terisi') { unit.status = 'Kosong'; updated = true; }
+                }
+            });
+
+            if(updated) setLS(DB_KEYS.units, units);
+        }
+
+        // === DUMMY DATA GENERATOR (SEED EXACT DATA FOR DEMO) ===
+        function checkAndGenerateDummyData() {
+            if (!localStorage.getItem(DB_KEYS.units) || getLS(DB_KEYS.units).length === 0) {
+                
+                // Set default Profile
+                if(!localStorage.getItem(DB_KEYS.profile)) {
+                    localStorage.setItem(DB_KEYS.profile, JSON.stringify({
+                        name: "PT. Mega Hunian Sejahtera",
+                        address: "Jl. Sudirman Kav. 45, Jakarta Pusat",
+                        phone: "0812-3456-7890"
+                    }));
+                }
+
+                // Seed 10 Units & 2 Types (Studio, 2BR)
+                let units = [];
+                for(let i=1; i<=10; i++) {
+                    units.push({
+                        id: generateId(),
+                        unitNo: "A-" + (100 + i),
+                        tower: "Tower A",
+                        floor: i <= 5 ? "1" : "2",
+                        type: i % 2 === 0 ? "Studio" : "2BR",
+                        area: i % 2 === 0 ? "24" : "45",
+                        status: "Kosong", // Will sync to Terisi later for active tenants
+                        note: "Unit Demo"
+                    });
+                }
+
+                // Seed 5 Tenants
+                let tenants = [];
+                for(let i=1; i<=5; i++) {
+                    tenants.push({
+                        id: generateId(),
+                        name: "Tenant Demo " + i,
+                        phone: "0812000000" + i,
+                        email: "tenant" + i + "@demo.com",
+                        unitId: units[i-1].id,
+                        joinDate: "2024-01-0" + i,
+                        status: "Aktif",
+                        note: "-"
+                    });
+                }
+
+                // Seed 10 Billings
+                let billings = [];
+                for(let i=1; i<=10; i++) {
+                    let tIndex = (i - 1) % 5;
+                    billings.push({
+                        id: generateId(),
+                        month: i <= 5 ? "2024-01" : "2024-02",
+                        tenantId: tenants[tIndex].id,
+                        unitId: units[tIndex].id,
+                        amount: units[tIndex].type === "Studio" ? "500000" : "750000",
+                        dueDate: i <= 5 ? "2024-01-10" : "2024-02-10",
+                        status: i <= 5 ? "Lunas" : "Belum Bayar"
+                    });
+                }
+
+                // Seed 5 Maintenances
+                let maintenances = [];
+                let statuses = ["Open", "In Progress", "Selesai", "Open", "Selesai"];
+                let cats = ["Air", "AC", "Listrik", "Kebersihan", "Plumbing"];
+                for(let i=1; i<=5; i++) {
+                    maintenances.push({
+                        id: generateId(),
+                        ticketNo: "TKT-00" + i,
+                        date: "2024-02-0" + i,
+                        tenantId: tenants[i-1].id,
+                        unitId: units[i-1].id,
+                        category: cats[i-1],
+                        description: "Keluhan demo " + i,
+                        status: statuses[i-1]
+                    });
+                }
+
+                setLS(DB_KEYS.units, units);
+                setLS(DB_KEYS.tenants, tenants);
+                setLS(DB_KEYS.billings, billings);
+                setLS(DB_KEYS.maintenances, maintenances);
+                
+                syncUnitStatus(); // Enforce rule automatically
+            }
+        }
+
+        // === NAVIGATION & VIEW CONTROL ===
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function switchMenu(module) {
+            currentModule = module;
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.classList.remove('bg-blue-600', 'text-white');
+                el.classList.add('text-slate-300');
+            });
+            
+            const activeNav = document.getElementById(`nav-${module}`);
+            if(activeNav) {
+                activeNav.classList.remove('text-slate-300');
+                activeNav.classList.add('bg-blue-600', 'text-white');
+            }
+
+            // Close sidebar on mobile after click
+            if(window.innerWidth < 1024) toggleSidebar();
+
+            document.getElementById('searchInput').value = '';
+
+            if (module === 'dashboard') {
+                document.getElementById('pageTitle').innerText = 'Dashboard';
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                renderDashboard();
+            } else if (module === 'company') {
+                document.getElementById('pageTitle').innerText = 'Profil Perusahaan';
+                document.getElementById('view-company').classList.remove('hidden');
+                loadCompanyForm();
+            } else {
+                document.getElementById('view-module').classList.remove('hidden');
+                
+                const titles = { unit: 'Data Unit Apartment', tenant: 'Data Tenant', billing: 'Billing IPL', maintenance: 'Tiket Maintenance' };
+                document.getElementById('pageTitle').innerText = titles[module];
+                
+                loadModuleData();
+                setupTableStructure();
+                renderTable();
+            }
+        }
+
+        // === MODALS FOR PREMIUM & DEMO LOCKS ===
+        function showDemoModal() {
+            document.getElementById('demoLimitModal').classList.remove('hidden');
+        }
+        function closeDemoModal() {
+            document.getElementById('demoLimitModal').classList.add('hidden');
+        }
+        function showPremiumModal() {
+            document.getElementById('premiumModal').classList.remove('hidden');
+        }
+        function closePremiumModal() {
+            document.getElementById('premiumModal').classList.add('hidden');
+        }
+
+        // === PROFILE PERUSAHAAN ===
+        function loadProfile() {
+            const p = JSON.parse(localStorage.getItem(DB_KEYS.profile));
+            if(p) {
+                document.getElementById('heroCompanyName').innerText = p.name;
+                document.getElementById('heroCompanyAddress').innerHTML = `<i class="fas fa-map-marker-alt w-5"></i> ${p.address}`;
+                document.getElementById('heroCompanyPhone').innerHTML = `<i class="fas fa-phone w-5"></i> ${p.phone}`;
+            }
+        }
+
+        function loadCompanyForm() {
+            const p = JSON.parse(localStorage.getItem(DB_KEYS.profile));
+            if(p) {
+                document.getElementById('compName').value = p.name;
+                document.getElementById('compAddress').value = p.address;
+                document.getElementById('compPhone').value = p.phone;
+            }
+        }
+
+        function saveCompany(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('compName').value,
+                address: document.getElementById('compAddress').value,
+                phone: document.getElementById('compPhone').value
+            };
+            localStorage.setItem(DB_KEYS.profile, JSON.stringify(data));
+            loadProfile();
+            alert('Profil Perusahaan berhasil disimpan!');
+        }
+
+        // === DASHBOARD LOGIC ===
+        function renderDashboard() {
+            const units = getLS(DB_KEYS.units);
+            const tenants = getLS(DB_KEYS.tenants);
+            const billings = getLS(DB_KEYS.billings);
+            const tickets = getLS(DB_KEYS.maintenances);
+
+            // Cards
+            document.getElementById('sumTotalUnit').innerText = units.length;
+            document.getElementById('sumUnitTerisi').innerText = units.filter(u => u.status === 'Terisi').length;
+            document.getElementById('sumUnitKosong').innerText = units.filter(u => u.status === 'Kosong').length;
+            document.getElementById('sumTenantAktif').innerText = tenants.filter(t => t.status === 'Aktif').length;
+            document.getElementById('sumBillingUnpaid').innerText = billings.filter(b => b.status === 'Belum Bayar').length;
+            document.getElementById('sumTicketOpen').innerText = tickets.filter(t => t.status === 'Open').length;
+
+            // Widget 1: Unit Terbaru
+            const latestUnits = [...units].reverse().slice(0, 5);
+            let wUnitHtml = '';
+            if(latestUnits.length === 0) wUnitHtml = '<li class="p-4 text-center text-gray-500 text-sm">Tidak ada data</li>';
+            latestUnits.forEach(u => {
+                let badge = u.status==='Terisi' ? 'bg-emerald-100 text-emerald-800' : (u.status==='Kosong' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800');
+                wUnitHtml += `<li class="px-5 py-3 flex justify-between items-center"><div class="flex flex-col"><span class="font-medium text-gray-800">${u.unitNo}</span><span class="text-xs text-gray-500">${u.type} • ${u.tower}</span></div><span class="px-2 py-1 rounded text-xs font-medium ${badge}">${u.status}</span></li>`;
+            });
+            document.getElementById('widgetUnitList').innerHTML = wUnitHtml;
+
+            // Widget 2: Billing Jatuh Tempo
+            const dueBillings = billings.filter(b => b.status === 'Belum Bayar').sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).slice(0, 5);
+            let wBillHtml = '';
+            if(dueBillings.length === 0) wBillHtml = '<li class="p-4 text-center text-gray-500 text-sm">Semua lunas!</li>';
+            dueBillings.forEach(b => {
+                let t = getTenant(b.tenantId);
+                let u = getUnit(b.unitId);
+                wBillHtml += `<li class="px-5 py-3 flex justify-between items-center"><div class="flex flex-col"><span class="font-medium text-gray-800">${t?t.name:'-'}</span><span class="text-xs text-gray-500">Unit: ${u?u.unitNo:'-'}</span></div><div class="text-right"><div class="text-red-600 font-bold text-sm">${formatRupiah(b.amount)}</div><div class="text-xs text-gray-500">Tempo: ${formatDate(b.dueDate)}</div></div></li>`;
+            });
+            document.getElementById('widgetBillingList').innerHTML = wBillHtml;
+
+            // Widget 3: Maintenance Terbaru
+            const latestTix = [...tickets].reverse().slice(0, 5);
+            let wTixHtml = '';
+            if(latestTix.length === 0) wTixHtml = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Tidak ada tiket</td></tr>';
+            latestTix.forEach(t => {
+                let un = getUnit(t.unitId);
+                let badge = t.status==='Selesai' ? 'bg-emerald-100 text-emerald-800' : (t.status==='In Progress' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800');
+                wTixHtml += `<tr class="hover:bg-gray-50"><td class="px-4 py-3 font-medium text-gray-800">${t.ticketNo}</td><td class="px-4 py-3">${formatDate(t.date)}</td><td class="px-4 py-3">${un?un.unitNo:'-'}</td><td class="px-4 py-3">${t.category}</td><td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${badge}">${t.status}</span></td></tr>`;
+            });
+            document.getElementById('widgetMaintenanceList').innerHTML = wTixHtml;
+
+            // Widget 4: Top Tenant (Ranking)
+            let paidBillings = billings.filter(b => b.status === 'Lunas');
+            let tenantStats = {};
+            paidBillings.forEach(b => {
+                if(!tenantStats[b.tenantId]) tenantStats[b.tenantId] = { total: 0, unitId: b.unitId };
+                tenantStats[b.tenantId].total += parseFloat(b.amount || 0);
+            });
+            
+            let topTenants = Object.keys(tenantStats).map(tId => ({
+                id: tId, 
+                total: tenantStats[tId].total,
+                unitId: tenantStats[tId].unitId
+            })).sort((a,b) => b.total - a.total).slice(0, 5);
+
+            let wTopHtml = '';
+            if(topTenants.length === 0) wTopHtml = '<li class="p-4 text-center text-gray-500 text-sm">Belum ada data pembayaran lunas</li>';
+            topTenants.forEach((rank, index) => {
+                let t = getTenant(rank.id);
+                let u = getUnit(rank.unitId);
+                if(t) {
+                    wTopHtml += `<li class="px-5 py-3 flex justify-between items-center"><div class="flex items-center"><div class="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs mr-3">#${index+1}</div><div class="flex flex-col"><span class="font-medium text-gray-800">${t.name}</span><span class="text-xs text-gray-500">Unit: ${u?u.unitNo:'-'}</span></div></div><div class="font-bold text-emerald-600 text-sm">${formatRupiah(rank.total)}</div></li>`;
+                }
+            });
+            document.getElementById('widgetTopTenantList').innerHTML = wTopHtml;
+        }
+
+        // === MODULE CRUD CORE ===
+        function loadModuleData() {
+            moduleData = getLS(DB_KEYS[currentModule + 's'] || DB_KEYS[currentModule]); 
+        }
+
+        function setupTableStructure() {
+            const thead = document.getElementById('tableHead');
+            let cols = '';
+            if(currentModule === 'unit') {
+                cols = `<tr><th class="px-4 py-3">No Unit</th><th class="px-4 py-3">Tower/Lantai</th><th class="px-4 py-3">Tipe/Luas</th><th class="px-4 py-3">Status</th><th class="px-4 py-3 text-right">Aksi</th></tr>`;
+            } else if(currentModule === 'tenant') {
+                cols = `<tr><th class="px-4 py-3">Nama/HP</th><th class="px-4 py-3">Unit</th><th class="px-4 py-3">Tgl Masuk</th><th class="px-4 py-3">Status</th><th class="px-4 py-3 text-right">Aksi</th></tr>`;
+            } else if(currentModule === 'billing') {
+                cols = `<tr><th class="px-4 py-3">Bulan</th><th class="px-4 py-3">Tenant/Unit</th><th class="px-4 py-3">Nominal</th><th class="px-4 py-3">Jatuh Tempo</th><th class="px-4 py-3">Status</th><th class="px-4 py-3 text-right">Aksi</th></tr>`;
+            } else if(currentModule === 'maintenance') {
+                cols = `<tr><th class="px-4 py-3">Tiket</th><th class="px-4 py-3">Unit</th><th class="px-4 py-3">Kategori</th><th class="px-4 py-3">Keluhan</th><th class="px-4 py-3">Status</th><th class="px-4 py-3 text-right">Aksi</th></tr>`;
+            }
+            thead.innerHTML = cols;
+        }
+
+        function renderTable(query = '') {
+            const tbody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+
+            let filtered = moduleData.filter(item => JSON.stringify(item).toLowerCase().includes(query.toLowerCase()));
+
+            if(filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                tbody.parentNode.classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                tbody.parentNode.classList.remove('hidden');
+                
+                filtered.forEach(row => {
+                    let tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-50 border-b border-gray-50';
+                    let html = '';
+                    let actionBtn = `<div class="flex justify-end gap-2"><button onclick="editData('${row.id}')" class="text-blue-500 hover:text-blue-700 bg-blue-50 p-1.5 rounded"><i class="fas fa-edit"></i></button><button onclick="deleteData('${row.id}')" class="text-red-500 hover:text-red-700 bg-red-50 p-1.5 rounded"><i class="fas fa-trash"></i></button></div>`;
+
+                    if(currentModule === 'unit') {
+                        let badge = row.status==='Terisi' ? 'bg-emerald-100 text-emerald-800' : (row.status==='Kosong' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800');
+                        html = `
+                            <td class="px-4 py-3 font-medium text-gray-800">${row.unitNo}</td>
+                            <td class="px-4 py-3">${row.tower} <span class="text-xs text-gray-500 block">Lt. ${row.floor}</span></td>
+                            <td class="px-4 py-3">${row.type} <span class="text-xs text-gray-500 block">${row.area} m²</span></td>
+                            <td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${badge}">${row.status}</span></td>
+                            <td class="px-4 py-3 text-right">${actionBtn}</td>
+                        `;
+                    } else if(currentModule === 'tenant') {
+                        let u = getUnit(row.unitId);
+                        let badge = row.status==='Aktif' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800';
+                        html = `
+                            <td class="px-4 py-3 font-medium text-gray-800">${row.name} <span class="text-xs text-gray-500 block"><i class="fas fa-phone w-3"></i> ${row.phone}</span></td>
+                            <td class="px-4 py-3 font-medium text-blue-600">${u ? u.unitNo : '-'}</td>
+                            <td class="px-4 py-3">${formatDate(row.joinDate)}</td>
+                            <td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${badge}">${row.status}</span></td>
+                            <td class="px-4 py-3 text-right">${actionBtn}</td>
+                        `;
+                    } else if(currentModule === 'billing') {
+                        let t = getTenant(row.tenantId);
+                        let u = getUnit(row.unitId);
+                        let badge = row.status==='Lunas' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800';
+                        html = `
+                            <td class="px-4 py-3 font-medium text-gray-800">${row.month}</td>
+                            <td class="px-4 py-3">${t?t.name:'-'} <span class="text-xs text-gray-500 block">Unit: ${u?u.unitNo:'-'}</span></td>
+                            <td class="px-4 py-3 font-medium text-gray-800">${formatRupiah(row.amount)}</td>
+                            <td class="px-4 py-3">${formatDate(row.dueDate)}</td>
+                            <td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${badge}">${row.status}</span></td>
+                            <td class="px-4 py-3 text-right">${actionBtn}</td>
+                        `;
+                    } else if(currentModule === 'maintenance') {
+                        let u = getUnit(row.unitId);
+                        let badge = row.status==='Selesai' ? 'bg-emerald-100 text-emerald-800' : (row.status==='In Progress' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800');
+                        html = `
+                            <td class="px-4 py-3 font-medium text-gray-800">${row.ticketNo} <span class="text-xs text-gray-500 block">${formatDate(row.date)}</span></td>
+                            <td class="px-4 py-3 font-medium text-blue-600">${u ? u.unitNo : '-'}</td>
+                            <td class="px-4 py-3"><span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">${row.category}</span></td>
+                            <td class="px-4 py-3 text-sm line-clamp-2" title="${row.description}">${row.description}</td>
+                            <td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${badge}">${row.status}</span></td>
+                            <td class="px-4 py-3 text-right">${actionBtn}</td>
+                        `;
+                    }
+                    tr.innerHTML = html;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // === MODAL FORM GENERATOR ===
+        function openModal(id = null) {
+            // ENFORCE DEMO LIMITS ON ADD NEW
+            if (!id && LIMIT_MAP[currentModule]) {
+                let currentCount = getLS(DB_KEYS[currentModule + 's']).length;
+                if (currentCount >= LIMIT_MAP[currentModule]) {
+                    showDemoModal();
+                    return;
+                }
+            }
+
+            const modal = document.getElementById('crudModal');
+            document.body.classList.add('modal-active');
+            modal.classList.remove('hidden');
+            document.getElementById('modalTitle').innerText = id ? 'Edit Data' : 'Tambah Data';
+            document.getElementById('formId').value = id || '';
+            
+            let item = id ? moduleData.find(d => d.id === id) : {};
+            let fieldsHtml = '';
+
+            let units = getLS(DB_KEYS.units);
+            let tenants = getLS(DB_KEYS.tenants);
+            let unitOpts = units.map(u => `<option value="${u.id}">${u.unitNo} (${u.tower})</option>`).join('');
+            let tenantOpts = tenants.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+
+            if(currentModule === 'unit') {
+                fieldsHtml = `
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Nomor Unit</label><input type="text" name="unitNo" required value="${item.unitNo||''}" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Tower</label><input type="text" name="tower" required value="${item.tower||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Lantai</label><input type="text" name="floor" required value="${item.floor||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Tipe Unit</label><input type="text" name="type" required value="${item.type||''}" placeholder="Studio/2BR/dll" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Luas (m²)</label><input type="number" name="area" required value="${item.area||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Status Unit</label>
+                        <select name="status" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                            <option value="Kosong" ${item.status==='Kosong'?'selected':''}>Kosong</option>
+                            <option value="Terisi" ${item.status==='Terisi'?'selected':''}>Terisi</option>
+                            <option value="Maintenance" ${item.status==='Maintenance'?'selected':''}>Maintenance</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Keterangan</label><textarea name="note" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">${item.note||''}</textarea></div>
+                `;
+            } else if(currentModule === 'tenant') {
+                fieldsHtml = `
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Nama Tenant</label><input type="text" name="name" required value="${item.name||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Nomor HP</label><input type="text" name="phone" required value="${item.phone||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Email</label><input type="email" name="email" value="${item.email||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Pilih Unit</label>
+                        <select name="unitId" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"><option value="">-- Pilih Unit --</option>
+                        ${units.map(u => `<option value="${u.id}" ${item.unitId===u.id?'selected':''}>${u.unitNo} - ${u.status}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Tanggal Masuk</label><input type="date" name="joinDate" required value="${item.joinDate||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                            <select name="status" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                                <option value="Aktif" ${item.status==='Aktif'?'selected':''}>Aktif</option>
+                                <option value="Tidak Aktif" ${item.status==='Tidak Aktif'?'selected':''}>Tidak Aktif</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Catatan</label><textarea name="note" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">${item.note||''}</textarea></div>
+                `;
+            } else if(currentModule === 'billing') {
+                fieldsHtml = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Bulan Tagihan</label><input type="month" name="month" required value="${item.month||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Jatuh Tempo</label><input type="date" name="dueDate" required value="${item.dueDate||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Tenant</label>
+                        <select name="tenantId" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none" onchange="autoFillUnit(this.value)"><option value="">-- Pilih Tenant --</option>${tenantOpts.replace(new RegExp(`value="${item.tenantId}"`), `value="${item.tenantId}" selected`)}</select>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Unit</label>
+                        <select name="unitId" id="billUnitId" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none bg-gray-50"><option value="">-- Pilih Unit --</option>${unitOpts.replace(new RegExp(`value="${item.unitId}"`), `value="${item.unitId}" selected`)}</select>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Nominal IPL (Rp)</label><input type="number" name="amount" required value="${item.amount||''}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Status Pembayaran</label>
+                        <select name="status" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                            <option value="Belum Bayar" ${item.status==='Belum Bayar'?'selected':''}>Belum Bayar</option>
+                            <option value="Lunas" ${item.status==='Lunas'?'selected':''}>Lunas</option>
+                        </select>
+                    </div>
+                `;
+            } else if(currentModule === 'maintenance') {
+                let categories = ['Listrik', 'Air', 'AC', 'Plumbing', 'Kebersihan', 'Lainnya'];
+                fieldsHtml = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">No Tiket</label><input type="text" name="ticketNo" required value="${item.ticketNo||('TKT-'+Math.floor(Math.random()*10000))}" class="w-full px-3 py-2 border bg-gray-50 rounded-lg text-sm outline-none" readonly></div>
+                        <div><label class="block text-xs font-medium text-gray-700 mb-1">Tanggal</label><input type="date" name="date" required value="${item.date||new Date().toISOString().split('T')[0]}" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Tenant (Opsional)</label>
+                        <select name="tenantId" class="w-full px-3 py-2 border rounded-lg text-sm outline-none" onchange="autoFillUnit(this.value)"><option value="">-- Kosong / Public Area --</option>${tenantOpts.replace(new RegExp(`value="${item.tenantId}"`), `value="${item.tenantId}" selected`)}</select>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Unit</label>
+                        <select name="unitId" id="billUnitId" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"><option value="">-- Pilih Unit --</option>${unitOpts.replace(new RegExp(`value="${item.unitId}"`), `value="${item.unitId}" selected`)}</select>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Kategori</label>
+                        <select name="category" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                            <option value="">-- Pilih Kategori --</option>
+                            ${categories.map(c => `<option value="${c}" ${item.category===c?'selected':''}>${c}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Deskripsi Keluhan</label><textarea name="description" required rows="3" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">${item.description||''}</textarea></div>
+                    <div><label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                        <select name="status" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                            <option value="Open" ${item.status==='Open'?'selected':''}>Open</option>
+                            <option value="In Progress" ${item.status==='In Progress'?'selected':''}>In Progress</option>
+                            <option value="Selesai" ${item.status==='Selesai'?'selected':''}>Selesai</option>
+                        </select>
+                    </div>
+                `;
+            }
+
+            document.getElementById('formFields').innerHTML = fieldsHtml;
+        }
+
+        function closeModal() {
+            document.getElementById('crudModal').classList.add('hidden');
+            document.body.classList.remove('modal-active');
+        }
+
+        function autoFillUnit(tenantId) {
+            if(!tenantId) return;
+            const t = getTenant(tenantId);
+            if(t && document.getElementById('billUnitId')) {
+                document.getElementById('billUnitId').value = t.unitId;
+            }
+        }
+
+        function saveData(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const dataObj = Object.fromEntries(formData.entries());
+            const id = document.getElementById('formId').value;
+            const key = DB_KEYS[currentModule + 's'] || DB_KEYS[currentModule];
+            
+            // ENFORCE UNIT TYPES LIMIT ON SAVE
+            if (!id && currentModule === 'unit') {
+                let units = getLS(DB_KEYS.units);
+                let existingTypes = new Set(units.map(u => u.type.toUpperCase()));
+                existingTypes.add(dataObj.type.toUpperCase());
+                if (existingTypes.size > DEMO_LIMITS.UnitTypes) {
+                    showDemoModal();
+                    return; // Stop execution
+                }
+            }
+
+            let lsData = getLS(key);
+
+            if(id) {
+                // Update
+                const index = lsData.findIndex(d => d.id === id);
+                lsData[index] = { ...lsData[index], ...dataObj };
+            } else {
+                // Insert
+                dataObj.id = generateId();
+                lsData.unshift(dataObj);
+            }
+
+            setLS(key, lsData);
+            closeModal();
+            syncUnitStatus(); // Run automations
+            loadModuleData(); // Reload memory
+            renderTable(); // Re-render table
+        }
+
+        function editData(id) { openModal(id); }
+
+        function deleteData(id) {
+            if(confirm('Yakin ingin menghapus data ini?')) {
+                const key = DB_KEYS[currentModule + 's'] || DB_KEYS[currentModule];
+                // DELETE STANDARD: By Primary Key
+                let lsData = getLS(key).filter(item => item.id !== id);
+                setLS(key, lsData);
+                syncUnitStatus();
+                loadModuleData();
+                renderTable();
+            }
+        }
+
+        // === PREMIUM EXPORT INTERCEPTOR ===
+        function exportData() {
+            // FITUR PREMIUM DIKUNCI DI VERSI DEMO
+            showPremiumModal();
+        }
+
+    </script>
+</body>
+</html>

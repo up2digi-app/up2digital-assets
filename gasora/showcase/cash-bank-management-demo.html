@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO & DEPLOYMENT STANDARD -->
+    <title>UP2Finance Lite Demo | GASORA</title>
+    <meta name="description" content="UP2Finance Lite Demo - Aplikasi Pencatatan Kas & Bank Standard Gasora">
+    <meta name="author" content="UP2Digital">
+    <link rel="canonical" href="https://gasora-up2finance-demo.up2digital.workers.dev">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gasora-up2finance-demo.up2digital.workers.dev">
+    <meta property="og:title" content="UP2Finance Lite Demo | GASORA">
+    <meta property="og:description" content="UP2Finance Lite Demo - Aplikasi Pencatatan Kas & Bank Standard Gasora">
+    <meta property="og:image" content="https://up2digi-app.github.io/up2digital-assets/gasora/favicon.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UP2Finance Lite Demo | GASORA">
+    <meta name="twitter:description" content="UP2Finance Lite Demo - Aplikasi Pencatatan Kas & Bank Standard Gasora">
+    <meta name="twitter:image" content="https://up2digi-app.github.io/up2digital-assets/gasora/favicon.png">
+
+    <!-- FAVICON RESMI GASORA -->
+    <link rel="icon" type="image/png" href="https://up2digi-app.github.io/up2digital-assets/gasora/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Animasi Toast Notification */
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast-animate {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+
+        /* WATERMARK STANDARD */
+        .demo-watermark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* Memastikan watermark tidak menutupi klik/interaksi */
+            z-index: 9999;
+            background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Ctext transform='rotate(-45 125 125)' x='125' y='125' font-size='36' fill='%23000000' fill-opacity='0.04' text-anchor='middle' alignment-baseline='middle' font-family='sans-serif' font-weight='900' letter-spacing='5'%3EDEMO%3C/text%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen relative">
+    
+    <!-- LAYER WATERMARK DEMO -->
+    <div class="demo-watermark"></div>
+
+    <!-- Navbar -->
+    <nav class="bg-blue-600 text-white p-4 shadow-md relative z-10">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0">
+            <!-- Logo & Title Group (BRANDING STANDARD) -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/20 border border-white/30 flex items-center justify-center font-bold text-xl tracking-wider shadow-sm flex-shrink-0">
+                    FL
+                </div>
+                <div class="flex flex-col justify-center">
+                    <span class="font-bold text-[15px] leading-tight uppercase tracking-wider">UP2FINANCE LITE</span>
+                    <span class="text-[11px] text-yellow-300 font-bold uppercase tracking-widest leading-tight mt-0.5">DEMO VERSION</span>
+                    <span class="text-[10px] text-white/80 leading-tight mt-0.5">Kas & Bank v1.0</span>
+                </div>
+            </div>
+            <!-- Navigation -->
+            <div class="space-x-4 text-sm overflow-x-auto whitespace-nowrap w-full md:w-auto pb-1 md:pb-0">
+                <button onclick="switchTab('masuk')" class="hover:text-blue-200" id="nav-masuk">Kas Masuk</button>
+                <button onclick="switchTab('keluar')" class="hover:text-blue-200" id="nav-keluar">Kas Keluar</button>
+                <button onclick="switchTab('kategori')" class="hover:text-blue-200" id="nav-kategori">Kategori</button>
+                <button onclick="switchTab('laporan')" class="hover:text-blue-200" id="nav-laporan">Laporan</button>
+                <button onclick="switchTab('pengaturan')" class="hover:text-blue-200" id="nav-pengaturan">Pengaturan</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="container mx-auto p-4 mt-4 flex-1 relative z-10">
+        
+        <!-- MODUL KAS MASUK & KELUAR (Shared View) -->
+        <div id="tab-transaksi" class="tab-content active bg-white p-6 rounded-lg shadow-sm border">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="transaksi-title" class="text-xl font-bold">Kas Masuk</h2>
+                <button onclick="openModal('modal-transaksi')" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">+ Tambah Data</button>
+            </div>
+            <div class="mb-4">
+                <input type="text" id="search-transaksi" onkeyup="renderTransaksi()" placeholder="Cari deskripsi atau kategori..." class="w-full md:w-1/3 border p-2 rounded text-sm">
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-sm">
+                            <th class="p-3 border-b">Tanggal</th>
+                            <th class="p-3 border-b">Kategori</th>
+                            <th class="p-3 border-b">Deskripsi</th>
+                            <th class="p-3 border-b">Nominal</th>
+                            <th class="p-3 border-b text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaksi-body">
+                        <!-- Data will be rendered here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MODUL KATEGORI -->
+        <div id="tab-kategori" class="tab-content bg-white p-6 rounded-lg shadow-sm border">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Kategori</h2>
+                <button onclick="openModal('modal-kategori')" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">+ Tambah Kategori</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-sm">
+                            <th class="p-3 border-b">Nama Kategori</th>
+                            <th class="p-3 border-b">Jenis</th>
+                            <th class="p-3 border-b text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kategori-body">
+                        <!-- Data will be rendered here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MODUL LAPORAN -->
+        <div id="tab-laporan" class="tab-content bg-white p-6 rounded-lg shadow-sm border">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <h2 class="text-xl font-bold">Laporan Keuangan</h2>
+                <div class="flex flex-wrap gap-2 items-end">
+                    <div>
+                        <label class="block text-xs text-gray-500">Mulai</label>
+                        <input type="date" id="filter-start" class="border p-2 rounded text-sm" onchange="renderLaporan()">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500">Sampai</label>
+                        <input type="date" id="filter-end" class="border p-2 rounded text-sm" onchange="renderLaporan()">
+                    </div>
+                    <button onclick="renderLaporan()" class="bg-gray-800 text-white px-4 py-2 rounded text-sm">Filter</button>
+                </div>
+            </div>
+
+            <!-- PREMIUM FEATURE LOCK: Laporan Export -->
+            <div class="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Ekspor Laporan</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="showPremiumModal()" class="flex items-center justify-between gap-2 bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded text-sm hover:bg-gray-100 w-full md:w-auto transition-colors">
+                        <span class="flex items-center gap-1.5">🔒 Export CSV</span>
+                        <span class="bg-yellow-100 text-yellow-800 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border border-yellow-200">Premium</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex items-center justify-between gap-2 bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded text-sm hover:bg-gray-100 w-full md:w-auto transition-colors">
+                        <span class="flex items-center gap-1.5">🔒 Export Excel</span>
+                        <span class="bg-yellow-100 text-yellow-800 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border border-yellow-200">Premium</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex items-center justify-between gap-2 bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded text-sm hover:bg-gray-100 w-full md:w-auto transition-colors">
+                        <span class="flex items-center gap-1.5">🔒 Export PDF</span>
+                        <span class="bg-yellow-100 text-yellow-800 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border border-yellow-200">Premium</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex items-center justify-between gap-2 bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded text-sm hover:bg-gray-100 w-full md:w-auto transition-colors">
+                        <span class="flex items-center gap-1.5">🔒 Export PNG</span>
+                        <span class="bg-yellow-100 text-yellow-800 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border border-yellow-200">Premium</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ringkasan Saldo -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-green-50 p-4 rounded-lg border border-green-100 shadow-sm">
+                    <p class="text-xs text-green-600 font-bold uppercase tracking-wider mb-1">Total Masuk</p>
+                    <p class="text-xl font-bold text-green-700" id="summary-masuk">Rp 0</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg border border-red-100 shadow-sm">
+                    <p class="text-xs text-red-600 font-bold uppercase tracking-wider mb-1">Total Keluar</p>
+                    <p class="text-xl font-bold text-red-700" id="summary-keluar">Rp 0</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 shadow-sm">
+                    <p class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1">Saldo Saat Ini</p>
+                    <p class="text-xl font-bold text-blue-700" id="summary-saldo">Rp 0</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-sm">
+                            <th class="p-3 border-b">Tanggal</th>
+                            <th class="p-3 border-b">Deskripsi</th>
+                            <th class="p-3 border-b">Masuk</th>
+                            <th class="p-3 border-b">Keluar</th>
+                            <th class="p-3 border-b">Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="laporan-body">
+                        <!-- Data will be rendered here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MODUL PENGATURAN (PREMIUM FEATURE PLACEMENT) -->
+        <div id="tab-pengaturan" class="tab-content bg-white p-6 rounded-lg shadow-sm border">
+            <h2 class="text-xl font-bold mb-6">Pengaturan Aplikasi</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="border rounded-lg p-5 bg-gray-50">
+                    <h3 class="font-bold text-gray-800 mb-1">Tools & Utilities</h3>
+                    <p class="text-xs text-gray-500 mb-4">Manajemen database dan pencadangan lokal aplikasi.</p>
+                    
+                    <div class="space-y-3">
+                        <button onclick="showPremiumModal()" class="flex items-center justify-between gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded text-sm hover:bg-gray-100 w-full transition-colors">
+                            <span class="flex items-center gap-2">🔒 Backup Data</span>
+                            <span class="bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-yellow-200">Premium</span>
+                        </button>
+                        <button onclick="showPremiumModal()" class="flex items-center justify-between gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded text-sm hover:bg-gray-100 w-full transition-colors">
+                            <span class="flex items-center gap-2">🔒 Restore Data</span>
+                            <span class="bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-yellow-200">Premium</span>
+                        </button>
+                        <button onclick="showPremiumModal()" class="flex items-center justify-between gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded text-sm hover:bg-gray-100 w-full transition-colors">
+                            <span class="flex items-center gap-2">🔒 Import Data</span>
+                            <span class="bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-yellow-200">Premium</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="border rounded-lg p-5 bg-blue-50/50">
+                    <h3 class="font-bold text-gray-800 mb-1">Informasi Aplikasi</h3>
+                    <p class="text-xs text-gray-500 mb-4">Detail instalasi dan status memori.</p>
+                    <ul class="text-sm space-y-2 text-gray-700">
+                        <li class="flex justify-between border-b border-gray-200 pb-1"><span>Versi:</span> <span class="font-semibold text-gray-900">v1.0 (Demo)</span></li>
+                        <li class="flex justify-between border-b border-gray-200 pb-1"><span>Storage:</span> <span class="font-semibold text-gray-900">Local Storage</span></li>
+                        <li class="flex justify-between border-b border-gray-200 pb-1"><span>Batas Kategori:</span> <span class="font-semibold text-blue-600" id="info-limit-cat">0 / 2</span></li>
+                        <li class="flex justify-between border-b border-gray-200 pb-1"><span>Batas Transaksi:</span> <span class="font-semibold text-blue-600" id="info-limit-tx">0 / 50</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER RESMI UP2DIGITAL (FOOTER STANDARD) -->
+    <footer class="bg-white border-t border-gray-200 py-6 mt-8 relative z-10">
+        <div class="container mx-auto px-4 flex flex-col items-center justify-center text-[13px] text-gray-500 text-center space-y-1">
+            <div class="font-bold text-gray-800 tracking-widest uppercase text-xs">UP2FINANCE LITE - DEMO VERSION</div>
+            <div class="font-medium text-gray-600">Kas & Bank v1.0</div>
+            <div class="mt-2 text-[12px]">
+                Built with Gasora &bull; Part of 
+                <a href="https://wa.link/i8w855" target="_blank" class="text-blue-600 font-bold hover:text-blue-800 hover:underline transition-colors">
+                    UP2Digital
+                </a> 
+                Ecosystem
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Transaksi -->
+    <div id="modal-transaksi" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center p-4 z-40">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md">
+            <h3 class="font-bold text-lg mb-4" id="modal-transaksi-title">Tambah Transaksi</h3>
+            <form id="form-transaksi" onsubmit="saveTransaksi(event)">
+                <input type="hidden" id="transaksi-id">
+                <div class="mb-3">
+                    <label class="block text-sm mb-1">Tanggal</label>
+                    <input type="date" id="transaksi-tanggal" required class="w-full border p-2 rounded">
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm mb-1">Kategori</label>
+                    <select id="transaksi-kategori" required class="w-full border p-2 rounded">
+                        <!-- Options generated dynamically -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm mb-1">Deskripsi</label>
+                    <input type="text" id="transaksi-deskripsi" required class="w-full border p-2 rounded">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm mb-1">Nominal (Rp)</label>
+                    <input type="number" id="transaksi-nominal" required min="0" class="w-full border p-2 rounded">
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('modal-transaksi')" class="bg-gray-200 px-4 py-2 rounded">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Kategori -->
+    <div id="modal-kategori" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center p-4 z-40">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md">
+            <h3 class="font-bold text-lg mb-4" id="modal-kategori-title">Tambah Kategori</h3>
+            <form id="form-kategori" onsubmit="saveKategori(event)">
+                <input type="hidden" id="kategori-id">
+                <div class="mb-3">
+                    <label class="block text-sm mb-1">Nama Kategori</label>
+                    <input type="text" id="kategori-nama" required class="w-full border p-2 rounded">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm mb-1">Jenis</label>
+                    <select id="kategori-jenis" required class="w-full border p-2 rounded">
+                        <option value="Masuk">Masuk</option>
+                        <option value="Keluar">Keluar</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('modal-kategori')" class="bg-gray-200 px-4 py-2 rounded">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI HAPUS (Custom Delete Confirm) -->
+    <div id="modal-confirm" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center p-4 z-50">
+        <div class="bg-white p-6 rounded-lg w-full max-w-sm text-center">
+            <div class="text-red-500 mb-3 flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Konfirmasi Hapus</h3>
+            <p class="text-gray-600 mb-6 text-sm">Apakah Anda yakin ingin menghapus data ini?</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeConfirm()" class="bg-gray-200 text-gray-800 font-semibold px-4 py-2 rounded text-sm hover:bg-gray-300">Batal</button>
+                <button onclick="executeDelete()" class="bg-red-600 text-white font-semibold px-4 py-2 rounded text-sm hover:bg-red-700">Ya</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LIMIT DEMO -->
+    <div id="modal-limit" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center p-4 z-50">
+        <div class="bg-white p-6 rounded-lg w-full max-w-sm text-center">
+            <div class="text-blue-500 mb-3 flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Batas Versi Demo</h3>
+            <p class="text-gray-600 mb-6 text-sm">Anda telah mencapai batas versi Demo. Upgrade ke UP2Finance Lite untuk penggunaan lebih lanjut.</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeLimitModal()" class="bg-gray-200 text-gray-800 font-semibold px-4 py-2 rounded text-sm hover:bg-gray-300">Tutup</button>
+                <a href="https://wa.link/i8w855" target="_blank" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded text-sm hover:bg-blue-700 inline-block">Hubungi UP2Digital</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PREMIUM FEATURE -->
+    <div id="modal-premium" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center p-4 z-50">
+        <div class="bg-white p-6 rounded-lg w-full max-w-sm text-center">
+            <div class="text-yellow-500 mb-3 flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Fitur Premium</h3>
+            <p class="text-gray-600 mb-6 text-sm">Fitur ini tersedia pada versi UP2Finance Lite atau lebih tinggi. Upgrade sekarang untuk membuka fitur premium dan meningkatkan kapasitas aplikasi.</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closePremiumModal()" class="bg-gray-200 text-gray-800 font-semibold px-4 py-2 rounded text-sm hover:bg-gray-300">Batal</button>
+                <a href="https://wa.link/i8w855" target="_blank" class="bg-yellow-500 text-white font-semibold px-4 py-2 rounded text-sm hover:bg-yellow-600 inline-block">Hubungi UP2Digital</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast-notification" class="fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        <span id="toast-message">Data berhasil dihapus</span>
+    </div>
+
+    <script>
+        // DATA STORAGE STANDARD (LOCAL STORAGE)
+        const LS_CATEGORIES_KEY = 'gasora_fin_categories';
+        const LS_TRANSACTIONS_KEY = 'gasora_fin_transactions';
+        const LS_PROFILE_KEY = 'gasora_fin_profile';
+
+        let currentView = 'Masuk'; 
+        let categories = [];
+        let transactions = [];
+
+        // Inisialisasi Data Storage
+        function initData() {
+            const storedCategories = localStorage.getItem(LS_CATEGORIES_KEY);
+            const storedTransactions = localStorage.getItem(LS_TRANSACTIONS_KEY);
+
+            if (storedCategories) {
+                categories = JSON.parse(storedCategories);
+            } else {
+                categories = [
+                    { id: 'c1', nama: 'Penjualan', jenis: 'Masuk' },
+                    { id: 'c2', nama: 'Listrik & Air', jenis: 'Keluar' }
+                ];
+                localStorage.setItem(LS_CATEGORIES_KEY, JSON.stringify(categories));
+            }
+
+            if (storedTransactions) {
+                transactions = JSON.parse(storedTransactions);
+            } else {
+                transactions = [
+                    { id: 't1', tanggal: new Date().toISOString().split('T')[0], jenis: 'Masuk', kategori: 'Penjualan', deskripsi: 'Jual Produk A', nominal: 500000 },
+                    { id: 't2', tanggal: new Date().toISOString().split('T')[0], jenis: 'Keluar', kategori: 'Listrik & Air', deskripsi: 'Bayar Listrik', nominal: 150000 }
+                ];
+                localStorage.setItem(LS_TRANSACTIONS_KEY, JSON.stringify(transactions));
+            }
+            updateInfoLimit();
+        }
+
+        // Simpan Data ke Storage
+        function saveToStorage() {
+            localStorage.setItem(LS_CATEGORIES_KEY, JSON.stringify(categories));
+            localStorage.setItem(LS_TRANSACTIONS_KEY, JSON.stringify(transactions));
+            updateInfoLimit();
+        }
+
+        function updateInfoLimit() {
+            const elCat = document.getElementById('info-limit-cat');
+            const elTx = document.getElementById('info-limit-tx');
+            if (elCat) elCat.innerText = `${categories.length} / 2`;
+            if (elTx) elTx.innerText = `${transactions.length} / 50`;
+        }
+
+        // Format Rupiah
+        const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(angka);
+
+        // State untuk Delete Konfirmasi
+        let deleteId = null;
+        let deleteType = null;
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('font-bold', 'underline'));
+            
+            const navBtn = document.getElementById(`nav-${tab}`);
+            if(navBtn) navBtn.classList.add('font-bold', 'underline');
+
+            if(tab === 'masuk' || tab === 'keluar') {
+                currentView = tab === 'masuk' ? 'Masuk' : 'Keluar';
+                const transTitle = document.getElementById('transaksi-title');
+                if(transTitle) transTitle.innerText = `Kas ${currentView}`;
+                const searchEl = document.getElementById('search-transaksi');
+                if(searchEl) searchEl.value = ''; // Reset pencarian
+                const tabTrans = document.getElementById('tab-transaksi');
+                if(tabTrans) tabTrans.classList.add('active');
+                renderTransaksi();
+            } else {
+                const tabEl = document.getElementById(`tab-${tab}`);
+                if(tabEl) tabEl.classList.add('active');
+                if(tab === 'kategori') renderKategori();
+                if(tab === 'laporan') renderLaporan();
+            }
+        }
+
+        // --- TRANSAKSI LOGIC ---
+        function renderTransaksi() {
+            const tbody = document.getElementById('transaksi-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            
+            const searchKeyword = document.getElementById('search-transaksi') ? document.getElementById('search-transaksi').value.toLowerCase() : '';
+            let filtered = transactions.filter(t => t.jenis === currentView).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+            
+            if (searchKeyword) {
+                filtered = filtered.filter(t => t.deskripsi.toLowerCase().includes(searchKeyword) || t.kategori.toLowerCase().includes(searchKeyword));
+            }
+            
+            filtered.forEach(t => {
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3 text-sm">${t.tanggal}</td>
+                        <td class="p-3 text-sm">${t.kategori}</td>
+                        <td class="p-3 text-sm">${t.deskripsi}</td>
+                        <td class="p-3 text-sm font-semibold ${t.jenis === 'Masuk' ? 'text-green-600' : 'text-red-600'}">
+                            ${formatRp(t.nominal)}
+                        </td>
+                        <td class="p-3 text-sm text-center">
+                            <button onclick="editTransaksi('${t.id}')" class="text-blue-500 mr-2 hover:underline">Edit</button>
+                            <button onclick="confirmDelete('${t.id}', 'transaksi')" class="text-red-500 hover:underline">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function saveTransaksi(e) {
+            e.preventDefault();
+            const id = document.getElementById('transaksi-id').value;
+            
+            // HARDEN DEMO LIMIT VALIDATION UNTUK TRANSAKSI (Hanya untuk data baru)
+            if (!id && transactions.length >= 50) {
+                closeModal('modal-transaksi');
+                showLimitModal();
+                return;
+            }
+
+            const data = {
+                id: id || 't' + Date.now(),
+                tanggal: document.getElementById('transaksi-tanggal').value,
+                jenis: currentView,
+                kategori: document.getElementById('transaksi-kategori').value,
+                deskripsi: document.getElementById('transaksi-deskripsi').value,
+                nominal: parseInt(document.getElementById('transaksi-nominal').value)
+            };
+
+            if(id) {
+                const idx = transactions.findIndex(t => t.id === id);
+                if(idx !== -1) transactions[idx] = data;
+            } else {
+                transactions.push(data);
+            }
+            
+            saveToStorage();
+            closeModal('modal-transaksi');
+            showToast(id ? 'Data berhasil diubah' : 'Data berhasil ditambahkan');
+            
+            // Sync all views
+            renderTransaksi();
+            renderLaporan();
+        }
+
+        function editTransaksi(id) {
+            const t = transactions.find(item => item.id === id);
+            if (t) {
+                document.getElementById('transaksi-id').value = t.id;
+                document.getElementById('transaksi-tanggal').value = t.tanggal;
+                
+                // Isi ulang opsi kategori sesuai jenis transaksi yang diedit
+                const select = document.getElementById('transaksi-kategori');
+                select.innerHTML = categories.filter(c => c.jenis === t.jenis).map(c => `<option value="${c.nama}">${c.nama}</option>`).join('');
+                document.getElementById('transaksi-kategori').value = t.kategori;
+                
+                document.getElementById('transaksi-deskripsi').value = t.deskripsi;
+                document.getElementById('transaksi-nominal').value = t.nominal;
+                
+                document.getElementById('modal-transaksi-title').innerText = 'Edit Transaksi';
+                document.getElementById('modal-transaksi').classList.remove('hidden');
+            }
+        }
+
+        // --- KATEGORI LOGIC ---
+        function renderKategori() {
+            const tbody = document.getElementById('kategori-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            categories.forEach(c => {
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3 text-sm">${c.nama}</td>
+                        <td class="p-3 text-sm">${c.jenis}</td>
+                        <td class="p-3 text-sm text-center">
+                            <button onclick="editKategori('${c.id}')" class="text-blue-500 mr-2 hover:underline">Edit</button>
+                            <button onclick="confirmDelete('${c.id}', 'kategori')" class="text-red-500 hover:underline">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function saveKategori(e) {
+            e.preventDefault();
+            const id = document.getElementById('kategori-id').value;
+            
+            // HARDEN DEMO LIMIT VALIDATION UNTUK KATEGORI (Hanya untuk data baru)
+            if (!id && categories.length >= 2) {
+                closeModal('modal-kategori');
+                showLimitModal();
+                return;
+            }
+
+            const data = {
+                id: id || 'c' + Date.now(),
+                nama: document.getElementById('kategori-nama').value,
+                jenis: document.getElementById('kategori-jenis').value
+            };
+            
+            if(id) {
+                const idx = categories.findIndex(c => c.id === id);
+                if(idx !== -1) categories[idx] = data;
+            } else {
+                categories.push(data);
+            }
+            
+            saveToStorage();
+            closeModal('modal-kategori');
+            showToast(id ? 'Kategori berhasil diubah' : 'Kategori berhasil ditambahkan');
+            
+            // Sync all views
+            renderKategori();
+        }
+
+        function editKategori(id) {
+            const c = categories.find(item => item.id === id);
+            if (c) {
+                document.getElementById('kategori-id').value = c.id;
+                document.getElementById('kategori-nama').value = c.nama;
+                document.getElementById('kategori-jenis').value = c.jenis;
+                
+                document.getElementById('modal-kategori-title').innerText = 'Edit Kategori';
+                document.getElementById('modal-kategori').classList.remove('hidden');
+            }
+        }
+
+        // --- FUNGSI HAPUS GLOBAL (Custom Confirm) ---
+        function confirmDelete(id, type) {
+            deleteId = id;
+            deleteType = type;
+            document.getElementById('modal-confirm').classList.remove('hidden');
+        }
+
+        function closeConfirm() {
+            deleteId = null;
+            deleteType = null;
+            document.getElementById('modal-confirm').classList.add('hidden');
+        }
+
+        function executeDelete() {
+            if(deleteType === 'transaksi') {
+                transactions = transactions.filter(t => t.id !== deleteId);
+                saveToStorage();
+                renderTransaksi();
+                renderLaporan(); // Pastikan saldo dan ringkasan update otomatis
+            } else if(deleteType === 'kategori') {
+                categories = categories.filter(c => c.id !== deleteId);
+                saveToStorage();
+                renderKategori();
+            }
+            
+            closeConfirm();
+            showToast('Data berhasil dihapus');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.innerText = message;
+            
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-animate');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('toast-animate');
+            }, 3000);
+        }
+
+        // --- LAPORAN LOGIC ---
+        function renderLaporan() {
+            const tbody = document.getElementById('laporan-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            
+            const start = document.getElementById('filter-start').value;
+            const end = document.getElementById('filter-end').value;
+
+            let filtered = [...transactions].sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
+            if(start) filtered = filtered.filter(t => t.tanggal >= start);
+            if(end) filtered = filtered.filter(t => t.tanggal <= end);
+
+            let saldo = 0;
+            let totalMasuk = 0;
+            let totalKeluar = 0;
+
+            filtered.forEach(t => {
+                let masuk = t.jenis === 'Masuk' ? t.nominal : 0;
+                let keluar = t.jenis === 'Keluar' ? t.nominal : 0;
+                saldo += (masuk - keluar);
+                totalMasuk += masuk;
+                totalKeluar += keluar;
+
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3 text-sm">${t.tanggal}</td>
+                        <td class="p-3 text-sm">${t.deskripsi} <br><span class="text-xs text-gray-400">${t.kategori}</span></td>
+                        <td class="p-3 text-sm text-green-600">${masuk > 0 ? formatRp(masuk) : '-'}</td>
+                        <td class="p-3 text-sm text-red-600">${keluar > 0 ? formatRp(keluar) : '-'}</td>
+                        <td class="p-3 text-sm font-bold ${saldo >= 0 ? 'text-blue-600' : 'text-red-600'}">${formatRp(saldo)}</td>
+                    </tr>
+                `;
+            });
+
+            if(document.getElementById('summary-masuk')) {
+                document.getElementById('summary-masuk').innerText = formatRp(totalMasuk);
+                document.getElementById('summary-keluar').innerText = formatRp(totalKeluar);
+                document.getElementById('summary-saldo').innerText = formatRp(saldo);
+                document.getElementById('summary-saldo').className = `text-xl font-bold ${saldo >= 0 ? 'text-blue-700' : 'text-red-700'}`;
+            }
+        }
+
+        // --- MODAL UTILS & DEMO LIMITS ---
+        function openModal(id) {
+            // Cek Limit Demo sebelum membuka modal tambah
+            if(id === 'modal-transaksi' && document.getElementById('transaksi-id').value === '') {
+                if(transactions.length >= 50) {
+                    showLimitModal();
+                    return;
+                }
+            } else if(id === 'modal-kategori' && document.getElementById('kategori-id').value === '') {
+                if(categories.length >= 2) {
+                    showLimitModal();
+                    return;
+                }
+            }
+
+            document.getElementById(id).classList.remove('hidden');
+            if(id === 'modal-transaksi') {
+                document.getElementById('modal-transaksi-title').innerText = 'Tambah Transaksi';
+                document.getElementById('form-transaksi').reset();
+                document.getElementById('transaksi-id').value = '';
+                const select = document.getElementById('transaksi-kategori');
+                select.innerHTML = categories.filter(c => c.jenis === currentView).map(c => `<option value="${c.nama}">${c.nama}</option>`).join('');
+            } else if(id === 'modal-kategori') {
+                document.getElementById('modal-kategori-title').innerText = 'Tambah Kategori';
+                document.getElementById('form-kategori').reset();
+                document.getElementById('kategori-id').value = '';
+            }
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // --- LIMIT & PREMIUM LOGIC ---
+        function showLimitModal() {
+            document.getElementById('modal-limit').classList.remove('hidden');
+        }
+        function closeLimitModal() {
+            document.getElementById('modal-limit').classList.add('hidden');
+        }
+
+        function showPremiumModal() {
+            document.getElementById('modal-premium').classList.remove('hidden');
+        }
+        function closePremiumModal() {
+            document.getElementById('modal-premium').classList.add('hidden');
+        }
+
+        // Initialize App View & Render
+        initData();
+        switchTab('masuk');
+        renderLaporan(); // Render Laporan di background saat awal load
+    </script>
+</body>
+</html>

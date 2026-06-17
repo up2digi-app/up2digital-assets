@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UP2Finance Invoice & Piutang Demo | GASORA</title>
+    
+    <!-- SEO & Deployment Standard -->
+    <meta name="author" content="UP2Digital">
+    <link rel="canonical" href="https://gasora-up2finance-invoice-piutang-demo.up2digital.workers.dev">
+    
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" content="UP2Finance Invoice & Piutang Demo | GASORA">
+    <meta property="og:url" content="https://gasora-up2finance-invoice-piutang-demo.up2digital.workers.dev">
+    
+    <!-- Twitter Card Metadata -->
+    <meta name="twitter:title" content="UP2Finance Invoice & Piutang Demo | GASORA">
+    <meta name="twitter:url" content="https://gasora-up2finance-invoice-piutang-demo.up2digital.workers.dev">
+
+    <!-- Favicon & Styles -->
+    <link rel="icon" href="https://up2digi-app.github.io/up2digital-assets/gasora/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
+        .tab-inactive { color: #6b7280; font-weight: 500; }
+        .tab-inactive:hover { color: #374151; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col relative">
+
+    <!-- Watermark Background (DEMO) -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden flex flex-col justify-around select-none opacity-[0.04] lg:opacity-[0.03]">
+        <div class="flex justify-around text-5xl md:text-8xl font-black tracking-widest text-gray-900 transform -rotate-12">DEMO</div>
+        <div class="flex justify-around text-5xl md:text-8xl font-black tracking-widest text-gray-900 transform -rotate-12">DEMO</div>
+        <div class="flex justify-around text-5xl md:text-8xl font-black tracking-widest text-gray-900 transform -rotate-12">DEMO</div>
+        <div class="flex justify-around text-5xl md:text-8xl font-black tracking-widest text-gray-900 transform -rotate-12">DEMO</div>
+        <div class="flex justify-around text-5xl md:text-8xl font-black tracking-widest text-gray-900 transform -rotate-12">DEMO</div>
+    </div>
+
+    <!-- Navbar (Branding Standard) -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center">
+                    <div class="bg-blue-600 text-white font-bold rounded-md text-sm mr-3 flex items-center justify-center h-10 w-10 shadow-sm">FL</div>
+                    <div class="flex flex-col justify-center">
+                        <span class="font-bold text-lg text-gray-900 tracking-tight leading-none uppercase">UP2FINANCE LITE</span>
+                        <span class="text-[10px] text-red-600 font-extrabold tracking-wider mt-0.5">DEMO VERSION</span>
+                        <span class="text-xs text-gray-500 font-medium mt-0.5">Invoice & Piutang v1.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Navigation -->
+    <div class="bg-white shadow-sm mb-6 z-10 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8 overflow-x-auto whitespace-nowrap" id="main-nav">
+                <button onclick="switchTab('customer')" id="tab-customer" class="tab-active py-4 px-1 focus:outline-none">
+                    <i class="fas fa-users mr-2"></i>Customer
+                </button>
+                <button onclick="switchTab('invoice')" id="tab-invoice" class="tab-inactive py-4 px-1 focus:outline-none">
+                    <i class="fas fa-file-invoice-dollar mr-2"></i>Invoice
+                </button>
+                <button onclick="switchTab('pembayaran')" id="tab-pembayaran" class="tab-inactive py-4 px-1 focus:outline-none">
+                    <i class="fas fa-money-bill-wave mr-2"></i>Pembayaran
+                </button>
+                <button onclick="switchTab('piutang')" id="tab-piutang" class="tab-inactive py-4 px-1 focus:outline-none">
+                    <i class="fas fa-chart-line mr-2"></i>Piutang & Export
+                </button>
+                <button onclick="switchTab('profil')" id="tab-profil" class="tab-inactive py-4 px-1 focus:outline-none">
+                    <i class="fas fa-store mr-2"></i>Profil
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-10 z-10 relative">
+        
+        <!-- CUSTOMER MODULE -->
+        <div id="view-customer" class="block">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-4">
+                <h2 class="text-2xl font-semibold text-gray-800">Data Customer</h2>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <div class="relative flex-grow sm:flex-grow-0">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </span>
+                        <input type="text" id="search-customer" oninput="renderCustomers()" placeholder="Cari Nama/HP..." class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition">
+                    </div>
+                    <button onclick="openModal('modal-customer')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition whitespace-nowrap">
+                        <i class="fas fa-plus mr-1"></i> Tambah Customer
+                    </button>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No HP</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-customer" class="bg-white divide-y divide-gray-200">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVOICE MODULE -->
+        <div id="view-invoice" class="hidden">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-4">
+                <h2 class="text-2xl font-semibold text-gray-800">Data Invoice</h2>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <div class="relative flex-grow sm:flex-grow-0">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </span>
+                        <input type="text" id="search-invoice" oninput="renderInvoices()" placeholder="Cari No Invoice/Customer..." class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition">
+                    </div>
+                    <button onclick="openModal('modal-invoice')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition whitespace-nowrap">
+                        <i class="fas fa-plus mr-1"></i> Buat Invoice
+                    </button>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No Invoice</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nominal</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jatuh Tempo</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-invoice" class="bg-white divide-y divide-gray-200">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PEMBAYARAN MODULE -->
+        <div id="view-pembayaran" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-800">Data Pembayaran</h2>
+                <button onclick="openModal('modal-pembayaran')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                    <i class="fas fa-plus mr-1"></i> Input Pembayaran
+                </button>
+            </div>
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Bayar</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No Invoice</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nominal Bayar</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-pembayaran" class="bg-white divide-y divide-gray-200">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PIUTANG & EXPORT MODULE -->
+        <div id="view-piutang" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-800">Pantau Piutang</h2>
+            </div>
+            
+            <!-- Ringkasan Piutang -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-lg shadow border-l-4 border-indigo-500">
+                    <div class="text-sm text-gray-500 font-medium">Total Invoice</div>
+                    <div class="text-2xl font-bold text-gray-900 mt-1" id="summary-total-invoice">Rp 0</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow border-l-4 border-emerald-500">
+                    <div class="text-sm text-gray-500 font-medium">Total Terbayar</div>
+                    <div class="text-2xl font-bold text-green-600 mt-1" id="summary-total-terbayar">Rp 0</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow border-l-4 border-orange-500">
+                    <div class="text-sm text-gray-500 font-medium">Total Piutang</div>
+                    <div class="text-2xl font-bold text-red-600 mt-1" id="summary-total-piutang">Rp 0</div>
+                </div>
+            </div>
+
+            <!-- Tabel Piutang -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice / Info</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nominal Tagihan</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telah Dibayar</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sisa Piutang</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-piutang" class="bg-white divide-y divide-gray-200">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tools & Utilities (Premium Grid) -->
+            <div class="mt-8 bg-white p-6 rounded-lg shadow border border-gray-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-toolbox text-blue-600 mr-2"></i> Tools & Utilities
+                    </h3>
+                    <span class="bg-amber-100 text-amber-800 text-xs font-extrabold px-3 py-1 rounded-full flex items-center">
+                        <i class="fas fa-crown mr-1"></i> PREMIUM BUNDLE
+                    </span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative">
+                        <i class="fas fa-file-csv text-blue-500 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Export CSV</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative">
+                        <i class="fas fa-file-excel text-green-600 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Export Excel</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative">
+                        <i class="fas fa-file-pdf text-red-500 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Export PDF</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative">
+                        <i class="fas fa-file-image text-purple-500 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Export PNG</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative">
+                        <i class="fas fa-print text-gray-700 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Cetak Invoice</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative">
+                        <i class="fas fa-receipt text-indigo-600 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Cetak Struk</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative">
+                        <i class="fas fa-hdd text-amber-600 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Backup Data</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative">
+                        <i class="fas fa-history text-emerald-500 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Restore Data</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative">
+                        <i class="fas fa-file-import text-sky-500 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Import Data</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                    <button onclick="showPremiumModal()" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-center transition group relative col-span-2 sm:col-span-1">
+                        <i class="fas fa-sync text-pink-500 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                        <span class="text-xs font-semibold text-gray-700">🔒 Sinkronisasi Cloud</span>
+                        <span class="absolute top-1 right-1 bg-amber-500 text-[9px] text-white font-bold px-1 rounded">PREMIUM</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFIL USAHA MODULE -->
+        <div id="view-profil" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-800">Profil Usaha</h2>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 max-w-lg">
+                <form id="form-profil" onsubmit="saveProfil(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Nama Usaha</label>
+                        <input type="text" id="prof-name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Alamat Usaha</label>
+                        <textarea id="prof-address" required rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">No HP Usaha</label>
+                        <input type="text" id="prof-phone" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500">
+                    </div>
+                    <hr class="my-6 border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Pembayaran</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Nama Bank</label>
+                        <input type="text" id="prof-bank-name" required placeholder="Contoh: BCA / Mandiri" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Nama Pemilik Rekening</label>
+                        <input type="text" id="prof-bank-acc-name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Nomor Rekening</label>
+                        <input type="text" id="prof-bank-acc-no" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500">
+                    </div>
+                    <div class="flex justify-end mt-6">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">Simpan Profil</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer Branding Standard (UP2Digital Ecosystem) -->
+    <footer class="bg-gray-900 text-white py-6 mt-auto z-10 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center space-y-2">
+            <div class="flex flex-col items-center space-y-1 text-sm font-semibold text-gray-200">
+                <img src="https://up2digi-app.github.io/up2digital-assets/gasora/logo.png" alt="Gasora Logo" class="h-6 w-6">
+                <span>UP2FINANCE LITE - DEMO VERSION</span>
+                <span class="text-xs text-gray-400 font-normal">Invoice & Piutang v1.0</span>
+            </div>
+            <div class="text-gray-400 text-xs font-normal">
+                Built with Gasora • Part of <a href="https://wa.link/i8w855" target="_blank" class="text-green-400 hover:text-green-300 transition font-bold">UP2Digital</a> Ecosystem
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div id="modal-delete" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50 transition-opacity">
+        <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-1/3 p-6 text-center transform transition-all">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Konfirmasi Hapus</h3>
+            <p class="text-sm text-gray-500 mb-6">Apakah Anda yakin ingin menghapus data ini? Data yang dihapus tidak dapat dikembalikan.</p>
+            <div class="flex justify-center space-x-3">
+                <button type="button" onclick="closeConfirm()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 font-medium transition">Batal</button>
+                <button type="button" onclick="executeDelete()" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 font-medium transition">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-md shadow-lg hidden items-center z-50">
+        <i class="fas fa-check-circle text-green-400 mr-2 text-lg"></i>
+        <span id="toast-message" class="font-medium text-sm">Data berhasil disimpan</span>
+    </div>
+
+    <!-- Modal Customer -->
+    <div id="modal-customer" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-1/3 p-6">
+            <h3 class="text-lg font-bold mb-4" id="title-modal-customer">Tambah Customer</h3>
+            <form id="form-customer" onsubmit="saveCustomer(event)">
+                <input type="hidden" id="cust-id">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Customer ID (Otomatis)</label>
+                    <input type="text" id="cust-customer-id" readonly class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-600 font-medium cursor-not-allowed">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Nama Customer</label>
+                    <input type="text" id="cust-name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Alamat Customer</label>
+                    <input type="text" id="cust-address" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">No HP</label>
+                    <input type="text" id="cust-phone" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal('modal-customer')" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Invoice -->
+    <div id="modal-invoice" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-1/2 p-6">
+            <h3 class="text-lg font-bold mb-4" id="title-modal-invoice">Buat Invoice</h3>
+            <form id="form-invoice" onsubmit="saveInvoice(event)">
+                <input type="hidden" id="inv-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">No Invoice (Otomatis)</label>
+                        <input type="text" id="inv-no" readonly class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-600 font-medium cursor-not-allowed">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Tanggal</label>
+                        <input type="date" id="inv-date" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                    </div>
+                    <div class="mb-4 md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Customer</label>
+                        <select id="inv-cust" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div class="mb-4 md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Deskripsi Invoice</label>
+                        <input type="text" id="inv-desc" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Nominal (Rp)</label>
+                        <input type="number" id="inv-amount" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Jatuh Tempo</label>
+                        <input type="date" id="inv-due" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-4">
+                    <button type="button" onclick="closeModal('modal-invoice')" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Pembayaran -->
+    <div id="modal-pembayaran" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-1/3 p-6">
+            <h3 class="text-lg font-bold mb-4">Input Pembayaran</h3>
+            <form id="form-pembayaran" onsubmit="savePembayaran(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Pilih Invoice (Belum Lunas)</label>
+                    <select id="pay-inv" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Tanggal Bayar</label>
+                    <input type="date" id="pay-date" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Nominal Bayar (Rp)</label>
+                    <input type="number" id="pay-amount" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal('modal-pembayaran')" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Premium Feature (Standard GASORA v1.0) -->
+    <div id="modal-premium" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-[400px] p-6 text-center">
+            <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-amber-100 mb-4 shadow-inner">
+                <i class="fas fa-lock text-amber-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Fitur Premium 🔒</h3>
+            <p class="text-sm text-gray-600 mb-6 leading-relaxed">
+                Fitur ini tersedia pada versi Lite atau lebih tinggi.<br>
+                Upgrade sekarang untuk membuka fitur premium dan meningkatkan kapasitas aplikasi.
+            </p>
+            <div class="flex flex-col space-y-2">
+                <a href="https://wa.link/i8w855" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-md font-semibold transition flex items-center justify-center shadow-md">
+                    <i class="fab fa-whatsapp mr-2 text-lg"></i> Hubungi UP2Digital
+                </a>
+                <button type="button" onclick="closeModal('modal-premium')" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 rounded-md font-medium transition text-sm">
+                    Nanti Saja
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Demo Limit (Standard GASORA v1.0) -->
+    <div id="modal-demo-limit" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-[400px] p-6 text-center">
+            <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-100 mb-4 shadow-inner">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl animate-pulse"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Batas Versi Demo ⚠️</h3>
+            <p class="text-sm text-gray-600 mb-6 leading-relaxed">
+                Anda telah mencapai batas versi Demo.<br>
+                Upgrade ke versi Lite untuk penggunaan lebih lanjut.
+            </p>
+            <div class="flex flex-col space-y-2">
+                <a href="https://wa.link/i8w855" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-md font-semibold transition flex items-center justify-center shadow-md">
+                    <i class="fab fa-whatsapp mr-2 text-lg"></i> Hubungi UP2Digital
+                </a>
+                <button type="button" onclick="closeModal('modal-demo-limit')" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 rounded-md font-medium transition text-sm">
+                    Kembali
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Template for PDF (Tetap dipertahankan untuk referensi internal code) -->
+    <div id="invoice-pdf-template" class="hidden bg-white text-gray-800 flex flex-col" style="width: 740px; height: 1050px; padding: 40px; box-sizing: border-box; margin: auto;">
+        <!-- HEADER PDF (Profil Usaha & Info Invoice) -->
+        <div class="flex justify-between items-start border-b-2 border-gray-800 pb-6 mb-8">
+            <div>
+                <h1 class="text-4xl font-black text-gray-900 mb-4 tracking-tight">INVOICE</h1>
+                <h2 class="text-xl font-bold text-gray-800" id="pdf-biz-name">Nama Usaha</h2>
+                <p class="text-sm text-gray-600 mt-1" id="pdf-biz-address">Alamat Usaha</p>
+                <p class="text-sm text-gray-600 mt-1">Telp: <span id="pdf-biz-phone">No HP Usaha</span></p>
+            </div>
+            <div class="text-right">
+                <p class="font-bold text-2xl text-gray-900 mb-4" id="pdf-inv-no">INV-000</p>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-right">
+                    <span class="text-gray-500 font-medium">Tanggal Invoice:</span>
+                    <span class="font-semibold text-gray-800" id="pdf-inv-date"></span>
+                    
+                    <span class="text-gray-500 font-medium">Jatuh Tempo:</span>
+                    <span class="font-bold text-red-600" id="pdf-inv-due"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DITAGIHKAN KEPADA -->
+        <div class="mb-10">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Ditagihkan Kepada:</h3>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 w-1/2">
+                <p class="text-xs text-blue-600 font-bold mb-1" id="pdf-cust-id">CUST-000</p>
+                <p class="font-bold text-lg text-gray-800 mb-1" id="pdf-cust-name">Nama Customer</p>
+                <p class="text-sm text-gray-600 mb-1" id="pdf-cust-address">Alamat Customer</p>
+                <p class="text-sm text-gray-600">Telp: <span class="font-medium" id="pdf-cust-phone">08123456789</span></p>
+            </div>
+        </div>
+
+        <!-- RINCIAN TAGIHAN -->
+        <table class="w-full mb-10 text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-800 text-white">
+                    <th class="py-3 px-4 font-semibold text-sm rounded-tl-md">Deskripsi Tagihan</th>
+                    <th class="py-3 px-4 font-semibold text-sm text-right w-1/3 rounded-tr-md">Nominal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-gray-200">
+                    <td class="py-5 px-4 text-gray-800 font-medium" id="pdf-desc-inv">Deskripsi Invoice</td>
+                    <td class="py-5 px-4 text-right font-bold text-gray-800" id="pdf-amount">Rp 0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- INFORMASI PEMBAYARAN & RINGKASAN -->
+        <div class="flex mb-12 gap-6 items-stretch">
+            <!-- Informasi Pembayaran (Kiri) -->
+            <div class="w-1/2 flex flex-col">
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-100 flex-grow">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Informasi Pembayaran</h3>
+                    <p class="text-sm text-gray-600 mb-1">Bank:</p>
+                    <p class="font-bold text-gray-800 mb-3" id="pdf-bank-name">Nama Bank</p>
+                    <p class="text-sm text-gray-600 mb-1">Atas Nama:</p>
+                    <p class="font-bold text-gray-800 mb-3" id="pdf-bank-acc-name">Nama Pemilik Rekening</p>
+                    <p class="text-sm text-gray-600 mb-1">No Rekening:</p>
+                    <p class="font-bold text-lg text-blue-600" id="pdf-bank-acc-no">Nomor Rekening</p>
+                </div>
+            </div>
+            
+            <!-- Ringkasan (Kanan) -->
+            <div class="w-1/2 flex flex-col">
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-100 flex-grow flex flex-col justify-center">
+                    <div class="flex justify-between py-2 border-b border-gray-200">
+                        <span class="text-gray-600 font-medium text-sm">Subtotal:</span>
+                        <span class="font-semibold text-gray-800" id="pdf-subtotal">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-200">
+                        <span class="text-gray-600 font-medium text-sm">Telah Dibayar:</span>
+                        <span class="font-semibold text-green-600" id="pdf-paid">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between pt-4 mt-2">
+                        <span class="font-bold text-lg text-gray-800">Sisa Piutang:</span>
+                        <span class="font-bold text-xl text-red-600" id="pdf-balance">Rp 0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER PDF -->
+        <div class="mt-auto text-center text-[10px] font-normal text-gray-400 pt-6 border-t border-gray-200 w-full">
+            <p>Generated by UP2Finance Lite</p>
+            <p class="mt-1">Built with Gasora • Part of <a href="https://wa.link/i8w855" target="_blank" class="text-blue-500 hover:text-blue-700 transition font-medium" style="text-decoration: none;">UP2Digital</a> Ecosystem</p>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // --- BASELINE PROFIL USAHA (DEFAULT VALUE JIKA LOCALSTORAGE KOSONG) ---
+        const defaultProfile = {
+            name: "PT Usaha Maju Sejahtera",
+            address: "Jl. Sudirman Kav. 21, Jakarta Selatan",
+            phone: "0811-2233-4455",
+            bankName: "BCA",
+            bankAccountName: "PT Usaha Maju Sejahtera",
+            bankAccountNumber: "1234567890"
+        };
+
+        // --- DATA STORAGE STANDARD (LOCALSTORAGE PERSISTENCE) ---
+        let businessProfile = JSON.parse(localStorage.getItem('gasora_ar_profile')) || defaultProfile;
+        let customers = JSON.parse(localStorage.getItem('gasora_ar_customers')) || [];
+        let invoices = JSON.parse(localStorage.getItem('gasora_ar_invoices')) || [];
+        let payments = JSON.parse(localStorage.getItem('gasora_ar_payments')) || [];
+
+        // GLOBAL STATE UNTUK HAPUS
+        let deleteId = null;
+        let deleteType = null;
+
+        // UTILS
+        const formatRp = (num) => "Rp " + new Intl.NumberFormat('id-ID').format(num);
+        const getCustomerName = (id) => customers.find(c => c.id == id)?.name || "Unknown";
+        
+        // SAVE TO LOCALSTORAGE HELPER
+        function saveToStorage() {
+            localStorage.setItem('gasora_ar_profile', JSON.stringify(businessProfile));
+            localStorage.setItem('gasora_ar_customers', JSON.stringify(customers));
+            localStorage.setItem('gasora_ar_invoices', JSON.stringify(invoices));
+            localStorage.setItem('gasora_ar_payments', JSON.stringify(payments));
+        }
+
+        // TAB NAVIGATION
+        function switchTab(tabId) {
+            ['customer', 'invoice', 'pembayaran', 'piutang', 'profil'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "tab-inactive py-4 px-1 focus:outline-none";
+            });
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).className = "tab-active py-4 px-1 focus:outline-none";
+            
+            if(tabId === 'profil') renderProfilForm();
+            else renderData();
+        }
+
+        // SHOW PREMIUM & DEMO LIMIT MODALS
+        function showPremiumModal() {
+            document.getElementById('modal-premium').classList.remove('hidden');
+            document.getElementById('modal-premium').classList.add('flex');
+        }
+
+        function showDemoLimitModal() {
+            document.getElementById('modal-demo-limit').classList.remove('hidden');
+            document.getElementById('modal-demo-limit').classList.add('flex');
+        }
+
+        // MODAL HANDLERS
+        function openModal(id) { 
+            // 1. VALIDASI LIMIT SAAT OPEN MODAL (DEMO LIMIT MAKSIMAL 3 ITEM)
+            if(id === 'modal-customer') {
+                const isNew = !document.getElementById('cust-id').value;
+                if (isNew && customers.length >= 3) {
+                    showDemoLimitModal();
+                    return;
+                }
+                document.getElementById(id).classList.remove('hidden'); 
+                document.getElementById(id).classList.add('flex'); 
+                document.getElementById('cust-customer-id').value = generateCustomerId();
+            }
+            else if(id === 'modal-invoice') {
+                const isNew = !document.getElementById('inv-id').value;
+                if (isNew && invoices.length >= 3) {
+                    showDemoLimitModal();
+                    return;
+                }
+                populateCustomerSelect();
+                if (customers.length === 0) {
+                    showToast('Silakan tambahkan Customer terlebih dahulu!');
+                    return;
+                }
+                document.getElementById(id).classList.remove('hidden'); 
+                document.getElementById(id).classList.add('flex'); 
+                document.getElementById('inv-no').value = generateInvoiceNo();
+                if(!document.getElementById('inv-date').value) {
+                    document.getElementById('inv-date').value = new Date().toISOString().split('T')[0];
+                }
+            }
+            else if(id === 'modal-pembayaran') {
+                if (payments.length >= 3) {
+                    showDemoLimitModal();
+                    return;
+                }
+                populateInvoiceSelect();
+                if (getPiutangData().filter(p => p.balance > 0).length === 0) {
+                    showToast('Tidak ada Invoice dengan sisa tagihan!');
+                    return;
+                }
+                document.getElementById(id).classList.remove('hidden'); 
+                document.getElementById(id).classList.add('flex'); 
+            }
+            else {
+                document.getElementById(id).classList.remove('hidden'); 
+                document.getElementById(id).classList.add('flex'); 
+            }
+        }
+
+        function closeModal(id) { 
+            document.getElementById(id).classList.add('hidden'); 
+            document.getElementById(id).classList.remove('flex'); 
+            const form = document.getElementById('form-' + id.split('-')[1]);
+            if (form) form.reset();
+            
+            const hiddenInputs = document.querySelectorAll(`#${id} input[type="hidden"]`);
+            hiddenInputs.forEach(input => {
+                input.value = '';
+            });
+        }
+
+        // DELETE HANDLERS
+        function confirmDelete(id, type) {
+            deleteId = id;
+            deleteType = type;
+            document.getElementById('modal-delete').classList.remove('hidden');
+            document.getElementById('modal-delete').classList.add('flex');
+        }
+
+        function closeConfirm() {
+            deleteId = null;
+            deleteType = null;
+            document.getElementById('modal-delete').classList.add('hidden');
+            document.getElementById('modal-delete').classList.remove('flex');
+        }
+
+        function executeDelete() {
+            if (deleteType === 'customer') {
+                customers = customers.filter(c => c.id != deleteId);
+            } else if (deleteType === 'invoice') {
+                invoices = invoices.filter(i => i.id != deleteId);
+                payments = payments.filter(p => p.invoiceId != deleteId);
+            } else if (deleteType === 'payment') {
+                payments = payments.filter(p => p.id != deleteId);
+            }
+
+            saveToStorage();
+            renderData();
+            closeConfirm();
+            showToast('Data berhasil dihapus');
+        }
+
+        // TOAST HANDLER
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3000);
+        }
+
+        // RENDER DATA
+        function renderData() {
+            renderCustomers();
+            renderInvoices();
+            renderPayments();
+            renderPiutang();
+        }
+
+        // --- PROFIL USAHA ---
+        function renderProfilForm() {
+            document.getElementById('prof-name').value = businessProfile.name;
+            document.getElementById('prof-address').value = businessProfile.address;
+            document.getElementById('prof-phone').value = businessProfile.phone;
+            document.getElementById('prof-bank-name').value = businessProfile.bankName || '';
+            document.getElementById('prof-bank-acc-name').value = businessProfile.bankAccountName || '';
+            document.getElementById('prof-bank-acc-no').value = businessProfile.bankAccountNumber || '';
+        }
+
+        function saveProfil(e) {
+            e.preventDefault();
+            businessProfile.name = document.getElementById('prof-name').value;
+            businessProfile.address = document.getElementById('prof-address').value;
+            businessProfile.phone = document.getElementById('prof-phone').value;
+            businessProfile.bankName = document.getElementById('prof-bank-name').value;
+            businessProfile.bankAccountName = document.getElementById('prof-bank-acc-name').value;
+            businessProfile.bankAccountNumber = document.getElementById('prof-bank-acc-no').value;
+            saveToStorage();
+            showToast('Profil Usaha & Pembayaran berhasil disimpan');
+        }
+
+        // --- CUSTOMER ---
+        function generateCustomerId() {
+            let maxSeq = 0;
+            customers.forEach(c => {
+                if(c.customerId && c.customerId.startsWith('CUST-')) {
+                    const seq = parseInt(c.customerId.split('-')[1], 10);
+                    if(!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+                }
+            });
+            const nextSeq = String(maxSeq + 1).padStart(3, '0');
+            return `CUST-${nextSeq}`;
+        }
+
+        function renderCustomers() {
+            const query = (document.getElementById('search-customer')?.value || '').toLowerCase();
+            const filtered = customers.filter(c => 
+                (c.customerId || '').toLowerCase().includes(query) ||
+                c.name.toLowerCase().includes(query) || 
+                c.phone.includes(query)
+            );
+
+            const tbody = document.getElementById('tbody-customer');
+            tbody.innerHTML = filtered.map(c => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${c.customerId || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${c.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${c.address || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${c.phone}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="editCustomer(${c.id})" class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-edit"></i></button>
+                        <button onclick="confirmDelete(${c.id}, 'customer')" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function saveCustomer(e) {
+            e.preventDefault();
+            const id = document.getElementById('cust-id').value;
+            const customerId = document.getElementById('cust-customer-id').value;
+            const name = document.getElementById('cust-name').value;
+            const address = document.getElementById('cust-address').value;
+            const phone = document.getElementById('cust-phone').value;
+
+            if(id) {
+                const idx = customers.findIndex(c => c.id == id);
+                customers[idx] = { id: parseInt(id), customerId, name, address, phone };
+                showToast('Customer berhasil diperbarui');
+            } else {
+                // 2. VALIDASI LIMIT SAAT SAVE CUSTOMER DATA
+                if (customers.length >= 3) {
+                    closeModal('modal-customer');
+                    showDemoLimitModal();
+                    return;
+                }
+                customers.push({ id: Date.now(), customerId, name, address, phone });
+                showToast('Customer berhasil ditambahkan');
+            }
+            saveToStorage();
+            closeModal('modal-customer');
+            renderData();
+        }
+
+        function editCustomer(id) {
+            const c = customers.find(x => x.id == id);
+            document.getElementById('cust-id').value = c.id;
+            document.getElementById('cust-customer-id').value = c.customerId || '';
+            document.getElementById('cust-name').value = c.name;
+            document.getElementById('cust-address').value = c.address || '';
+            document.getElementById('cust-phone').value = c.phone;
+            document.getElementById('title-modal-customer').innerText = "Edit Customer";
+            
+            // Bypass limit check saat proses edit item yang sudah ada
+            document.getElementById('modal-customer').classList.remove('hidden');
+            document.getElementById('modal-customer').classList.add('flex');
+        }
+
+        // --- INVOICE ---
+        function generateInvoiceNo() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            
+            const currentYearInvs = invoices.filter(i => i.no.startsWith(`INV-${yyyy}`));
+            let maxSeq = 0;
+            currentYearInvs.forEach(i => {
+                const parts = i.no.split('-');
+                if(parts.length === 3) {
+                    const seq = parseInt(parts[2], 10);
+                    if(!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+                }
+            });
+            const nextSeq = String(maxSeq + 1).padStart(3, '0');
+            return `INV-${yyyy}${mm}-${nextSeq}`;
+        }
+
+        function renderInvoices() {
+            const query = (document.getElementById('search-invoice')?.value || '').toLowerCase();
+            const filtered = invoices.filter(i => {
+                const cName = getCustomerName(i.customerId).toLowerCase();
+                return i.no.toLowerCase().includes(query) || cName.includes(query);
+            });
+
+            const tbody = document.getElementById('tbody-invoice');
+            tbody.innerHTML = filtered.map(i => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${i.no}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${i.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${getCustomerName(i.customerId)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${i.desc || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">${formatRp(i.amount)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${i.dueDate}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="editInvoice(${i.id})" class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-edit"></i></button>
+                        <button onclick="confirmDelete(${i.id}, 'invoice')" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function populateCustomerSelect() {
+            document.getElementById('inv-cust').innerHTML = customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        function saveInvoice(e) {
+            e.preventDefault();
+            const id = document.getElementById('inv-id').value;
+            const data = {
+                no: document.getElementById('inv-no').value,
+                date: document.getElementById('inv-date').value,
+                customerId: parseInt(document.getElementById('inv-cust').value),
+                desc: document.getElementById('inv-desc').value,
+                amount: parseFloat(document.getElementById('inv-amount').value),
+                dueDate: document.getElementById('inv-due').value
+            };
+
+            if(id) {
+                const idx = invoices.findIndex(i => i.id == id);
+                invoices[idx] = { id: parseInt(id), ...data };
+                showToast('Invoice berhasil diperbarui');
+            } else {
+                // 2. VALIDASI LIMIT SAAT SAVE INVOICE DATA
+                if (invoices.length >= 3) {
+                    closeModal('modal-invoice');
+                    showDemoLimitModal();
+                    return;
+                }
+                invoices.push({ id: Date.now(), ...data });
+                showToast('Invoice berhasil dibuat');
+            }
+            saveToStorage();
+            closeModal('modal-invoice');
+            renderData();
+        }
+
+        function editInvoice(id) {
+            const i = invoices.find(x => x.id == id);
+            document.getElementById('inv-id').value = i.id;
+            document.getElementById('inv-no').value = i.no;
+            document.getElementById('inv-date').value = i.date;
+            populateCustomerSelect();
+            document.getElementById('inv-cust').value = i.customerId;
+            document.getElementById('inv-desc').value = i.desc || '';
+            document.getElementById('inv-amount').value = i.amount;
+            document.getElementById('inv-due').value = i.dueDate;
+            document.getElementById('title-modal-invoice').innerText = "Edit Invoice";
+            
+            // Bypass limit check saat proses edit item yang sudah ada
+            document.getElementById('modal-invoice').classList.remove('hidden');
+            document.getElementById('modal-invoice').classList.add('flex');
+        }
+
+        // --- PEMBAYARAN ---
+        function renderPayments() {
+            const tbody = document.getElementById('tbody-pembayaran');
+            tbody.innerHTML = payments.map(p => {
+                const inv = invoices.find(i => i.id == p.invoiceId);
+                const invNo = inv ? inv.no : '-';
+                const custName = inv ? getCustomerName(inv.customerId) : '-';
+                return `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${p.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${invNo}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${custName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">${formatRp(p.amount)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="confirmDelete(${p.id}, 'payment')" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        function getPiutangData() {
+            return invoices.map(inv => {
+                const paid = payments.filter(p => p.invoiceId == inv.id).reduce((sum, p) => sum + p.amount, 0);
+                const balance = inv.amount - paid;
+                let status = "Belum Dibayar";
+                let statusColor = "bg-red-100 text-red-800";
+                if(balance <= 0) {
+                    status = "Lunas";
+                    statusColor = "bg-green-100 text-green-800";
+                } else if(paid > 0) {
+                    status = "Sebagian";
+                    statusColor = "bg-yellow-100 text-yellow-800";
+                }
+                return { ...inv, paid, balance, status, statusColor };
+            });
+        }
+
+        function populateInvoiceSelect() {
+            const unpaid = getPiutangData().filter(p => p.balance > 0);
+            document.getElementById('pay-inv').innerHTML = unpaid.map(i => `<option value="${i.id}">${i.no} - Sisa ${formatRp(i.balance)}</option>`).join('');
+        }
+
+        function savePembayaran(e) {
+            e.preventDefault();
+            // 2. VALIDASI LIMIT SAAT SAVE PEMBAYARAN DATA
+            if (payments.length >= 3) {
+                closeModal('modal-pembayaran');
+                showDemoLimitModal();
+                return;
+            }
+            const data = {
+                id: Date.now(),
+                invoiceId: parseInt(document.getElementById('pay-inv').value),
+                date: document.getElementById('pay-date').value,
+                amount: parseFloat(document.getElementById('pay-amount').value)
+            };
+            payments.push(data);
+            saveToStorage();
+            closeModal('modal-pembayaran');
+            showToast('Pembayaran berhasil diinput');
+            renderData();
+        }
+
+        // --- PIUTANG & EXPORT ---
+        function renderPiutang() {
+            const tbody = document.getElementById('tbody-piutang');
+            const data = getPiutangData();
+            const today = new Date().toISOString().split('T')[0];
+
+            let totalInv = 0, totalPay = 0, totalBal = 0;
+
+            tbody.innerHTML = data.map(i => {
+                totalInv += i.amount;
+                totalPay += i.paid;
+                totalBal += i.balance;
+
+                const isOverdue = i.balance > 0 && i.dueDate < today;
+                const reminderHtml = isOverdue ? `<br><span class="text-xs text-red-600 font-bold"><i class="fas fa-exclamation-circle"></i> Jatuh Tempo!</span>` : `<br><span class="text-xs text-gray-500">Tempo: ${i.dueDate}</span>`;
+                
+                return `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-bold text-gray-900">${i.no}</div>
+                        <div class="text-sm text-gray-500">${getCustomerName(i.customerId)}</div>
+                        ${reminderHtml}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatRp(i.amount)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">${formatRp(i.paid)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-600">${formatRp(i.balance)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${i.statusColor}">
+                            ${i.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <!-- PREMIUM FEATURE LOCK: CETAK PDF DI-LOCK -->
+                        <button onclick="showPremiumModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded text-xs transition font-semibold flex items-center justify-center space-x-1 ml-auto">
+                            <span>🔒 Cetak PDF</span>
+                            <span class="bg-white text-amber-800 text-[9px] px-1 rounded font-bold">PREMIUM</span>
+                        </button>
+                    </td>
+                </tr>
+            `}).join('');
+
+            if(document.getElementById('summary-total-invoice')) {
+                document.getElementById('summary-total-invoice').innerText = formatRp(totalInv);
+                document.getElementById('summary-total-terbayar').innerText = formatRp(totalPay);
+                document.getElementById('summary-total-piutang').innerText = formatRp(totalBal);
+            }
+        }
+
+        // FUNGSI PDF GENERATOR (Dipertahankan sebagai baseline visual premium, diakses via versi berbayar)
+        function generatePDF(invoiceId) {
+            const data = getPiutangData().find(i => i.id == invoiceId);
+            const customer = customers.find(c => c.id == data.customerId);
+
+            // Populate Profil Usaha (Header)
+            document.getElementById('pdf-biz-name').innerText = businessProfile.name;
+            document.getElementById('pdf-biz-address').innerText = businessProfile.address;
+            document.getElementById('pdf-biz-phone').innerText = businessProfile.phone;
+
+            // Populate Info Pembayaran
+            document.getElementById('pdf-bank-name').innerText = businessProfile.bankName || '-';
+            document.getElementById('pdf-bank-acc-name').innerText = businessProfile.bankAccountName || '-';
+            document.getElementById('pdf-bank-acc-no').innerText = businessProfile.bankAccountNumber || '-';
+
+            // Populate Info Invoice
+            document.getElementById('pdf-inv-no').innerText = data.no;
+            document.getElementById('pdf-inv-date').innerText = data.date;
+            document.getElementById('pdf-inv-due').innerText = data.dueDate;
+            
+            // Populate Ditagihkan Kepada
+            document.getElementById('pdf-cust-id').innerText = customer.customerId || '-';
+            document.getElementById('pdf-cust-name').innerText = customer.name;
+            document.getElementById('pdf-cust-address').innerText = customer.address || '-';
+            document.getElementById('pdf-cust-phone').innerText = customer.phone;
+            
+            // Populate Rincian & Ringkasan
+            document.getElementById('pdf-desc-inv').innerText = data.desc || '-';
+            document.getElementById('pdf-amount').innerText = formatRp(data.amount);
+            document.getElementById('pdf-subtotal').innerText = formatRp(data.amount);
+            document.getElementById('pdf-paid').innerText = formatRp(data.paid);
+            document.getElementById('pdf-balance').innerText = formatRp(data.balance);
+
+            const element = document.getElementById('invoice-pdf-template');
+            element.classList.remove('hidden');
+
+            const opt = {
+                margin:       0.2,
+                filename:     `Invoice_${data.no}.pdf`,
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { scale: 2, windowWidth: 800, useCORS: true, logging: false },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.classList.add('hidden');
+            });
+        }
+
+        // Initialize Data On Page Load
+        renderData();
+    </script>
+</body>
+</html>

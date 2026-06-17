@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO & DEPLOYMENT STANDARD -->
+    <title>UP2Purchasing Lite Demo | GASORA</title>
+    <link rel="canonical" href="https://gasora-up2purchasing-demo.up2digital.workers.dev">
+    <meta property="og:title" content="UP2Purchasing Lite Demo | GASORA">
+    <meta property="og:url" content="https://gasora-up2purchasing-demo.up2digital.workers.dev">
+    <meta name="twitter:title" content="UP2Purchasing Lite Demo | GASORA">
+    <meta name="twitter:url" content="https://gasora-up2purchasing-demo.up2digital.workers.dev">
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 8px;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* --- WATERMARK DEMO --- */
+        .watermark-demo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15vw;
+            font-weight: 800;
+            color: rgba(0, 0, 0, 0.03);
+            pointer-events: none;
+            z-index: 9999;
+            transform: rotate(-30deg);
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            background-color: var(--primary);
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .brand-version {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .btn-wa {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background-color: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-wa:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* --- TABS --- */
+        .tabs-wrapper {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tabs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 1.5rem;
+        }
+
+        .tab-item {
+            padding: 1rem 1.2rem;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .tab-item:hover {
+            color: var(--text-main);
+        }
+
+        .tab-item.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            flex: 1;
+            padding: 2rem 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .controls { width: auto; }
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-primary { background-color: var(--primary); color: #fff; }
+        .btn-success { background-color: var(--success); color: #fff; }
+        .btn-danger { background-color: var(--danger); color: #fff; }
+        .btn-warning { background-color: var(--warning); color: #fff; }
+        .btn-outline { background-color: #fff; border: 1px solid var(--border); color: var(--text-main); }
+        
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .stat-card.interactive:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-color: var(--primary);
+        }
+
+        .stat-content h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-content p {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .icon-blue { background-color: #eff6ff; color: #3b82f6; }
+        .icon-amber { background-color: #fffbeb; color: #f59e0b; }
+        .icon-emerald { background-color: #ecfdf5; color: #10b981; }
+        .icon-gray { background-color: #f1f5f9; color: #64748b; }
+
+        /* Tables */
+        .table-container {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: #f8fafc; }
+
+        /* Badges */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .bg-gray { background-color: #f1f5f9; color: #475569; }
+        .bg-blue { background-color: #eff6ff; color: #2563eb; }
+        .bg-yellow { background-color: #fffbeb; color: #d97706; }
+        .bg-green { background-color: #ecfdf5; color: #059669; }
+
+        /* Action Buttons in Table */
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+        .btn-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+        .btn-icon.edit { background-color: #eff6ff; color: #2563eb; }
+        .btn-icon.edit:hover { background-color: #dbeafe; }
+        .btn-icon.delete { background-color: #fef2f2; color: #ef4444; }
+        .btn-icon.delete:hover { background-color: #fee2e2; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background-color: var(--bg-card);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { font-size: 1.1rem; font-weight: 700; }
+        
+        .btn-close {
+            background: none; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer;
+        }
+
+        .modal-body { padding: 1.5rem; max-height: 70vh; overflow-y: auto; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-main);
+        }
+        .form-control {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+            border-radius: var(--radius); font-size: 14px; outline: none; transition: 0.2s;
+        }
+        .form-control:focus { border-color: var(--primary); }
+        .form-control:read-only { background-color: #f8fafc; cursor: not-allowed; }
+
+        .modal-footer {
+            padding: 1.25rem 1.5rem; border-top: 1px solid var(--border);
+            display: flex; justify-content: flex-end; gap: 10px; background-color: #f8fafc;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            margin-top: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-row-1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .footer-logo { height: 24px; }
+        .footer-text { font-size: 14px; color: var(--text-main); font-weight: 600; }
+        .footer-sub { font-size: 12px; color: var(--text-muted); }
+
+        .footer-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .summary-footer {
+            background-color: var(--bg-body);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 var(--radius) var(--radius);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        /* Utility */
+        .empty-state { padding: 3rem; text-align: center; color: var(--text-muted); font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <!-- WATERMARK DEMO -->
+    <div class="watermark-demo">DEMO</div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="brand-wrapper">
+                <div class="brand-logo">PL</div>
+                <div class="brand-text">
+                    <div class="brand-title-wrapper">
+                        <span class="brand-title">UP2PURCHASING LITE</span>
+                        <span class="badge bg-yellow" style="font-size:10px; padding:2px 6px;">DEMO VERSION</span>
+                    </div>
+                    <span class="brand-version">Purchasing v1.1.2</span>
+                </div>
+            </div>
+            <a href="https://wa.link/i8w855" target="_blank" class="btn-wa">
+                <i class="fa-brands fa-whatsapp" style="color: #25d366; font-size: 18px;"></i>
+                <span style="display:none; @media(min-width: 640px){display:inline;}">Hubungi Kami</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- TABS -->
+    <div class="tabs-wrapper">
+        <div class="tabs-container">
+            <div class="tab-item active" onclick="switchTab('dashboard')">Dashboard</div>
+            <div class="tab-item" onclick="switchTab('supplier')">Supplier</div>
+            <div class="tab-item" onclick="switchTab('po')">Purchase Order</div>
+            <div class="tab-item" onclick="switchTab('penerimaan')">Penerimaan Barang</div>
+            <div class="tab-item" onclick="switchTab('riwayat')">Riwayat Pembelian</div>
+            <div class="tab-item" onclick="switchTab('tools')"><i class="fa-solid fa-wrench" style="margin-right: 4px;"></i> Tools & Utilities</div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <main>
+        
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="section active">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <h3>Total Supplier</h3>
+                        <div style="display: flex; flex-direction: column; margin-top: 4px; gap: 2px;">
+                            <div style="font-size: 13px; color: var(--text-main);">Qty: <strong id="dash-sup-qty">0</strong></div>
+                            <div style="font-size: 13px; color: var(--text-main);">Transaksi: <strong id="dash-sup-trx">0</strong></div>
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-blue"><i class="fa-solid fa-users"></i></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <h3>PO Aktif</h3>
+                        <div style="display: flex; flex-direction: column; margin-top: 4px; gap: 2px;">
+                            <div style="font-size: 13px; color: var(--text-main);">Qty: <strong id="dash-po-aktif-qty">0</strong></div>
+                            <div style="font-size: 13px; color: var(--text-main);">Amount: <strong id="dash-po-aktif-amount">Rp 0</strong></div>
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-amber"><i class="fa-solid fa-file-invoice"></i></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <h3>Total Pembelian</h3>
+                        <div style="display: flex; flex-direction: column; margin-top: 4px; gap: 2px;">
+                            <div style="font-size: 13px; color: var(--text-main);">Qty: <strong id="dash-po-total-qty">0</strong></div>
+                            <div style="font-size: 13px; color: var(--text-main);">Amount: <strong id="dash-po-total-amount">Rp 0</strong></div>
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-emerald"><i class="fa-solid fa-circle-check"></i></div>
+                </div>
+            </div>
+
+            <div class="section-header" style="margin-top: 2rem;">
+                <h2 class="section-title">Ringkasan Pembelian Supplier</h2>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Supplier</th>
+                            <th style="text-align: right;">Jumlah PO</th>
+                            <th style="text-align: right;">Total Pembelian</th>
+                            <th style="text-align: right;">Kontribusi %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-dash-supplier"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SUPPLIER -->
+        <div id="supplier" class="section">
+            <div class="section-header">
+                <div class="controls">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-supplier" placeholder="Cari ID, Nama, No HP..." oninput="renderSupplier()">
+                    </div>
+                    <button class="btn btn-primary" onclick="if(checkLimit('supplier')) { showDemoLimitModal(); } else { openModal('supplier'); }">
+                        <i class="fa-solid fa-plus"></i> Tambah Supplier
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Supplier ID</th>
+                            <th>Nama Supplier</th>
+                            <th>No HP</th>
+                            <th>Alamat</th>
+                            <th width="80">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-supplier"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PURCHASE ORDER -->
+        <div id="po" class="section">
+            <div class="section-header">
+                <div class="controls">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-po" placeholder="Cari No PO, Supplier..." oninput="renderPO()">
+                    </div>
+                    <button class="btn btn-primary" onclick="if(checkLimit('po')) { showDemoLimitModal(); } else { openModal('po'); }">
+                        <i class="fa-solid fa-plus"></i> Tambah PO
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No PO</th>
+                            <th>Tanggal PO</th>
+                            <th>Supplier</th>
+                            <th>Deskripsi PO</th>
+                            <th>Nominal PO</th>
+                            <th>Status PO</th>
+                            <th width="80">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-po"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PENERIMAAN BARANG -->
+        <div id="penerimaan" class="section">
+            <div class="section-header">
+                <div class="controls">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-gr" placeholder="Cari No Terima, PO, Supplier..." oninput="renderGR()">
+                    </div>
+                    <button class="btn btn-primary" onclick="if(checkLimit('gr')) { showDemoLimitModal(); } else { openModal('gr'); }">
+                        <i class="fa-solid fa-plus"></i> Tambah Penerimaan
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No Penerimaan</th>
+                            <th>Tanggal</th>
+                            <th>No PO</th>
+                            <th>Supplier</th>
+                            <th>Status</th>
+                            <th width="80">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-gr"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RIWAYAT PEMBELIAN -->
+        <div id="riwayat" class="section">
+            <div class="section-header">
+                <div class="controls" style="flex:1;">
+                    <input type="date" id="filter-start" class="form-control" style="width:auto; max-width:150px;">
+                    <span style="color:var(--text-muted)">s/d</span>
+                    <input type="date" id="filter-end" class="form-control" style="width:auto; max-width:150px;">
+                    <button class="btn btn-outline" onclick="renderRiwayat()">Filter</button>
+                </div>
+                <!-- Export Excel diganti menjadi Premium Lock -->
+                <button class="btn btn-warning" onclick="showPremiumModal()">
+                    <i class="fa-solid fa-lock"></i> Export Excel
+                </button>
+            </div>
+            <div class="table-container" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal PO</th>
+                            <th>No PO</th>
+                            <th>Supplier</th>
+                            <th>Nominal PO</th>
+                            <th>Status PO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-riwayat"></tbody>
+                </table>
+            </div>
+            <div class="summary-footer">
+                <div>Total PO: <span id="riwayat-total-po">0</span></div>
+                <div>Total Pembelian: <span id="riwayat-total-amount">Rp 0</span></div>
+            </div>
+        </div>
+
+        <!-- TOOLS & UTILITIES (PREMIUM LOCK) -->
+        <div id="tools" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Tools & Utilities</h2>
+            </div>
+            <div class="dashboard-grid">
+                <div class="stat-card interactive" style="cursor:pointer;" onclick="showPremiumModal()">
+                    <div class="stat-content">
+                        <h3 style="color:var(--text-main); font-size:16px;">Export CSV</h3>
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:normal; margin-top:4px;">Export data ke format .csv</p>
+                    </div>
+                    <div class="stat-icon icon-gray"><i class="fa-solid fa-lock"></i></div>
+                </div>
+                <div class="stat-card interactive" style="cursor:pointer;" onclick="showPremiumModal()">
+                    <div class="stat-content">
+                        <h3 style="color:var(--text-main); font-size:16px;">Export Excel</h3>
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:normal; margin-top:4px;">Export data ke format .xlsx</p>
+                    </div>
+                    <div class="stat-icon icon-gray"><i class="fa-solid fa-lock"></i></div>
+                </div>
+                <div class="stat-card interactive" style="cursor:pointer;" onclick="showPremiumModal()">
+                    <div class="stat-content">
+                        <h3 style="color:var(--text-main); font-size:16px;">Export PDF</h3>
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:normal; margin-top:4px;">Cetak laporan PO format PDF</p>
+                    </div>
+                    <div class="stat-icon icon-gray"><i class="fa-solid fa-lock"></i></div>
+                </div>
+                <div class="stat-card interactive" style="cursor:pointer;" onclick="showPremiumModal()">
+                    <div class="stat-content">
+                        <h3 style="color:var(--text-main); font-size:16px;">Export PNG</h3>
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:normal; margin-top:4px;">Download ringkasan grafis</p>
+                    </div>
+                    <div class="stat-icon icon-gray"><i class="fa-solid fa-lock"></i></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- GLOBAL MODAL (FORM) -->
+    <div id="app-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">Title</h2>
+                <button class="btn-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Form Inputs Injected Here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" id="btn-save" onclick="saveData()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PREMIUM -->
+    <div id="modal-premium" class="modal-overlay">
+        <div class="modal" style="max-width:400px; text-align:center;">
+            <div class="modal-body" style="padding: 2.5rem 2rem;">
+                <div style="font-size: 3.5rem; color: var(--warning); margin-bottom: 1rem;"><i class="fa-solid fa-lock"></i></div>
+                <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Fitur Premium</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 1.75rem; line-height: 1.6;">Fitur ini tersedia pada versi UP2Purchasing Lite atau lebih tinggi.</p>
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap: wrap;">
+                    <button class="btn btn-outline" onclick="closePremiumModal()">Tutup</button>
+                    <a href="https://wa.link/i8w855" target="_blank" class="btn btn-primary" style="text-decoration:none;">
+                        <i class="fa-brands fa-whatsapp"></i> Hubungi UP2Digital
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DEMO LIMIT -->
+    <div id="modal-demo-limit" class="modal-overlay">
+        <div class="modal" style="max-width:400px; text-align:center;">
+            <div class="modal-body" style="padding: 2.5rem 2rem;">
+                <div style="font-size: 3.5rem; color: var(--danger); margin-bottom: 1rem;"><i class="fa-solid fa-circle-exclamation"></i></div>
+                <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Batas Versi Demo</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 1.75rem; line-height: 1.6;">Anda telah mencapai batas versi Demo. Upgrade ke UP2Purchasing Lite untuk penggunaan lebih lanjut.</p>
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap: wrap;">
+                    <button class="btn btn-outline" onclick="closeDemoLimitModal()">Tutup</button>
+                    <a href="https://wa.link/i8w855" target="_blank" class="btn btn-primary" style="text-decoration:none;">
+                        <i class="fa-brands fa-whatsapp"></i> Hubungi UP2Digital
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-row-1">
+            <img src="https://up2digi-app.github.io/up2digital-assets/gasora/logo.png" alt="Gasora Logo" class="footer-logo">
+            <div class="footer-text">UP2Purchasing Lite - Purchasing v1.1.2</div>
+        </div>
+        <div class="footer-sub">Built with Gasora &bull; Part of <a href="https://wa.link/i8w855" target="_blank" class="footer-link">UP2Digital</a> Ecosystem</div>
+    </footer>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        // --- CONSTANTS ---
+        const DEMO_LIMITS = {
+            Supplier: 10,
+            PO: 20,
+            Penerimaan: 20
+        };
+
+        // --- DATA STORE (LOCAL STORAGE) ---
+        let db = {
+            suppliers: [],
+            pos: [],
+            grs: []
+        };
+
+        function loadData() {
+            const lsSupplier = localStorage.getItem('gasora_purchasing_supplier');
+            const lsPo = localStorage.getItem('gasora_purchasing_po');
+            const lsGr = localStorage.getItem('gasora_purchasing_gr');
+
+            if (lsSupplier && lsPo && lsGr) {
+                db.suppliers = JSON.parse(lsSupplier);
+                db.pos = JSON.parse(lsPo);
+                db.grs = JSON.parse(lsGr);
+            } else {
+                // SEED DATA DEMO (Jika kosong)
+                db.suppliers = [
+                    { id: 'SUP-001', name: 'PT Surya Makmur', address: 'Kawasan Industri Cikarang', phone: '081234567890' },
+                    { id: 'SUP-002', name: 'CV Abadi Jaya', address: 'Jl. Merdeka No. 45 Jakarta', phone: '081987654321' },
+                    { id: 'SUP-003', name: 'Toko Bangunan Maju', address: 'Jl. Jend. Sudirman 12', phone: '08551234567' }
+                ];
+                db.pos = [
+                    { id: 'PO-202606-001', date: '2026-06-01', supplierId: 'SUP-001', supplierName: 'PT Surya Makmur', desc: 'Pengadaan ATK & Material', nominal: 5000000, status: 'Selesai' },
+                    { id: 'PO-202606-002', date: '2026-06-05', supplierId: 'SUP-002', supplierName: 'CV Abadi Jaya', desc: 'Material Semen & Pasir', nominal: 12500000, status: 'Sebagian Diterima' },
+                    { id: 'PO-202606-003', date: '2026-06-10', supplierId: 'SUP-003', supplierName: 'Toko Bangunan Maju', desc: 'Besi Beton & Kawat', nominal: 8000000, status: 'Dikirim' }
+                ];
+                db.grs = [
+                    { id: 'GR-202606-001', date: '2026-06-03', poId: 'PO-202606-001', supplierName: 'PT Surya Makmur', status: 'Lengkap' },
+                    { id: 'GR-202606-002', date: '2026-06-07', poId: 'PO-202606-002', supplierName: 'CV Abadi Jaya', status: 'Sebagian' }
+                ];
+                saveToStorage();
+            }
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('gasora_purchasing_supplier', JSON.stringify(db.suppliers));
+            localStorage.setItem('gasora_purchasing_po', JSON.stringify(db.pos));
+            localStorage.setItem('gasora_purchasing_gr', JSON.stringify(db.grs));
+        }
+
+        // State Modal
+        let currentModalMode = ''; // 'supplier', 'po', 'gr'
+        let editId = null;
+
+        // --- HELPER FORMAT RUPIAH ---
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(angka || 0);
+        }
+
+        // --- CORE NAVIGATION ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            if(tabId === 'dashboard') updateDashboard();
+            if(tabId === 'supplier') renderSupplier();
+            if(tabId === 'po') renderPO();
+            if(tabId === 'penerimaan') renderGR();
+            if(tabId === 'riwayat') renderRiwayat();
+            // tab 'tools' does not need a specific render function for now
+        }
+
+        // --- AUTO NUMBER GENERATORS ---
+        function getYearMonth() {
+            const d = new Date();
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            return `${yyyy}${mm}`;
+        }
+
+        function generateId(type) {
+            let prefix, list;
+            if (type === 'supplier') {
+                prefix = 'SUP-';
+                list = db.suppliers;
+            } else if (type === 'po') {
+                prefix = `PO-${getYearMonth()}-`;
+                list = db.pos.filter(x => x.id.startsWith(prefix));
+            } else if (type === 'gr') {
+                prefix = `GR-${getYearMonth()}-`;
+                list = db.grs.filter(x => x.id.startsWith(prefix));
+            }
+
+            let maxNum = 0;
+            list.forEach(item => {
+                const parts = item.id.split('-');
+                const numStr = parts[parts.length - 1];
+                const num = parseInt(numStr, 10);
+                if (num > maxNum) maxNum = num;
+            });
+            return `${prefix}${String(maxNum + 1).padStart(3, '0')}`;
+        }
+
+        // --- STATUS BADGES ---
+        function getStatusBadge(status) {
+            if (status === 'Draft') return `<span class="badge bg-gray">Draft</span>`;
+            if (status === 'Dikirim') return `<span class="badge bg-blue">Dikirim</span>`;
+            if (status === 'Sebagian Diterima' || status === 'Sebagian') return `<span class="badge bg-yellow">${status}</span>`;
+            if (status === 'Selesai' || status === 'Lengkap') return `<span class="badge bg-green">${status}</span>`;
+            return `<span class="badge bg-gray">${status}</span>`;
+        }
+
+        // --- PO TRACKING LOGIC ---
+        function updatePoStatus(poId) {
+            const po = db.pos.find(p => p.id === poId);
+            if (!po) return;
+
+            const relatedGrs = db.grs.filter(g => g.poId === poId);
+            
+            if (relatedGrs.length === 0) {
+                if (po.status !== 'Draft') po.status = 'Dikirim'; // Default back
+            } else {
+                const isLengkap = relatedGrs.some(g => g.status === 'Lengkap');
+                if (isLengkap) {
+                    po.status = 'Selesai';
+                } else {
+                    po.status = 'Sebagian Diterima';
+                }
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderSupplier() {
+            const q = document.getElementById('search-supplier').value.toLowerCase();
+            const filtered = db.suppliers.filter(s => 
+                s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q) || s.phone.toLowerCase().includes(q)
+            );
+
+            const tbody = document.getElementById('tb-supplier');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Data Supplier tidak ditemukan</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(s => `
+                <tr>
+                    <td><strong>${s.id}</strong></td>
+                    <td>${s.name}</td>
+                    <td>${s.phone}</td>
+                    <td>${s.address}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon edit" onclick="editData('supplier', '${s.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-icon delete" onclick="deleteData('supplier', '${s.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPO() {
+            const q = document.getElementById('search-po').value.toLowerCase();
+            const filtered = db.pos.filter(p => 
+                p.id.toLowerCase().includes(q) || p.supplierName.toLowerCase().includes(q)
+            );
+
+            const tbody = document.getElementById('tb-po');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-state">Data Purchase Order tidak ditemukan</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(p => `
+                <tr>
+                    <td><strong>${p.id}</strong></td>
+                    <td>${p.date}</td>
+                    <td>${p.supplierName}</td>
+                    <td>${p.desc}</td>
+                    <td>${formatRupiah(p.nominal)}</td>
+                    <td>${getStatusBadge(p.status)}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon edit" onclick="editData('po', '${p.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-icon delete" onclick="deleteData('po', '${p.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            updateDashboard();
+        }
+
+        function renderGR() {
+            const q = document.getElementById('search-gr').value.toLowerCase();
+            const filtered = db.grs.filter(g => 
+                g.id.toLowerCase().includes(q) || g.poId.toLowerCase().includes(q) || g.supplierName.toLowerCase().includes(q)
+            );
+
+            const tbody = document.getElementById('tb-gr');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Data Penerimaan Barang tidak ditemukan</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(g => `
+                <tr>
+                    <td><strong>${g.id}</strong></td>
+                    <td>${g.date}</td>
+                    <td>${g.poId}</td>
+                    <td>${g.supplierName}</td>
+                    <td>${getStatusBadge(g.status)}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon edit" onclick="editData('gr', '${g.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-icon delete" onclick="deleteData('gr', '${g.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderRiwayat() {
+            let start = document.getElementById('filter-start').value;
+            let end = document.getElementById('filter-end').value;
+            
+            let filtered = db.pos;
+            if (start && end) {
+                filtered = db.pos.filter(p => p.date >= start && p.date <= end);
+            }
+
+            const tbody = document.getElementById('tb-riwayat');
+            const elTotalPo = document.getElementById('riwayat-total-po');
+            const elTotalAmount = document.getElementById('riwayat-total-amount');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Riwayat tidak ditemukan</td></tr>`;
+                elTotalPo.textContent = '0';
+                elTotalAmount.textContent = 'Rp 0';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(p => `
+                <tr>
+                    <td>${p.date}</td>
+                    <td><strong>${p.id}</strong></td>
+                    <td>${p.supplierName}</td>
+                    <td>${formatRupiah(p.nominal)}</td>
+                    <td>${getStatusBadge(p.status)}</td>
+                </tr>
+            `).join('');
+
+            const totalAmount = filtered.reduce((sum, p) => sum + (p.nominal || 0), 0);
+            elTotalPo.textContent = filtered.length;
+            elTotalAmount.textContent = formatRupiah(totalAmount);
+        }
+
+        function updateDashboard() {
+            // Card 1: Total Supplier
+            document.getElementById('dash-sup-qty').textContent = db.suppliers.length;
+            document.getElementById('dash-sup-trx').textContent = db.pos.length;
+
+            // Card 2: PO Aktif
+            const activePos = db.pos.filter(p => ['Draft', 'Dikirim', 'Sebagian Diterima', 'Sebagian'].includes(p.status));
+            const activeQty = activePos.length;
+            const activeAmount = activePos.reduce((sum, p) => sum + (p.nominal || 0), 0);
+            
+            document.getElementById('dash-po-aktif-qty').textContent = activeQty;
+            document.getElementById('dash-po-aktif-amount').textContent = formatRupiah(activeAmount);
+
+            // Card 3: Total Pembelian
+            const totalQty = db.pos.length;
+            const totalAmount = db.pos.reduce((sum, p) => sum + (p.nominal || 0), 0);
+            
+            document.getElementById('dash-po-total-qty').textContent = totalQty;
+            document.getElementById('dash-po-total-amount').textContent = formatRupiah(totalAmount);
+
+            // Ringkasan Pembelian Supplier
+            const supSummary = {};
+            db.pos.forEach(p => {
+                if (!supSummary[p.supplierId]) {
+                    supSummary[p.supplierId] = { name: p.supplierName, qty: 0, amount: 0 };
+                }
+                supSummary[p.supplierId].qty += 1;
+                supSummary[p.supplierId].amount += (p.nominal || 0);
+            });
+
+            const arrSummary = Object.values(supSummary).sort((a, b) => b.amount - a.amount);
+            const tbDashSup = document.getElementById('tb-dash-supplier');
+            
+            if (arrSummary.length === 0) {
+                tbDashSup.innerHTML = `<tr><td colspan="4" class="empty-state">Belum ada data pembelian</td></tr>`;
+            } else {
+                tbDashSup.innerHTML = arrSummary.map(s => {
+                    let pct = totalAmount > 0 ? ((s.amount / totalAmount) * 100).toFixed(1) : 0;
+                    // Format to remove trailing .0 if integer
+                    pct = pct % 1 === 0 ? parseInt(pct) : pct;
+
+                    return `
+                        <tr>
+                            <td>${s.name}</td>
+                            <td style="text-align: right;">${s.qty}</td>
+                            <td style="text-align: right;"><strong>${formatRupiah(s.amount)}</strong></td>
+                            <td style="text-align: right;">${pct}%</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // --- MODAL & LIMIT CHECK LOGIC ---
+        function checkLimit(type) {
+            if (type === 'supplier' && db.suppliers.length >= DEMO_LIMITS.Supplier) return true;
+            if (type === 'po' && db.pos.length >= DEMO_LIMITS.PO) return true;
+            if (type === 'gr' && db.grs.length >= DEMO_LIMITS.Penerimaan) return true;
+            return false;
+        }
+
+        function showDemoLimitModal() {
+            document.getElementById('modal-demo-limit').classList.add('active');
+        }
+
+        function closeDemoLimitModal() {
+            document.getElementById('modal-demo-limit').classList.remove('active');
+        }
+
+        function showPremiumModal() {
+            document.getElementById('modal-premium').classList.add('active');
+        }
+
+        function closePremiumModal() {
+            document.getElementById('modal-premium').classList.remove('active');
+        }
+
+        function openModal(type) {
+            currentModalMode = type;
+            editId = null;
+            const modal = document.getElementById('app-modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+
+            if (type === 'supplier') {
+                title.textContent = 'Tambah Supplier';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Supplier ID</label>
+                        <input type="text" class="form-control" id="f-sup-id" value="${generateId('supplier')}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Supplier</label>
+                        <input type="text" class="form-control" id="f-sup-name" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>No HP</label>
+                        <input type="text" class="form-control" id="f-sup-phone" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Alamat</label>
+                        <textarea class="form-control" id="f-sup-address" rows="3"></textarea>
+                    </div>
+                `;
+            } else if (type === 'po') {
+                title.textContent = 'Tambah Purchase Order';
+                const optSupplier = db.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                const today = new Date().toISOString().split('T')[0];
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>No PO</label>
+                        <input type="text" class="form-control" id="f-po-id" value="${generateId('po')}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Tanggal PO</label>
+                        <input type="date" class="form-control" id="f-po-date" value="${today}">
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier</label>
+                        <select class="form-control" id="f-po-sup">
+                            <option value="">-- Pilih Supplier --</option>
+                            ${optSupplier}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Deskripsi PO</label>
+                        <input type="text" class="form-control" id="f-po-desc" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Nominal PO</label>
+                        <input type="number" class="form-control" id="f-po-nominal" placeholder="Contoh: 5000000">
+                    </div>
+                    <div class="form-group">
+                        <label>Status PO</label>
+                        <select class="form-control" id="f-po-status">
+                            <option value="Draft">Draft</option>
+                            <option value="Dikirim">Dikirim</option>
+                        </select>
+                    </div>
+                `;
+            } else if (type === 'gr') {
+                title.textContent = 'Tambah Penerimaan Barang';
+                // Only show POs that are not finished
+                const optPo = db.pos.filter(p => p.status !== 'Selesai').map(p => `<option value="${p.id}">${p.id} - ${p.supplierName}</option>`).join('');
+                const today = new Date().toISOString().split('T')[0];
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>No Penerimaan</label>
+                        <input type="text" class="form-control" id="f-gr-id" value="${generateId('gr')}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Tanggal Penerimaan</label>
+                        <input type="date" class="form-control" id="f-gr-date" value="${today}">
+                    </div>
+                    <div class="form-group">
+                        <label>No PO</label>
+                        <select class="form-control" id="f-gr-po" onchange="autoFillSupplierGR()">
+                            <option value="">-- Pilih PO --</option>
+                            ${optPo}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier</label>
+                        <input type="text" class="form-control" id="f-gr-sup" readonly placeholder="Otomatis terisi">
+                        <input type="hidden" id="f-gr-supid">
+                    </div>
+                    <div class="form-group">
+                        <label>Status Penerimaan</label>
+                        <select class="form-control" id="f-gr-status">
+                            <option value="Sebagian">Sebagian</option>
+                            <option value="Lengkap">Lengkap</option>
+                        </select>
+                    </div>
+                `;
+            }
+            modal.classList.add('active');
+        }
+
+        function autoFillSupplierGR() {
+            const poId = document.getElementById('f-gr-po').value;
+            const po = db.pos.find(p => p.id === poId);
+            if (po) {
+                document.getElementById('f-gr-sup').value = po.supplierName;
+                document.getElementById('f-gr-supid').value = po.supplierId;
+            } else {
+                document.getElementById('f-gr-sup').value = '';
+                document.getElementById('f-gr-supid').value = '';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('app-modal').classList.remove('active');
+        }
+
+        // --- CRUD LOGIC ---
+        function saveData() {
+            if (currentModalMode === 'supplier') {
+                const name = document.getElementById('f-sup-name').value.trim();
+                const phone = document.getElementById('f-sup-phone').value.trim();
+                const address = document.getElementById('f-sup-address').value.trim();
+                
+                if(!name) return alert('Nama Supplier wajib diisi!');
+
+                if (editId) {
+                    const idx = db.suppliers.findIndex(x => x.id === editId);
+                    db.suppliers[idx].name = name;
+                    db.suppliers[idx].phone = phone;
+                    db.suppliers[idx].address = address;
+                    
+                    // Update supplier names in POs and GRs to match
+                    db.pos.filter(p => p.supplierId === editId).forEach(p => p.supplierName = name);
+                    db.grs.filter(g => db.pos.find(po => po.id === g.poId)?.supplierId === editId).forEach(g => g.supplierName = name);
+
+                } else {
+                    db.suppliers.push({
+                        id: document.getElementById('f-sup-id').value,
+                        name, phone, address
+                    });
+                }
+                renderSupplier();
+                renderPO(); // In case name updated
+                renderGR(); // In case name updated
+
+            } else if (currentModalMode === 'po') {
+                const date = document.getElementById('f-po-date').value;
+                const supId = document.getElementById('f-po-sup').value;
+                const desc = document.getElementById('f-po-desc').value.trim();
+                const nominal = parseInt(document.getElementById('f-po-nominal').value) || 0;
+                const status = document.getElementById('f-po-status').value;
+
+                if(!supId) return alert('Silakan pilih Supplier!');
+                const sup = db.suppliers.find(s => s.id === supId);
+
+                if (editId) {
+                    const idx = db.pos.findIndex(x => x.id === editId);
+                    db.pos[idx].date = date;
+                    db.pos[idx].supplierId = supId;
+                    db.pos[idx].supplierName = sup.name;
+                    db.pos[idx].desc = desc;
+                    db.pos[idx].nominal = nominal;
+                    // Prevent changing status manually if GR exists
+                    const hasGr = db.grs.some(g => g.poId === editId);
+                    if (!hasGr) db.pos[idx].status = status;
+                } else {
+                    db.pos.push({
+                        id: document.getElementById('f-po-id').value,
+                        date,
+                        supplierId: supId,
+                        supplierName: sup.name,
+                        desc,
+                        nominal,
+                        status
+                    });
+                }
+                renderPO();
+
+            } else if (currentModalMode === 'gr') {
+                const date = document.getElementById('f-gr-date').value;
+                const poId = document.getElementById('f-gr-po').value;
+                const status = document.getElementById('f-gr-status').value;
+                const supName = document.getElementById('f-gr-sup').value;
+
+                if(!poId) return alert('Silakan pilih No PO!');
+
+                if (editId) {
+                    const idx = db.grs.findIndex(x => x.id === editId);
+                    db.grs[idx].date = date;
+                    db.grs[idx].poId = poId;
+                    db.grs[idx].supplierName = supName;
+                    db.grs[idx].status = status;
+                } else {
+                    db.grs.push({
+                        id: document.getElementById('f-gr-id').value,
+                        date,
+                        poId,
+                        supplierName: supName,
+                        status
+                    });
+                }
+                updatePoStatus(poId);
+                renderGR();
+                renderPO(); // update PO status in view
+            }
+            saveToStorage(); // Sync to localStorage
+            closeModal();
+        }
+
+        function editData(type, id) {
+            openModal(type); // Limit check is not applied on edit because editId is set immediately below
+            editId = id;
+            document.getElementById('modal-title').textContent = `Edit ${type.toUpperCase()}`;
+            
+            if (type === 'supplier') {
+                const s = db.suppliers.find(x => x.id === id);
+                document.getElementById('f-sup-id').value = s.id;
+                document.getElementById('f-sup-name').value = s.name;
+                document.getElementById('f-sup-phone').value = s.phone;
+                document.getElementById('f-sup-address').value = s.address;
+            } else if (type === 'po') {
+                const p = db.pos.find(x => x.id === id);
+                document.getElementById('f-po-id').value = p.id;
+                document.getElementById('f-po-date').value = p.date;
+                document.getElementById('f-po-sup').value = p.supplierId;
+                document.getElementById('f-po-desc').value = p.desc;
+                document.getElementById('f-po-nominal').value = p.nominal || 0;
+                document.getElementById('f-po-status').value = p.status;
+
+                // Lock status field if GR exists
+                const hasGr = db.grs.some(g => g.poId === id);
+                if (hasGr) {
+                    document.getElementById('f-po-status').disabled = true;
+                    document.getElementById('f-po-status').title = "Status diatur otomatis oleh Penerimaan Barang";
+                }
+            } else if (type === 'gr') {
+                const g = db.grs.find(x => x.id === id);
+                document.getElementById('f-gr-id').value = g.id;
+                document.getElementById('f-gr-date').value = g.date;
+                // add PO to options if not exists (in case it was 'Selesai' and hidden)
+                const sel = document.getElementById('f-gr-po');
+                if(![...sel.options].some(o => o.value === g.poId)) {
+                    const po = db.pos.find(p => p.id === g.poId);
+                    sel.add(new Option(`${po.id} - ${po.supplierName}`, po.id));
+                }
+                sel.value = g.poId;
+                document.getElementById('f-gr-sup').value = g.supplierName;
+                document.getElementById('f-gr-status').value = g.status;
+            }
+        }
+
+        function deleteData(type, id) {
+            // PROTEKSI DELETE (LOCK)
+            if (type === 'supplier') {
+                const isUsed = db.pos.some(p => p.supplierId === id);
+                if (isUsed) {
+                    alert('GAGAL: Supplier ini tidak boleh dihapus karena masih digunakan dalam Purchase Order.');
+                    return;
+                }
+                if (confirm(`Hapus Supplier ${id}?`)) {
+                    db.suppliers = db.suppliers.filter(x => x.id !== id);
+                    saveToStorage();
+                    renderSupplier();
+                    updateDashboard();
+                }
+            } else if (type === 'po') {
+                const isUsed = db.grs.some(g => g.poId === id);
+                if (isUsed) {
+                    alert('GAGAL: PO ini tidak boleh dihapus karena sudah memiliki data Penerimaan Barang.');
+                    return;
+                }
+                if (confirm(`Hapus Purchase Order ${id}?`)) {
+                    db.pos = db.pos.filter(x => x.id !== id);
+                    saveToStorage();
+                    renderPO();
+                    updateDashboard();
+                }
+            } else if (type === 'gr') {
+                if (confirm(`Hapus Penerimaan Barang ${id}?`)) {
+                    const gr = db.grs.find(x => x.id === id);
+                    db.grs = db.grs.filter(x => x.id !== id);
+                    updatePoStatus(gr.poId);
+                    saveToStorage();
+                    renderGR();
+                    renderPO();
+                    updateDashboard();
+                }
+            }
+        }
+
+        // --- INIT ---
+        window.onload = () => {
+            loadData();
+            updateDashboard();
+            renderSupplier();
+            renderPO();
+            renderGR();
+        };
+
+    </script>
+</body>
+</html>

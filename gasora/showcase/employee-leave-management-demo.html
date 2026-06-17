@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO & DEPLOYMENT STANDARD -->
+    <title>UP2HR Leave Management Lite Demo | GASORA</title>
+    <meta name="author" content="UP2Digital">
+    <link rel="canonical" href="https://gasora-up2hr-leave-demo.up2digital.workers.dev">
+    <meta property="og:title" content="UP2HR Leave Management Lite Demo | GASORA">
+    <meta property="og:url" content="https://gasora-up2hr-leave-demo.up2digital.workers.dev">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="GASORA">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UP2HR Leave Management Lite Demo | GASORA">
+    <meta name="twitter:url" content="https://gasora-up2hr-leave-demo.up2digital.workers.dev">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://up2digi-app.github.io/up2digital-assets/gasora/favicon.png" type="image/png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        secondary: '#64748b',
+                        dark: '#0f172a',
+                        light: '#f8fafc',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print, .watermark-bg { display: none !important; }
+        }
+
+        .modal-enter { animation: modalFadeIn 0.3s ease-out forwards; }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* WATERMARK STANDARD */
+        .watermark-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9999;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' width='200' height='200'><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='30' font-weight='bold' font-family='sans-serif' fill='%23000' transform='rotate(-45 100 100)'>DEMO</text></svg>");
+            opacity: 0.08;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-slate-800">
+
+    <!-- WATERMARK -->
+    <div class="watermark-bg"></div>
+
+    <!-- Sidebar (Desktop) -->
+    <aside class="hidden md:flex flex-col w-64 bg-dark text-white transition-all duration-300 z-20 shadow-xl">
+        <div class="p-5 flex items-center gap-3 border-b border-slate-700/50">
+            <div class="bg-primary/20 p-2 rounded-lg text-primary-400 font-bold text-xl leading-none">LV</div>
+            <div>
+                <!-- BRANDING STANDARD -->
+                <h1 class="font-bold text-sm tracking-wide">UP2HR LITE</h1>
+                <p class="text-[10px] text-amber-400 font-bold mb-0.5">DEMO VERSION</p>
+                <p class="text-[10px] text-slate-400">Leave Management v1.0</p>
+            </div>
+        </div>
+        
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors bg-primary text-white">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+            </button>
+            <button onclick="navigate('pengajuan')" id="nav-pengajuan" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+                <i data-lucide="file-plus-2" class="w-5 h-5"></i> Pengajuan
+            </button>
+            <button onclick="navigate('approval')" id="nav-approval" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors relative">
+                <i data-lucide="check-square" class="w-5 h-5"></i> Approval
+                <span id="badge-approval" class="absolute right-3 top-2.5 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full hidden">0</span>
+            </button>
+            <button onclick="navigate('riwayat')" id="nav-riwayat" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+                <i data-lucide="history" class="w-5 h-5"></i> Riwayat
+            </button>
+            
+            <div class="pt-4 mt-4 border-t border-slate-700/50">
+                <button onclick="navigate('profil')" id="nav-profil" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+                    <i data-lucide="building-2" class="w-5 h-5"></i> Profil Perusahaan
+                </button>
+                <button onclick="navigate('tools')" id="nav-tools" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-amber-400 hover:bg-slate-800 transition-colors mt-1">
+                    <i data-lucide="wrench" class="w-5 h-5"></i> Tools & Utilities
+                </button>
+            </div>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-700/50">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold">HR</div>
+                <div class="text-sm">
+                    <p class="font-medium">Admin HR</p>
+                    <p class="text-xs text-slate-400">System Administrator</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Header -->
+    <div class="md:hidden fixed top-0 left-0 right-0 h-16 bg-dark text-white flex items-center justify-between px-4 z-30 shadow-md">
+        <div class="flex items-center gap-3">
+            <div class="bg-primary/20 p-1.5 rounded text-primary-400 font-bold text-lg leading-none">LV</div>
+            <div class="flex flex-col">
+                <h1 class="font-bold text-sm leading-tight">UP2HR LITE</h1>
+                <p class="text-[10px] text-amber-400 font-bold leading-tight">DEMO VERSION</p>
+            </div>
+        </div>
+        <button onclick="toggleMobileMenu()" class="p-2 text-slate-300">
+            <i data-lucide="menu"></i>
+        </button>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-dark/95 z-40 hidden flex-col pt-16">
+        <button onclick="toggleMobileMenu()" class="absolute top-4 right-4 p-2 text-white"><i data-lucide="x"></i></button>
+        <nav class="flex-1 p-6 space-y-4 overflow-y-auto">
+             <button onclick="navigate('dashboard'); toggleMobileMenu()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-white bg-slate-800">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </button>
+            <button onclick="navigate('pengajuan'); toggleMobileMenu()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-slate-300">
+                <i data-lucide="file-plus-2"></i> Pengajuan
+            </button>
+            <button onclick="navigate('approval'); toggleMobileMenu()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-slate-300">
+                <i data-lucide="check-square"></i> Approval
+            </button>
+            <button onclick="navigate('riwayat'); toggleMobileMenu()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-slate-300">
+                <i data-lucide="history"></i> Riwayat
+            </button>
+            <div class="border-t border-slate-700 mt-4 pt-4 space-y-4">
+                <button onclick="navigate('profil'); toggleMobileMenu()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-slate-300">
+                    <i data-lucide="building-2"></i> Profil Perusahaan
+                </button>
+                <button onclick="navigate('tools'); toggleMobileMenu()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-amber-400 bg-slate-800/50">
+                    <i data-lucide="wrench"></i> Tools & Utilities
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen relative pt-16 md:pt-0">
+        <!-- Views Container -->
+        <div id="view-container" class="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-8">
+            <!-- Content will be injected here by JS -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-slate-200 py-4 px-4 text-center text-xs text-slate-500 shrink-0 mt-auto flex flex-col items-center justify-center gap-1 z-10 relative">
+            <div class="flex items-center justify-center gap-2">
+                <img src="https://up2digi-app.github.io/up2digital-assets/gasora/logo.png" alt="Gasora Logo" class="h-4 object-contain">
+                <span class="font-medium text-slate-700">UP2HR Lite - Leave Management v1.0</span>
+            </div>
+            <p>Built with Gasora • Part of <a href="https://wa.link/i8w855" target="_blank" class="text-primary hover:underline font-bold">UP2Digital</a> Ecosystem</p>
+        </footer>
+    </main>
+
+    <!-- Modal Container -->
+    <div id="modal-container" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <!-- Modal Content -->
+        <div id="modal-content" class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto hidden modal-enter relative z-50">
+            <!-- Injected by JS -->
+        </div>
+    </div>
+
+    <!-- Print Area -->
+    <div id="print-area"></div>
+
+    <!-- Javascript Logic -->
+    <script>
+        // --- CONSTANTS & STATE ---
+        const DB_KEY_COMPANY = 'gasora_leave_company';
+        const DB_KEY_REQUESTS = 'gasora_leave_requests';
+        
+        // DEMO LIMIT STANDARD
+        const DEMO_LIMITS = {
+            Employees: 5,
+            LeaveRequests: 20
+        };
+        
+        let company = {
+            name: 'PT. UP2Digital Inovasi',
+            address: 'Jl. Sudirman Kav 12, Jakarta Selatan',
+            phone: '021-88899900'
+        };
+        
+        let requests = [];
+        let currentView = 'dashboard';
+
+        // --- INITIALIZATION ---
+        function init() {
+            lucide.createIcons();
+            loadData();
+            checkDummyData();
+            navigate('dashboard');
+            updateBadge();
+        }
+
+        // --- DATA MANAGEMENT ---
+        function loadData() {
+            const storedCompany = localStorage.getItem(DB_KEY_COMPANY);
+            if (storedCompany) company = JSON.parse(storedCompany);
+            
+            const storedReqs = localStorage.getItem(DB_KEY_REQUESTS);
+            if (storedReqs) requests = JSON.parse(storedReqs);
+        }
+
+        function saveData() {
+            localStorage.setItem(DB_KEY_COMPANY, JSON.stringify(company));
+            localStorage.setItem(DB_KEY_REQUESTS, JSON.stringify(requests));
+            updateBadge();
+        }
+
+        function checkDummyData() {
+            if (!localStorage.getItem(DB_KEY_REQUESTS) || requests.length === 0) {
+                generateDummyData();
+            }
+        }
+
+        function generateDummyData() {
+            // SEED DATA DEMO: 3 Karyawan, 10 Pengajuan (4 Menunggu, 4 Approved, 2 Rejected)
+            const names = ['Andi Setiawan', 'Budi Santoso', 'Citra Lestari'];
+            const types = ['Cuti Tahunan', 'Cuti Sakit', 'Izin'];
+            
+            const statusFlow = [
+                'Menunggu Approval', 'Menunggu Approval', 'Menunggu Approval', 'Menunggu Approval',
+                'Approved', 'Approved', 'Approved', 'Approved',
+                'Rejected', 'Rejected'
+            ];
+            
+            for (let i = 0; i < 10; i++) {
+                let status = statusFlow[i];
+                let noDoc = '';
+                let catatan = '';
+
+                if (status === 'Approved') { 
+                    noDoc = `APP-2026-00${i+1}`; 
+                    catatan = 'Disetujui oleh Manager.'; 
+                } else if (status === 'Rejected') { 
+                    catatan = 'Kuota cuti tidak cukup / operasional sibuk.'; 
+                }
+
+                const tglMulai = new Date(2026, 0, i + 5);
+                const tglSelesai = new Date(2026, 0, i + 5 + (i%3));
+                const jmlHari = Math.ceil((tglSelesai - tglMulai) / (1000 * 60 * 60 * 24)) + 1;
+
+                requests.push({
+                    id: generateUUID(),
+                    no: `LV-${String(i+1).padStart(4, '0')}`,
+                    nama: names[i % 3],
+                    tglPengajuan: new Date(2026, 0, i+1).toISOString().split('T')[0],
+                    jenis: types[i % 3],
+                    tglMulai: tglMulai.toISOString().split('T')[0],
+                    tglSelesai: tglSelesai.toISOString().split('T')[0],
+                    jumlahHari: jmlHari,
+                    alasan: `Keperluan ${types[i % 3]}`,
+                    status: status,
+                    noDoc: noDoc,
+                    catatan: catatan
+                });
+            }
+            saveData();
+        }
+
+        // --- HELPERS ---
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function generateNextNo() {
+            if (requests.length === 0) return 'LV-0001';
+            const numbers = requests
+                .map(r => parseInt(r.no.replace('LV-', '')))
+                .filter(n => !isNaN(n));
+            const max = numbers.length > 0 ? Math.max(...numbers) : 0;
+            return `LV-${String(max + 1).padStart(4, '0')}`;
+        }
+
+        function calculateDays(start, end) {
+            if (!start || !end) return 0;
+            const d1 = new Date(start);
+            const d2 = new Date(end);
+            if (d2 < d1) return 0;
+            return Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+        }
+
+        function formatDate(dateStr) {
+            if(!dateStr) return '-';
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('id-ID', options);
+        }
+
+        function getStatusBadge(status) {
+            if (status === 'Menunggu Approval') return `<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Menunggu</span>`;
+            if (status === 'Approved') return `<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">Approved</span>`;
+            if (status === 'Rejected') return `<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-rose-100 text-rose-800 border border-rose-200">Rejected</span>`;
+            return `<span>${status}</span>`;
+        }
+
+        function updateBadge() {
+            const count = requests.filter(r => r.status === 'Menunggu Approval').length;
+            const badge = document.getElementById('badge-approval');
+            if (count > 0) {
+                badge.innerText = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // --- NAVIGATION & VIEWS ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+        }
+
+        function navigate(view) {
+            currentView = view;
+            
+            // Update Active Nav (Desktop)
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white', 'text-amber-400');
+                if(btn.id === 'nav-tools') {
+                    btn.classList.add('text-amber-400');
+                } else {
+                    btn.classList.add('text-slate-300');
+                }
+            });
+            const activeBtn = document.getElementById(`nav-${view}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-slate-300', 'text-amber-400');
+                activeBtn.classList.add('bg-primary', 'text-white');
+            }
+
+            const container = document.getElementById('view-container');
+            
+            if (view === 'dashboard') renderDashboard(container);
+            else if (view === 'pengajuan') renderPengajuan(container);
+            else if (view === 'approval') renderApproval(container);
+            else if (view === 'riwayat') renderRiwayat(container);
+            else if (view === 'profil') renderProfil(container);
+            else if (view === 'tools') renderTools(container);
+
+            lucide.createIcons();
+        }
+
+        // --- VIEWS RENDERERS ---
+
+        function renderDashboard(container) {
+            const total = requests.length;
+            const waiting = requests.filter(r => r.status === 'Menunggu Approval').length;
+            const approved = requests.filter(r => r.status === 'Approved').length;
+            const rejected = requests.filter(r => r.status === 'Rejected').length;
+            const cuti = requests.filter(r => r.jenis.includes('Cuti')).length;
+            const izin = requests.filter(r => r.jenis.includes('Izin') || r.jenis === 'Lainnya').length;
+
+            const terbaru = [...requests].sort((a,b) => new Date(b.tglPengajuan) - new Date(a.tglPengajuan)).slice(0,5);
+            const waitingList = requests.filter(r => r.status === 'Menunggu Approval').sort((a,b) => new Date(b.tglPengajuan) - new Date(a.tglPengajuan)).slice(0,5);
+            
+            // Ranking
+            const pemohonCount = {};
+            requests.forEach(r => {
+                pemohonCount[r.nama] = (pemohonCount[r.nama] || 0) + 1;
+            });
+            const topPemohon = Object.keys(pemohonCount)
+                .map(nama => ({nama, total: pemohonCount[nama]}))
+                .sort((a,b) => b.total - a.total)
+                .slice(0,5);
+
+            container.innerHTML = `
+                <!-- Hero Perusahaan -->
+                <div class="bg-gradient-to-r from-primary to-indigo-600 rounded-2xl p-6 md:p-8 text-white mb-6 shadow-lg relative overflow-hidden">
+                    <div class="absolute right-0 top-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+                        <i data-lucide="building-2" class="w-64 h-64"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <h2 class="text-2xl md:text-3xl font-bold mb-2">${company.name}</h2>
+                        <div class="flex flex-col md:flex-row gap-2 md:gap-6 text-indigo-100 text-sm">
+                            <span class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4"></i> ${company.address}</span>
+                            <span class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i> ${company.phone}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+                    ${createStatCard('Total Pengajuan', total, 'file-text', 'text-blue-500', 'bg-blue-50')}
+                    ${createStatCard('Menunggu', waiting, 'clock', 'text-amber-500', 'bg-amber-50')}
+                    ${createStatCard('Approved', approved, 'check-circle', 'text-emerald-500', 'bg-emerald-50')}
+                    ${createStatCard('Rejected', rejected, 'x-circle', 'text-rose-500', 'bg-rose-50')}
+                    ${createStatCard('Total Cuti', cuti, 'calendar', 'text-purple-500', 'bg-purple-50')}
+                    ${createStatCard('Total Izin', izin, 'user-minus', 'text-cyan-500', 'bg-cyan-50')}
+                </div>
+
+                <!-- Widgets Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Widget 1 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 z-10 relative">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                            <h3 class="font-semibold text-slate-800">Pengajuan Terbaru</h3>
+                            <button onclick="navigate('riwayat')" class="text-xs text-primary hover:underline">Lihat Semua</button>
+                        </div>
+                        <div class="space-y-3">
+                            ${terbaru.length ? terbaru.map(r => `
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-800">${r.nama}</p>
+                                        <p class="text-xs text-slate-500">${r.jenis} • ${r.jumlahHari} Hari</p>
+                                    </div>
+                                    ${getStatusBadge(r.status)}
+                                </div>
+                            `).join('') : '<p class="text-sm text-slate-400">Belum ada data</p>'}
+                        </div>
+                    </div>
+
+                    <!-- Widget 2 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 z-10 relative">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                            <h3 class="font-semibold text-slate-800">Menunggu Approval</h3>
+                            <button onclick="navigate('approval')" class="text-xs text-amber-600 hover:underline">Proses</button>
+                        </div>
+                        <div class="space-y-3">
+                            ${waitingList.length ? waitingList.map(r => `
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-800">${r.nama}</p>
+                                        <p class="text-xs text-slate-500">${formatDate(r.tglPengajuan)}</p>
+                                    </div>
+                                    <span class="text-xs font-semibold text-slate-700">${r.no}</span>
+                                </div>
+                            `).join('') : '<p class="text-sm text-slate-400">Tidak ada antrean</p>'}
+                        </div>
+                    </div>
+
+                    <!-- Widget 3: Ranking -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 z-10 relative">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                            <h3 class="font-semibold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="trophy" class="w-4 h-4 text-amber-500"></i> Top Pemohon
+                            </h3>
+                        </div>
+                        <div class="space-y-4">
+                            ${topPemohon.length ? topPemohon.map((p, idx) => `
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">${idx+1}</div>
+                                        <p class="text-sm font-medium text-slate-800">${p.nama}</p>
+                                    </div>
+                                    <span class="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded">${p.total} Kali</span>
+                                </div>
+                            `).join('') : '<p class="text-sm text-slate-400">Belum ada data</p>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createStatCard(title, value, icon, iconColor, bgColor) {
+            return `
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 relative z-10">
+                    <div class="w-10 h-10 rounded-lg ${bgColor} flex items-center justify-center shrink-0">
+                        <i data-lucide="${icon}" class="w-5 h-5 ${iconColor}"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">${title}</p>
+                        <h3 class="text-xl font-bold text-slate-800">${value}</h3>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- PENGAJUAN VIEW ---
+        function renderPengajuan(container) {
+            container.innerHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 z-10 relative">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Data Pengajuan</h2>
+                        <p class="text-sm text-slate-500">Kelola data cuti dan izin karyawan.</p>
+                    </div>
+                    <button onclick="openFormModal()" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Pengajuan
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden z-10 relative">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                        <div class="relative w-full max-w-sm">
+                            <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-400"></i>
+                            <input type="text" id="search-pengajuan" placeholder="Cari nama atau nomor..." class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white" oninput="filterTable('pengajuan')">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse bg-white relative">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                                    <th class="p-4 font-medium border-b">No. Pengajuan</th>
+                                    <th class="p-4 font-medium border-b">Karyawan</th>
+                                    <th class="p-4 font-medium border-b">Jenis</th>
+                                    <th class="p-4 font-medium border-b">Tanggal</th>
+                                    <th class="p-4 font-medium border-b">Status</th>
+                                    <th class="p-4 font-medium border-b text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-pengajuan" class="text-sm divide-y divide-slate-100">
+                                <!-- Data rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            renderTableData('pengajuan');
+        }
+
+        function renderTableData(type, filterKeyword = '') {
+            let tbody = document.getElementById(`tbody-${type}`);
+            if(!tbody) return;
+
+            let data = [...requests].sort((a,b) => new Date(b.tglPengajuan) - new Date(a.tglPengajuan));
+            
+            if (type === 'approval') {
+                data = data.filter(r => r.status === 'Menunggu Approval');
+            }
+
+            if (filterKeyword) {
+                const kw = filterKeyword.toLowerCase();
+                data = data.filter(r => r.nama.toLowerCase().includes(kw) || r.no.toLowerCase().includes(kw));
+            }
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">Tidak ada data ditemukan.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map(r => `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-4 font-medium text-slate-800">${r.no}</td>
+                    <td class="p-4">
+                        <p class="font-medium text-slate-800">${r.nama}</p>
+                        <p class="text-xs text-slate-500">Input: ${formatDate(r.tglPengajuan)}</p>
+                    </td>
+                    <td class="p-4 text-slate-600">${r.jenis}</td>
+                    <td class="p-4">
+                        <p class="text-slate-800">${formatDate(r.tglMulai)} - ${formatDate(r.tglSelesai)}</p>
+                        <p class="text-xs text-slate-500">${r.jumlahHari} Hari</p>
+                    </td>
+                    <td class="p-4">${getStatusBadge(r.status)}</td>
+                    <td class="p-4 text-right space-x-1">
+                        ${type === 'pengajuan' ? `
+                            <button onclick="showPremiumModal()" title="🔒 Cetak Form" class="inline-flex items-center gap-1 p-1.5 text-slate-400 hover:text-amber-600 bg-slate-100 hover:bg-amber-50 rounded transition-colors relative z-20"><i data-lucide="lock" class="w-3 h-3 text-amber-500"></i><i data-lucide="printer" class="w-4 h-4"></i></button>
+                            <button onclick="openFormModal('${r.id}')" title="Edit" class="p-1.5 text-slate-400 hover:text-amber-600 bg-slate-100 hover:bg-amber-50 rounded transition-colors inline-flex relative z-20"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                            <button onclick="deleteData('${r.id}')" title="Hapus" class="p-1.5 text-slate-400 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 rounded transition-colors inline-flex relative z-20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        ` : type === 'approval' ? `
+                             <button onclick="openApprovalModal('${r.id}')" class="bg-primary text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-indigo-700 transition-colors relative z-20">Proses</button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function filterTable(type) {
+            const keyword = document.getElementById(`search-${type}`).value;
+            renderTableData(type, keyword);
+        }
+
+        // --- APPROVAL VIEW ---
+        function renderApproval(container) {
+            container.innerHTML = `
+                <div class="mb-6 z-10 relative">
+                    <h2 class="text-2xl font-bold text-slate-800">Approval Cuti & Izin</h2>
+                    <p class="text-sm text-slate-500">Daftar pengajuan yang menunggu keputusan.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden z-10 relative">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse bg-white">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                                    <th class="p-4 font-medium border-b">No. Pengajuan</th>
+                                    <th class="p-4 font-medium border-b">Karyawan</th>
+                                    <th class="p-4 font-medium border-b">Jenis</th>
+                                    <th class="p-4 font-medium border-b">Tanggal</th>
+                                    <th class="p-4 font-medium border-b">Status</th>
+                                    <th class="p-4 font-medium border-b text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-approval" class="text-sm divide-y divide-slate-100">
+                                <!-- Data rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            renderTableData('approval');
+        }
+
+        // --- RIWAYAT VIEW ---
+        function renderRiwayat(container) {
+            container.innerHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 z-10 relative">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Riwayat Pengajuan</h2>
+                        <p class="text-sm text-slate-500">Seluruh data riwayat cuti dan izin.</p>
+                    </div>
+                    <!-- PREMIUM FEATURE LOCK -->
+                    <button onclick="showPremiumModal()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm">
+                        <i data-lucide="lock" class="w-4 h-4 text-amber-400"></i> Export CSV
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden z-10 relative">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                         <div class="flex flex-wrap gap-2">
+                            <button onclick="filterRiwayat('Semua')" id="flt-Semua" class="riwayat-filter px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-white relative z-20">Semua</button>
+                            <button onclick="filterRiwayat('Menunggu Approval')" id="flt-Menunggu Approval" class="riwayat-filter px-3 py-1.5 rounded-full text-xs font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 relative z-20">Menunggu</button>
+                            <button onclick="filterRiwayat('Approved')" id="flt-Approved" class="riwayat-filter px-3 py-1.5 rounded-full text-xs font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 relative z-20">Approved</button>
+                            <button onclick="filterRiwayat('Rejected')" id="flt-Rejected" class="riwayat-filter px-3 py-1.5 rounded-full text-xs font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 relative z-20">Rejected</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse bg-white">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                                    <th class="p-4 font-medium border-b">No. Pengajuan</th>
+                                    <th class="p-4 font-medium border-b">Karyawan</th>
+                                    <th class="p-4 font-medium border-b">Detail</th>
+                                    <th class="p-4 font-medium border-b">Status & Approval</th>
+                                    <th class="p-4 font-medium border-b text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-riwayat" class="text-sm divide-y divide-slate-100">
+                                <!-- Data rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            renderRiwayatTable('Semua');
+        }
+
+        function filterRiwayat(status) {
+            document.querySelectorAll('.riwayat-filter').forEach(btn => {
+                btn.className = "riwayat-filter px-3 py-1.5 rounded-full text-xs font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors relative z-20";
+            });
+            const activeBtn = document.getElementById(`flt-${status}`);
+            if(activeBtn) activeBtn.className = "riwayat-filter px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-white transition-colors relative z-20";
+            
+            renderRiwayatTable(status);
+        }
+
+        function renderRiwayatTable(statusFilter) {
+            const tbody = document.getElementById('tbody-riwayat');
+            let data = [...requests].sort((a,b) => new Date(b.tglPengajuan) - new Date(a.tglPengajuan));
+            
+            if(statusFilter !== 'Semua') {
+                data = data.filter(r => r.status === statusFilter);
+            }
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Tidak ada riwayat.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map(r => `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-4 font-medium text-slate-800">${r.no}</td>
+                    <td class="p-4">
+                        <p class="font-medium text-slate-800">${r.nama}</p>
+                        <p class="text-xs text-slate-500">Tgl: ${formatDate(r.tglPengajuan)}</p>
+                    </td>
+                    <td class="p-4">
+                        <p class="text-slate-800 font-medium">${r.jenis} (${r.jumlahHari} Hari)</p>
+                        <p class="text-xs text-slate-500">${formatDate(r.tglMulai)} s.d ${formatDate(r.tglSelesai)}</p>
+                    </td>
+                    <td class="p-4">
+                        <div class="mb-1">${getStatusBadge(r.status)}</div>
+                        ${r.noDoc ? `<p class="text-[10px] text-slate-500 font-mono">${r.noDoc}</p>` : ''}
+                    </td>
+                    <td class="p-4 text-right">
+                        <button onclick="showPremiumModal()" title="🔒 Cetak Form" class="p-1.5 text-slate-400 hover:text-amber-600 bg-slate-100 hover:bg-amber-50 rounded transition-colors inline-flex items-center gap-1 relative z-20"><i data-lucide="lock" class="w-3 h-3 text-amber-500"></i><i data-lucide="printer" class="w-4 h-4"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // --- PROFIL PERUSAHAAN VIEW ---
+        function renderProfil(container) {
+            container.innerHTML = `
+                <div class="mb-6 z-10 relative">
+                    <h2 class="text-2xl font-bold text-slate-800">Profil Perusahaan</h2>
+                    <p class="text-sm text-slate-500">Pengaturan data identitas perusahaan.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 max-w-2xl p-6 z-10 relative">
+                    <form onsubmit="saveProfil(event)" class="space-y-4 relative z-20">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Perusahaan</label>
+                            <input type="text" id="prof-nama" value="${company.name}" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Alamat Lengkap</label>
+                            <textarea id="prof-alamat" rows="3" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white">${company.address}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Telepon</label>
+                            <input type="text" id="prof-telp" value="${company.phone}" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white">
+                        </div>
+                        <div class="pt-4 border-t border-slate-100 flex justify-end">
+                            <button type="submit" class="bg-primary hover:bg-indigo-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                                Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function saveProfil(e) {
+            e.preventDefault();
+            company.name = document.getElementById('prof-nama').value;
+            company.address = document.getElementById('prof-alamat').value;
+            company.phone = document.getElementById('prof-telp').value;
+            saveData();
+            alert('Profil perusahaan berhasil disimpan.');
+        }
+
+        // --- TOOLS & UTILITIES VIEW (PREMIUM FEATURE LOCK) ---
+        function renderTools(container) {
+            container.innerHTML = `
+                <div class="mb-6 z-10 relative">
+                    <h2 class="text-2xl font-bold text-slate-800">Tools & Utilities</h2>
+                    <p class="text-sm text-slate-500">Alat tambahan manajemen dan sinkronisasi data sistem.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 z-10 relative">
+                    ${createLockedTool('Export CSV', 'file-text')}
+                    ${createLockedTool('Export Excel', 'sheet')}
+                    ${createLockedTool('Import Data', 'upload')}
+                    ${createLockedTool('Backup Data', 'database')}
+                    ${createLockedTool('Restore Data', 'refresh-cw')}
+                    ${createLockedTool('Sinkronisasi Cloud', 'cloud')}
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function createLockedTool(title, icon) {
+            return `
+                <div onclick="showPremiumModal()" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-between group relative z-20">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:text-amber-500 group-hover:bg-amber-50 transition-colors">
+                            <i data-lucide="${icon}" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-medium text-slate-700">${title}</span>
+                    </div>
+                    <i data-lucide="lock" class="w-4 h-4 text-amber-400"></i>
+                </div>
+            `;
+        }
+
+        // --- DEMO MODALS ---
+        function showDemoLimitModal() {
+            document.getElementById('modal-content').innerHTML = `
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-amber-50 rounded-t-xl">
+                    <h3 class="text-lg font-bold text-amber-800 flex items-center gap-2">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i> Batas Versi Demo
+                    </h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="shield-alert" class="w-8 h-8"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 leading-relaxed">Anda telah mencapai batas maksimal versi Demo.<br>Upgrade ke UP2HR Lite untuk penggunaan tanpa batas.</p>
+                    <a href="https://wa.link/i8w855" target="_blank" class="inline-block px-6 py-3 bg-primary hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors w-full shadow-sm">
+                        Hubungi UP2Digital
+                    </a>
+                </div>
+            `;
+            lucide.createIcons();
+            openModal();
+        }
+
+        function showPremiumModal() {
+            document.getElementById('modal-content').innerHTML = `
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-indigo-50 rounded-t-xl">
+                    <h3 class="text-lg font-bold text-indigo-800 flex items-center gap-2">
+                        <i data-lucide="lock" class="w-5 h-5 text-amber-500"></i> Fitur Premium
+                    </h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 bg-indigo-100 text-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="gem" class="w-8 h-8"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 leading-relaxed">Fitur ini tersedia pada versi UP2HR Lite atau lebih tinggi.<br>Upgrade sekarang untuk membuka fitur premium dan meningkatkan kapasitas aplikasi.</p>
+                    <a href="https://wa.link/i8w855" target="_blank" class="inline-block px-6 py-3 bg-primary hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors w-full shadow-sm">
+                        Hubungi UP2Digital
+                    </a>
+                </div>
+            `;
+            lucide.createIcons();
+            openModal();
+        }
+
+        // --- MODALS (CRUD & APPROVAL) ---
+        function openModal() {
+            const container = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+            container.classList.remove('hidden');
+            container.classList.add('flex');
+            content.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            const container = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+            container.classList.add('hidden');
+            container.classList.remove('flex');
+            content.classList.add('hidden');
+        }
+
+        function openFormModal(id = null) {
+            // DEMO LIMIT CHECK (Max Requests)
+            if (!id && requests.length >= DEMO_LIMITS.LeaveRequests) {
+                showDemoLimitModal();
+                return;
+            }
+
+            let data = { id: '', no: generateNextNo(), nama: '', jenis: 'Cuti Tahunan', tglMulai: '', tglSelesai: '', alasan: '' };
+            let isEdit = false;
+
+            if (id) {
+                const existing = requests.find(r => r.id === id);
+                if(existing) { data = {...existing}; isEdit = true; }
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+
+            document.getElementById('modal-content').innerHTML = `
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
+                    <h3 class="text-lg font-bold text-slate-800">${isEdit ? 'Edit Pengajuan' : 'Tambah Pengajuan Baru'}</h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <form onsubmit="saveDataPengajuan(event, '${id}')" class="p-6 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Nomor Pengajuan</label>
+                            <input type="text" value="${data.no}" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-600 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Tanggal Input</label>
+                            <input type="date" value="${isEdit ? data.tglPengajuan : today}" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-600">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Nama Karyawan <span class="text-rose-500">*</span></label>
+                        <input type="text" id="frm-nama" value="${data.nama}" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white">
+                        <p class="text-[10px] text-slate-400 mt-1">Batas Demo: Maksimal ${DEMO_LIMITS.Employees} Karyawan tersimpan.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Pengajuan <span class="text-rose-500">*</span></label>
+                        <select id="frm-jenis" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white">
+                            <option value="Cuti Tahunan" ${data.jenis === 'Cuti Tahunan' ? 'selected' : ''}>Cuti Tahunan</option>
+                            <option value="Cuti Sakit" ${data.jenis === 'Cuti Sakit' ? 'selected' : ''}>Cuti Sakit</option>
+                            <option value="Cuti Melahirkan" ${data.jenis === 'Cuti Melahirkan' ? 'selected' : ''}>Cuti Melahirkan</option>
+                            <option value="Izin" ${data.jenis === 'Izin' ? 'selected' : ''}>Izin</option>
+                            <option value="Lainnya" ${data.jenis === 'Lainnya' ? 'selected' : ''}>Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Tgl Mulai <span class="text-rose-500">*</span></label>
+                            <input type="date" id="frm-mulai" value="${data.tglMulai}" required onchange="calcHariForm()" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Tgl Selesai <span class="text-rose-500">*</span></label>
+                            <input type="date" id="frm-selesai" value="${data.tglSelesai}" required onchange="calcHariForm()" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Jumlah Hari</label>
+                        <input type="text" id="frm-hari" value="${isEdit ? data.jumlahHari + ' Hari' : '0 Hari'}" readonly class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Alasan / Keperluan <span class="text-rose-500">*</span></label>
+                        <textarea id="frm-alasan" rows="2" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white">${data.alasan}</textarea>
+                    </div>
+                    <div class="pt-4 mt-2 flex justify-end gap-2 border-t border-slate-100">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium transition-colors">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-primary hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors">Simpan Data</button>
+                    </div>
+                </form>
+            `;
+            lucide.createIcons();
+            openModal();
+        }
+
+        function calcHariForm() {
+            const start = document.getElementById('frm-mulai').value;
+            const end = document.getElementById('frm-selesai').value;
+            const hari = calculateDays(start, end);
+            document.getElementById('frm-hari').value = hari + ' Hari';
+        }
+
+        function saveDataPengajuan(e, idStr) {
+            e.preventDefault();
+            const id = idStr !== 'null' ? idStr : null;
+            
+            const start = document.getElementById('frm-mulai').value;
+            const end = document.getElementById('frm-selesai').value;
+            const hari = calculateDays(start, end);
+
+            if(hari <= 0) { alert('Tanggal Selesai harus lebih besar atau sama dengan Tanggal Mulai.'); return; }
+
+            const inputNama = document.getElementById('frm-nama').value.trim();
+
+            // DEMO LIMIT CHECK (Employees validation)
+            if (!id) {
+                const uniqueNames = new Set(requests.map(r => r.nama.toLowerCase().trim()));
+                if (!uniqueNames.has(inputNama.toLowerCase()) && uniqueNames.size >= DEMO_LIMITS.Employees) {
+                    showDemoLimitModal();
+                    return;
+                }
+            }
+
+            const data = {
+                nama: inputNama,
+                jenis: document.getElementById('frm-jenis').value,
+                tglMulai: start,
+                tglSelesai: end,
+                jumlahHari: hari,
+                alasan: document.getElementById('frm-alasan').value
+            };
+
+            if (id) {
+                // Update by primary key
+                const index = requests.findIndex(r => r.id === id);
+                if(index !== -1) {
+                    requests[index] = { ...requests[index], ...data };
+                }
+            } else {
+                // Insert
+                requests.push({
+                    id: generateUUID(),
+                    no: generateNextNo(),
+                    tglPengajuan: new Date().toISOString().split('T')[0],
+                    status: 'Menunggu Approval',
+                    noDoc: '',
+                    catatan: '',
+                    ...data
+                });
+            }
+
+            saveData();
+            closeModal();
+            if(currentView === 'pengajuan') filterTable('pengajuan');
+            else navigate(currentView);
+        }
+
+        function deleteData(id) {
+            if(confirm('Yakin ingin menghapus data pengajuan ini?')) {
+                // Delete By Primary Key (ID)
+                requests = requests.filter(r => r.id !== id);
+                saveData();
+                if(currentView === 'pengajuan') filterTable('pengajuan');
+                else navigate(currentView);
+            }
+        }
+
+        // --- APPROVAL MODAL ---
+        function openApprovalModal(id) {
+            const req = requests.find(r => r.id === id);
+            if(!req) return;
+
+            document.getElementById('modal-content').innerHTML = `
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
+                    <h3 class="text-lg font-bold text-slate-800">Proses Approval</h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div class="p-6 bg-blue-50/50 border-b border-blue-100">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="text-xs text-slate-500">Pemohon</p>
+                            <p class="font-bold text-slate-800">${req.nama}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-slate-500">No. Pengajuan</p>
+                            <p class="font-bold font-mono text-primary">${req.no}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-sm mt-4">
+                        <div><p class="text-slate-500 text-xs">Jenis</p><p class="font-medium">${req.jenis}</p></div>
+                        <div><p class="text-slate-500 text-xs">Jumlah Hari</p><p class="font-medium">${req.jumlahHari} Hari</p></div>
+                        <div class="col-span-2"><p class="text-slate-500 text-xs">Tanggal</p><p class="font-medium">${formatDate(req.tglMulai)} - ${formatDate(req.tglSelesai)}</p></div>
+                        <div class="col-span-2"><p class="text-slate-500 text-xs">Alasan</p><p class="font-medium bg-white p-2 border border-blue-100 rounded mt-1">${req.alasan}</p></div>
+                    </div>
+                </div>
+                <form onsubmit="submitApproval(event, '${id}')" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Keputusan <span class="text-rose-500">*</span></label>
+                        <select id="appr-keputusan" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white">
+                            <option value="">-- Pilih Keputusan --</option>
+                            <option value="Approved">Approve (Setujui)</option>
+                            <option value="Rejected">Reject (Tolak)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Nomor Dokumen Approval (Opsional)</label>
+                        <input type="text" id="appr-nodoc" placeholder="Contoh: APP-2026-001" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Approval (Opsional)</label>
+                        <textarea id="appr-catatan" rows="2" placeholder="Catatan dari atasan..." class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white"></textarea>
+                    </div>
+                    <div class="pt-4 mt-2 flex justify-end gap-2 border-t border-slate-100">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium transition-colors">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-primary hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors">Simpan Keputusan</button>
+                    </div>
+                </form>
+            `;
+            lucide.createIcons();
+            openModal();
+        }
+
+        function submitApproval(e, id) {
+            e.preventDefault();
+            const status = document.getElementById('appr-keputusan').value;
+            const noDoc = document.getElementById('appr-nodoc').value;
+            const catatan = document.getElementById('appr-catatan').value;
+
+            const index = requests.findIndex(r => r.id === id);
+            if(index !== -1) {
+                requests[index].status = status;
+                requests[index].noDoc = noDoc;
+                requests[index].catatan = catatan;
+                saveData();
+                closeModal();
+                navigate('approval');
+            }
+        }
+
+        // --- PRINT TO PDF (PREMIUM LOCKED - JANGAN DIHAPUS) ---
+        function printForm(id) {
+            const r = requests.find(x => x.id === id);
+            if(!r) return;
+
+            const printArea = document.getElementById('print-area');
+            printArea.innerHTML = `
+                <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px; color: #000; position: relative; z-index: 50; background: #fff;">
+                    <!-- Header -->
+                    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px;">
+                        <h2 style="margin: 0 0 5px 0; font-size: 24px; text-transform: uppercase;">FORM PENGAJUAN CUTI / IZIN</h2>
+                        <h3 style="margin: 0; font-size: 18px; color: #333;">${company.name}</h3>
+                    </div>
+
+                    <!-- Details -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 14px;">
+                        <tr>
+                            <td style="padding: 8px 0; width: 30%;"><strong>Nomor Pengajuan</strong></td>
+                            <td style="padding: 8px 0; width: 2%;">:</td>
+                            <td style="padding: 8px 0;">${r.no}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Nama Karyawan</strong></td>
+                            <td style="padding: 8px 0;">:</td>
+                            <td style="padding: 8px 0;">${r.nama}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Jenis Pengajuan</strong></td>
+                            <td style="padding: 8px 0;">:</td>
+                            <td style="padding: 8px 0;">${r.jenis}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Tanggal Mulai</strong></td>
+                            <td style="padding: 8px 0;">:</td>
+                            <td style="padding: 8px 0;">${formatDate(r.tglMulai)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Tanggal Selesai</strong></td>
+                            <td style="padding: 8px 0;">:</td>
+                            <td style="padding: 8px 0;">${formatDate(r.tglSelesai)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Jumlah Hari</strong></td>
+                            <td style="padding: 8px 0;">:</td>
+                            <td style="padding: 8px 0;">${r.jumlahHari} Hari</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; vertical-align: top;"><strong>Alasan</strong></td>
+                            <td style="padding: 8px 0; vertical-align: top;">:</td>
+                            <td style="padding: 8px 0; border: 1px solid #ccc; height: 60px; vertical-align: top;">${r.alasan}</td>
+                        </tr>
+                    </table>
+
+                    <!-- Keputusan Area -->
+                    <div style="border: 1px solid #000; padding: 20px; margin-bottom: 40px;">
+                        <div style="margin-bottom: 15px;"><strong>Keputusan:</strong></div>
+                        <div style="margin-bottom: 20px;">
+                            <span style="display: inline-block; width: 150px;">[ &nbsp;&nbsp; ] Disetujui</span>
+                            <span>[ &nbsp;&nbsp; ] Ditolak</span>
+                        </div>
+                        <div><strong>Catatan:</strong></div>
+                        <div style="border-bottom: 1px dotted #000; height: 30px; margin-bottom: 15px;"></div>
+                        <div style="border-bottom: 1px dotted #000; height: 30px;"></div>
+                    </div>
+
+                    <!-- Signatures -->
+                    <table style="width: 100%; text-align: center; margin-top: 50px;">
+                        <tr>
+                            <td style="width: 50%;">
+                                <p style="margin-bottom: 80px;">Pemohon</p>
+                                <p>(__________________)</p>
+                                <p style="font-size: 12px; margin-top: 5px;">${r.nama}</p>
+                            </td>
+                            <td style="width: 50%;">
+                                <p style="margin-bottom: 80px;">Atasan</p>
+                                <p>(__________________)</p>
+                                <p style="font-size: 12px; margin-top: 5px;">Nama & Tanda Tangan</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+            window.print();
+        }
+
+        // --- EXPORT CSV (PREMIUM LOCKED - JANGAN DIJALANKAN, JANGAN DIHAPUS) ---
+        function exportCSV() {
+            let csvContent = "UP2 Cuti & Izin Lite v1.0\n";
+            csvContent += `Nama Perusahaan,${company.name}\n`;
+            csvContent += `Alamat,${company.address.replace(/,/g, ' ')}\n`;
+            csvContent += `Telepon,${company.phone}\n`;
+            csvContent += `Tanggal Export,${formatDate(new Date().toISOString())}\n\n`;
+            
+            // Header
+            csvContent += "Nomor Pengajuan,Nama Karyawan,Tanggal Pengajuan,Jenis Pengajuan,Tanggal Mulai,Tanggal Selesai,Jumlah Hari,Status,Nomor Dokumen Approval,Catatan Approval\n";
+            
+            // Data Rows (Excluding Internal ID)
+            const sortedData = [...requests].sort((a,b) => new Date(b.tglPengajuan) - new Date(a.tglPengajuan));
+            
+            sortedData.forEach(r => {
+                const row = [
+                    r.no,
+                    `"${r.nama}"`,
+                    r.tglPengajuan,
+                    r.jenis,
+                    r.tglMulai,
+                    r.tglSelesai,
+                    r.jumlahHari,
+                    r.status,
+                    `"${r.noDoc || '-'}"`,
+                    `"${r.catatan || '-'}"`
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Export_Cuti_Izin_${new Date().getTime()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initialize App
+        window.onload = init;
+    </script>
+</body>
+</html>

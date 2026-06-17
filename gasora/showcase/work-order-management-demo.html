@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UP2 Work Order Demo | GASORA</title>
+    
+    <!-- SEO & DEPLOYMENT STANDARD -->
+    <meta name="author" content="UP2Digital">
+    <link rel="canonical" href="https://gasora-workorder-demo.up2digital.workers.dev">
+    <meta property="og:title" content="UP2 Work Order Demo | GASORA">
+    <meta property="og:url" content="https://gasora-workorder-demo.up2digital.workers.dev">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="GASORA">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UP2 Work Order Demo | GASORA">
+    <meta name="twitter:url" content="https://gasora-workorder-demo.up2digital.workers.dev">
+    
+    <link rel="icon" type="image/png" href="https://up2digi-app.github.io/up2digital-assets/gasora/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom Scrollbar for better Ecosystem feel */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .view-section { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* WATERMARK STANDARD */
+        .global-watermark {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9999; opacity: 0.08;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200'><text x='50%' y='50%' font-size='48' font-family='sans-serif' font-weight='900' text-anchor='middle' alignment-baseline='middle' transform='rotate(-30, 150, 100)' fill='black'>DEMO</text></svg>");
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-hidden selection:bg-blue-200">
+    
+    <!-- WATERMARK ELEMENT -->
+    <div class="global-watermark"></div>
+
+    <div id="app" class="flex h-screen w-full">
+        
+        <!-- Mobile Overlay -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 hidden md:hidden"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-slate-900 text-white transform -translate-x-full md:translate-x-0 md:relative transition-transform duration-300 ease-in-out z-40 shadow-2xl md:shadow-none flex flex-col">
+            <button onclick="toggleSidebar()" class="md:hidden absolute top-4 right-4 text-slate-400 hover:text-white p-2">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div class="p-6 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-lg text-white">WO</div>
+                    <div>
+                        <!-- BRANDING STANDARD -->
+                        <h2 class="text-base font-bold text-white tracking-tight leading-tight">UP2 WORK ORDER</h2>
+                        <p class="text-[10px] text-amber-400 font-bold tracking-wider mt-0.5">DEMO VERSION</p>
+                        <p class="text-[10px] text-slate-400 font-medium">Work Order Management v1.1</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto z-10 relative">
+                <a href="#" onclick="switchView('view-dashboard', this)" class="nav-link active flex items-center gap-3 py-2.5 px-4 rounded-lg transition-all duration-200 bg-blue-600 text-white shadow-md shadow-blue-900/20 font-medium">
+                    <i class="fas fa-home w-5 text-center"></i> Dashboard
+                </a>
+                <a href="#" onclick="switchView('view-tickets', this)" class="nav-link flex items-center gap-3 py-2.5 px-4 rounded-lg transition-all duration-200 hover:bg-slate-800 text-slate-300 font-medium hover:text-white">
+                    <i class="fas fa-ticket-alt w-5 text-center"></i> Tiket Work Order
+                </a>
+                <a href="#" onclick="switchView('view-technicians', this)" class="nav-link flex items-center gap-3 py-2.5 px-4 rounded-lg transition-all duration-200 hover:bg-slate-800 text-slate-300 font-medium hover:text-white">
+                    <i class="fas fa-users-cog w-5 text-center"></i> Teknisi
+                </a>
+                <a href="#" onclick="switchView('view-progress', this)" class="nav-link flex items-center gap-3 py-2.5 px-4 rounded-lg transition-all duration-200 hover:bg-slate-800 text-slate-300 font-medium hover:text-white">
+                    <i class="fas fa-tasks w-5 text-center"></i> Progress Pekerjaan
+                </a>
+                <a href="#" onclick="switchView('view-company', this)" class="nav-link flex items-center gap-3 py-2.5 px-4 rounded-lg transition-all duration-200 hover:bg-slate-800 text-slate-300 font-medium hover:text-white">
+                    <i class="fas fa-building w-5 text-center"></i> Profil Perusahaan
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-800 text-xs text-center text-slate-500">
+                Lite Basic Edition
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="relative flex flex-col flex-1 overflow-hidden bg-slate-50">
+            
+            <!-- Mobile Header -->
+            <header class="bg-white border-b border-slate-200 p-4 flex justify-between items-center md:hidden shadow-sm z-20">
+                <div class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                    <span class="w-8 h-8 rounded bg-blue-600 text-white flex items-center justify-center text-sm">WO</span>
+                    <span class="text-base truncate">UP2 Work Order Demo</span>
+                </div>
+                <button onclick="toggleSidebar()" class="text-slate-600 p-2 rounded-lg hover:bg-slate-100 focus:outline-none relative z-20">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </header>
+
+            <!-- Main Area -->
+            <main class="w-full flex-grow p-4 md:p-8 overflow-y-auto overflow-x-hidden relative z-10">
+                
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard" class="view-section w-full max-w-7xl mx-auto">
+                    <!-- Hero Perusahaan -->
+                    <div class="bg-gradient-to-r from-blue-700 to-blue-500 rounded-2xl shadow-lg p-6 md:p-8 text-white mb-8 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
+                        <div class="absolute right-0 top-0 opacity-10 pointer-events-none transform translate-x-1/4 -translate-y-1/4">
+                            <i class="fas fa-building text-9xl"></i>
+                        </div>
+                        <div class="relative z-10 w-full text-center md:text-left">
+                            <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-semibold mb-3 backdrop-blur-sm">PROFIL AKTIF</span>
+                            <h1 class="text-3xl md:text-4xl font-bold mb-2 tracking-tight" id="hero-company-name">Nama Perusahaan</h1>
+                            <div class="flex flex-col md:flex-row gap-2 md:gap-6 text-blue-100 text-sm mt-4">
+                                <p class="flex items-center justify-center md:justify-start"><i class="fas fa-map-marker-alt w-5"></i> <span id="hero-company-address">Alamat</span></p>
+                                <p class="flex items-center justify-center md:justify-start"><i class="fas fa-phone w-5"></i> <span id="hero-company-phone">Telepon</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition">
+                            <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Total Tiket</div>
+                            <div class="text-3xl font-black text-slate-800" id="count-total">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition">
+                            <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Tiket Open</div>
+                            <div class="text-3xl font-black text-slate-500" id="count-open">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition">
+                            <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">In Progress</div>
+                            <div class="text-3xl font-black text-amber-500" id="count-progress">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition">
+                            <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Selesai</div>
+                            <div class="text-3xl font-black text-emerald-500" id="count-done">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition">
+                            <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Tech Aktif</div>
+                            <div class="text-3xl font-black text-blue-500" id="count-tech-active">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition">
+                            <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Tech Non-Aktif</div>
+                            <div class="text-3xl font-black text-red-400" id="count-tech-inactive">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Widgets Row 1 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- Tiket Terbaru -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-ticket-alt text-blue-500"></i> Tiket Terbaru</h3>
+                            </div>
+                            <div class="space-y-3" id="widget-recent-tickets"></div>
+                        </div>
+                        <!-- Progress Terbaru -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-tasks text-blue-500"></i> Progress Terbaru</h3>
+                            </div>
+                            <div class="space-y-3" id="widget-recent-progress"></div>
+                        </div>
+                    </div>
+
+                    <!-- Widgets Row 2 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Teknisi Aktif -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-user-check text-blue-500"></i> Teknisi Aktif</h3>
+                            </div>
+                            <div class="space-y-3" id="widget-active-techs"></div>
+                        </div>
+                        <!-- Top Teknisi -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none"><i class="fas fa-trophy text-6xl"></i></div>
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 relative z-10">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-trophy text-amber-500"></i> Ranking Top Teknisi</h3>
+                            </div>
+                            <div class="space-y-3 relative z-10" id="widget-top-techs"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: TIKETS -->
+                <div id="view-tickets" class="view-section hidden w-full max-w-7xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Tiket Work Order</h2>
+                            <p class="text-sm text-slate-500">Kelola semua permintaan perbaikan dan tugas.</p>
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <!-- PREMIUM FEATURE LOCK BUTTON -->
+                            <button onclick="doExportCSV('tickets')" class="flex-1 md:flex-none bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200 transition shadow-sm border border-slate-200 relative z-20">
+                                <i class="fas fa-file-csv mr-2"></i>Export
+                            </button>
+                            <button onclick="openTicketModal()" class="flex-1 md:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm shadow-blue-600/30 relative z-20">
+                                <i class="fas fa-plus mr-2"></i>Tambah
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between gap-4 relative z-20">
+                            <div class="relative w-full sm:w-72">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="search-tickets" placeholder="Cari nomor, pelanggan, lokasi..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition relative z-20">
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto relative z-20">
+                            <table class="w-full text-left border-collapse whitespace-nowrap">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                                        <th class="p-4">Nomor</th>
+                                        <th class="p-4">Tanggal</th>
+                                        <th class="p-4">Pelanggan & Lokasi</th>
+                                        <th class="p-4">Pekerjaan</th>
+                                        <th class="p-4">Teknisi</th>
+                                        <th class="p-4">Prioritas</th>
+                                        <th class="p-4 w-48">Status & Progress</th>
+                                        <th class="p-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tickets-tbody" class="text-sm divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: TECHNICIANS -->
+                <div id="view-technicians" class="view-section hidden w-full max-w-7xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Data Teknisi</h2>
+                            <p class="text-sm text-slate-500">Kelola informasi dan status tenaga kerja.</p>
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <!-- PREMIUM FEATURE LOCK BUTTON -->
+                            <button onclick="doExportCSV('technicians')" class="flex-1 md:flex-none bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200 transition shadow-sm border border-slate-200 relative z-20">
+                                <i class="fas fa-file-csv mr-2"></i>Export
+                            </button>
+                            <button onclick="openTechnicianModal()" class="flex-1 md:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm shadow-blue-600/30 relative z-20">
+                                <i class="fas fa-plus mr-2"></i>Tambah
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 relative z-20">
+                            <div class="relative w-full sm:w-72">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="search-technicians" placeholder="Cari teknisi, skill..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition relative z-20">
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto relative z-20">
+                            <table class="w-full text-left border-collapse whitespace-nowrap">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                                        <th class="p-4">ID</th>
+                                        <th class="p-4">Nama Teknisi</th>
+                                        <th class="p-4">Nomor HP</th>
+                                        <th class="p-4">Keahlian</th>
+                                        <th class="p-4">Status</th>
+                                        <th class="p-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="technicians-tbody" class="text-sm divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PROGRESS -->
+                <div id="view-progress" class="view-section hidden w-full max-w-7xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Progress Pekerjaan</h2>
+                            <p class="text-sm text-slate-500">Catat setiap perkembangan perbaikan tiket.</p>
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <!-- PREMIUM FEATURE LOCK BUTTON -->
+                            <button onclick="doExportCSV('progress')" class="flex-1 md:flex-none bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200 transition shadow-sm border border-slate-200 relative z-20">
+                                <i class="fas fa-file-csv mr-2"></i>Export
+                            </button>
+                            <button onclick="openProgressModal()" class="flex-1 md:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm shadow-blue-600/30 relative z-20">
+                                <i class="fas fa-plus mr-2"></i>Tambah
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 relative z-20">
+                            <div class="relative w-full sm:w-72">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="search-progress" placeholder="Cari nomor tiket, catatan..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition relative z-20">
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto relative z-20">
+                            <table class="w-full text-left border-collapse whitespace-nowrap">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                                        <th class="p-4">Tanggal</th>
+                                        <th class="p-4">Nomor Tiket</th>
+                                        <th class="p-4">Teknisi</th>
+                                        <th class="p-4">Catatan Progress</th>
+                                        <th class="p-4">Persentase</th>
+                                        <th class="p-4">Status</th>
+                                        <th class="p-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="progress-tbody" class="text-sm divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: COMPANY -->
+                <div id="view-company" class="view-section hidden w-full max-w-3xl mx-auto">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-slate-800">Profil Perusahaan</h2>
+                        <p class="text-sm text-slate-500">Konfigurasi identitas perusahaan untuk Dashboard.</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 relative z-20">
+                        <form id="company-form" class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Nama Perusahaan</label>
+                                <input type="text" id="comp-name" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Telepon</label>
+                                <input type="text" id="comp-phone" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Alamat Lengkap</label>
+                                <textarea id="comp-address" rows="3" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm"></textarea>
+                            </div>
+                            <div class="pt-4 border-t border-slate-100 flex justify-end">
+                                <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700 transition shadow-sm shadow-blue-600/30">
+                                    <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- Footer -->
+            <footer class="bg-white border-t border-slate-200 text-center py-5 text-sm text-slate-500 z-10 mt-auto relative">
+                <div class="font-semibold text-slate-700 mb-1 flex items-center justify-center gap-2">
+                    <!-- FOOTER STANDARD -->
+                    <img src="https://up2digi-app.github.io/up2digital-assets/gasora/logo.png" alt="Gasora Logo" class="h-4 w-auto relative z-20">
+                    <span>UP2 Work Order Demo - Work Order Management v1.1</span>
+                </div>
+                <div>Built with Gasora • Part of <a href="https://wa.link/i8w855" target="_blank" class="text-blue-600 font-bold hover:underline transition relative z-20 pointer-events-auto">UP2Digital</a> Ecosystem</div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <!-- Modal Background -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 transition-opacity"></div>
+
+    <!-- Ticket Modal -->
+    <div id="ticket-modal" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all flex flex-col max-h-full">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-lg font-bold text-slate-800" id="ticket-modal-title">Tambah Tiket</h3>
+                <button type="button" onclick="closeModal('ticket-modal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <form id="ticket-form" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nomor Tiket (Otomatis)</label>
+                            <input type="text" id="ticket-no" readonly class="w-full px-3 py-2 border border-slate-200 bg-slate-50 rounded-lg text-sm text-slate-500 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Tanggal</label>
+                            <input type="date" id="ticket-date" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Pelanggan / Unit</label>
+                            <input type="text" id="ticket-customer" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Lokasi</label>
+                            <input type="text" id="ticket-location" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Jenis Pekerjaan</label>
+                            <input type="text" id="ticket-jobtype" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Prioritas</label>
+                            <select id="ticket-priority" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="Rendah">Rendah</option>
+                                <option value="Sedang">Sedang</option>
+                                <option value="Tinggi">Tinggi</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Masalah</label>
+                            <textarea id="ticket-desc" rows="3" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Tugaskan Teknisi (Opsional)</label>
+                            <select id="ticket-technician" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                                <!-- injected -->
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
+                <button type="button" onclick="closeModal('ticket-modal')" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 rounded-lg transition">Batal</button>
+                <button type="submit" form="ticket-form" class="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition">Simpan Tiket</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technician Modal -->
+    <div id="technician-modal" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-lg font-bold text-slate-800" id="tech-modal-title">Tambah Teknisi</h3>
+                <button type="button" onclick="closeModal('technician-modal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-6">
+                <form id="technician-form" class="space-y-4">
+                    <input type="hidden" id="tech-id">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
+                        <input type="text" id="tech-name" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nomor HP</label>
+                        <input type="text" id="tech-phone" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Keahlian Utama</label>
+                        <input type="text" id="tech-skill" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Status</label>
+                        <select id="tech-status" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Tidak Aktif">Tidak Aktif</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
+                <button type="button" onclick="closeModal('technician-modal')" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 rounded-lg transition">Batal</button>
+                <button type="submit" form="technician-form" class="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div id="progress-modal" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-lg font-bold text-slate-800" id="progress-modal-title">Update Progress</h3>
+                <button type="button" onclick="closeModal('progress-modal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="mb-4 p-3 bg-blue-50 text-blue-800 rounded-lg text-xs font-medium border border-blue-100 flex gap-3 items-start">
+                    <i class="fas fa-info-circle mt-0.5"></i>
+                    <p>Status Tiket otomatis: (0% = Open/Assigned, 1-99% = In Progress, 100% = Selesai).</p>
+                </div>
+                <form id="progress-form" class="space-y-4">
+                    <input type="hidden" id="prog-id">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Tiket</label>
+                            <select id="prog-ticket" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Tanggal Update</label>
+                            <input type="date" id="prog-date" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Teknisi Pelaksana</label>
+                            <select id="prog-tech" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"></select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Progress</label>
+                            <textarea id="prog-notes" rows="2" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Contoh: Penggantian sparepart selesai..."></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1 flex justify-between">
+                                <span>Persentase Penyelesaian</span>
+                                <span id="prog-val-display" class="text-blue-600">0%</span>
+                            </label>
+                            <input type="range" id="prog-percent" min="0" max="100" value="0" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="document.getElementById('prog-val-display').innerText = this.value + '%'">
+                            <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-bold">
+                                <span>0% (Open)</span>
+                                <span>50%</span>
+                                <span>100% (Selesai)</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
+                <button type="button" onclick="closeModal('progress-modal')" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 rounded-lg transition">Batal</button>
+                <button type="submit" form="progress-form" class="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition">Simpan Progress</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Detail Modal -->
+    <div id="ticket-detail-modal" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-lg font-bold text-slate-800" id="detail-modal-title">Detail & Riwayat Tiket</h3>
+                <button type="button" onclick="closeModal('ticket-detail-modal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div>
+                        <p class="text-xs text-slate-500 font-bold mb-1">Nomor Tiket</p>
+                        <p class="text-sm font-mono font-bold text-slate-800" id="det-no">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-bold mb-1">Status Saat Ini</p>
+                        <div id="det-status">-</div>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-bold mb-1">Pelanggan / Lokasi</p>
+                        <p class="text-sm font-medium text-slate-800" id="det-cust">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-bold mb-1">Teknisi Ditugaskan</p>
+                        <p class="text-sm font-medium text-slate-800" id="det-tech">-</p>
+                    </div>
+                </div>
+                
+                <h4 class="font-bold text-slate-800 mb-3 flex items-center gap-2"><i class="fas fa-history text-blue-500"></i> Riwayat Progress</h4>
+                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                                <th class="p-3">Tanggal</th>
+                                <th class="p-3">Teknisi</th>
+                                <th class="p-3">Catatan Progress</th>
+                                <th class="p-3 w-24">Persentase</th>
+                                <th class="p-3 w-32">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="det-history-tbody" class="text-sm divide-y divide-slate-100">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button type="button" onclick="closeModal('ticket-detail-modal')" class="px-4 py-2 text-sm font-bold text-slate-700 bg-slate-200 hover:bg-slate-300 rounded-lg transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Limit Modal -->
+    <div id="demo-limit-modal" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all relative z-10 text-center">
+            <div class="p-6">
+                <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">Batas Versi Demo</h3>
+                <p class="text-sm text-slate-600 mb-6">Anda telah mencapai batas versi Demo.<br>Upgrade ke UP2 Work Order Lite untuk penggunaan lebih lanjut.</p>
+                <div class="flex flex-col gap-2">
+                    <a href="https://wa.link/i8w855" target="_blank" class="w-full px-4 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition block">Hubungi UP2Digital</a>
+                    <button type="button" onclick="closeModal('demo-limit-modal')" class="w-full px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium Modal -->
+    <div id="premium-modal" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all relative z-10 text-center">
+            <div class="p-6">
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">Fitur Premium</h3>
+                <p class="text-sm text-slate-600 mb-6">Fitur ini tersedia pada versi UP2 Work Order Lite atau lebih tinggi. Upgrade sekarang untuk membuka fitur premium dan meningkatkan kapasitas aplikasi.</p>
+                <div class="flex flex-col gap-2">
+                    <a href="https://wa.link/i8w855" target="_blank" class="w-full px-4 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition block">Hubungi UP2Digital</a>
+                    <button type="button" onclick="closeModal('premium-modal')" class="w-full px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // LOCAL STORAGE STANDARD & DEMO LIMIT STANDARD
+        const DB_PREFIX = 'gasora_workorder_';
+        const DEMO_LIMITS = {
+            Tickets: 20,
+            Technicians: 5,
+            Progress: 50
+        };
+        
+        let currentEditId = null;
+
+        // SEED DATA DEMO GENERATOR (5 Tickets, 3 Techs, 10 Progress)
+        const defaultCompany = {
+            name: "PT. Maju Nusantara",
+            address: "Komp. Ruko Sudirman Blok B/12, Jakarta",
+            phone: "021-88899977"
+        };
+        const defaultTechs = [
+            { id: 'T-101', name: 'Budi Santoso', phone: '08123456789', skill: 'Kelistrikan Umum', status: 'Aktif' },
+            { id: 'T-102', name: 'Andi Wijaya', phone: '08198765432', skill: 'AC & Pendingin', status: 'Aktif' },
+            { id: 'T-103', name: 'Joko Anwar', phone: '08155566677', skill: 'Plumbing', status: 'Tidak Aktif' }
+        ];
+        const defaultTickets = [
+            { ticket_no: 'WO-812301', date: '2023-10-01', customer: 'Bpk. Ridwan', location: 'Lantai 1', job_type: 'Perbaikan AC', description: 'AC mati total', technician_id: 'T-102', priority: 'Tinggi', status: 'In Progress', progress: 50 },
+            { ticket_no: 'WO-812302', date: '2023-10-02', customer: 'Ibu Susi', location: 'Pantry', job_type: 'Plumbing', description: 'Keran air bocor', technician_id: 'T-101', priority: 'Sedang', status: 'Selesai', progress: 100 },
+            { ticket_no: 'WO-812303', date: '2023-10-03', customer: 'Ruang Meeting A', location: 'Lantai 2', job_type: 'Kelistrikan', description: 'Lampu utama redup', technician_id: 'T-101', priority: 'Rendah', status: 'Selesai', progress: 100 },
+            { ticket_no: 'WO-812304', date: '2023-10-04', customer: 'Gudang Utama', location: 'Basement', job_type: 'Pengecatan', description: 'Tembok rembes', technician_id: 'T-101', priority: 'Sedang', status: 'In Progress', progress: 60 },
+            { ticket_no: 'WO-812305', date: '2023-10-05', customer: 'Bpk. Ahmad', location: 'Lobby', job_type: 'Jaringan', description: 'WiFi router mati', technician_id: 'T-102', priority: 'Tinggi', status: 'In Progress', progress: 30 }
+        ];
+        const defaultProgress = [
+            { id: 'PRG-1001', ticket_no: 'WO-812301', date: '2023-10-01', technician_id: 'T-102', notes: 'Pengecekan awal dan bongkar unit', percentage: 20, status: 'In Progress' },
+            { id: 'PRG-1002', ticket_no: 'WO-812301', date: '2023-10-02', technician_id: 'T-102', notes: 'Menunggu sparepart kompresor', percentage: 50, status: 'In Progress' },
+            { id: 'PRG-1003', ticket_no: 'WO-812302', date: '2023-10-02', technician_id: 'T-101', notes: 'Penggantian keran selesai', percentage: 100, status: 'Selesai' },
+            { id: 'PRG-1004', ticket_no: 'WO-812305', date: '2023-10-05', technician_id: 'T-102', notes: 'Cek kabel LAN putus', percentage: 10, status: 'In Progress' },
+            { id: 'PRG-1005', ticket_no: 'WO-812305', date: '2023-10-06', technician_id: 'T-102', notes: 'Menyambung kabel, test ping OK', percentage: 30, status: 'In Progress' },
+            { id: 'PRG-1006', ticket_no: 'WO-812304', date: '2023-10-06', technician_id: 'T-101', notes: 'Survei lokasi dan estimasi cat', percentage: 0, status: 'Assigned' },
+            { id: 'PRG-1007', ticket_no: 'WO-812304', date: '2023-10-07', technician_id: 'T-101', notes: 'Pembersihan tembok rembes', percentage: 20, status: 'In Progress' },
+            { id: 'PRG-1008', ticket_no: 'WO-812304', date: '2023-10-08', technician_id: 'T-101', notes: 'Pelapisan waterproofing', percentage: 60, status: 'In Progress' },
+            { id: 'PRG-1009', ticket_no: 'WO-812303', date: '2023-10-07', technician_id: 'T-101', notes: 'Pengecekan saklar dan fitting lampu', percentage: 40, status: 'In Progress' },
+            { id: 'PRG-1010', ticket_no: 'WO-812303', date: '2023-10-08', technician_id: 'T-101', notes: 'Penggantian lampu utama selesai', percentage: 100, status: 'Selesai' }
+        ];
+
+        // Core DB Helpers
+        const getDB = (key) => JSON.parse(localStorage.getItem(DB_PREFIX + key)) || [];
+        const setDB = (key, data) => localStorage.setItem(DB_PREFIX + key, JSON.stringify(data));
+        const getObj = (key) => JSON.parse(localStorage.getItem(DB_PREFIX + key)) || {};
+        const setObj = (key, data) => localStorage.setItem(DB_PREFIX + key, JSON.stringify(data));
+
+        function initDB() {
+            if (!localStorage.getItem(DB_PREFIX + 'company')) {
+                setObj('company', defaultCompany);
+                setDB('techs', defaultTechs);
+                setDB('tickets', defaultTickets);
+                setDB('progress', defaultProgress);
+            }
+        }
+
+        // Utils
+        const getTechName = (id) => { const t = getDB('techs').find(x => x.id === id); return t ? t.name : '-'; };
+        const calcTicketStatus = (techId, progress) => {
+            progress = parseInt(progress) || 0;
+            if (progress === 100) return 'Selesai';
+            if (progress > 0) return 'In Progress';
+            if (techId && techId.trim() !== '') return 'Assigned';
+            return 'Open';
+        };
+        const getStatusBadge = (s) => {
+            if(s === 'Open') return `<span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold uppercase tracking-wider border border-slate-200">Open</span>`;
+            if(s === 'Assigned') return `<span class="px-2.5 py-1 bg-purple-50 text-purple-600 rounded-md text-[10px] font-bold uppercase tracking-wider border border-purple-200">Assigned</span>`;
+            if(s === 'In Progress') return `<span class="px-2.5 py-1 bg-amber-50 text-amber-600 rounded-md text-[10px] font-bold uppercase tracking-wider border border-amber-200">In Progress</span>`;
+            if(s === 'Selesai') return `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-md text-[10px] font-bold uppercase tracking-wider border border-emerald-200">Selesai</span>`;
+            return `<span>${s}</span>`;
+        };
+        const getPriBadge = (p) => {
+            if(p === 'Tinggi') return `<span class="text-red-600 font-bold text-xs"><i class="fas fa-circle text-[8px] mr-1"></i>Tinggi</span>`;
+            if(p === 'Sedang') return `<span class="text-blue-600 font-bold text-xs"><i class="fas fa-circle text-[8px] mr-1"></i>Sedang</span>`;
+            return `<span class="text-slate-500 font-bold text-xs"><i class="fas fa-circle text-[8px] mr-1"></i>Rendah</span>`;
+        };
+
+        // Sidebar Navigation
+        let sidebarOpen = false;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebarOpen = !sidebarOpen;
+            if(sidebarOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function switchView(viewId, element) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(viewId).classList.remove('hidden');
+            
+            if(element) {
+                document.querySelectorAll('.nav-link').forEach(el => {
+                    el.classList.remove('bg-blue-600', 'text-white', 'active', 'shadow-md', 'shadow-blue-900/20');
+                    el.classList.add('hover:bg-slate-800', 'text-slate-300');
+                });
+                element.classList.remove('hover:bg-slate-800', 'text-slate-300');
+                element.classList.add('bg-blue-600', 'text-white', 'active', 'shadow-md', 'shadow-blue-900/20');
+                if(window.innerWidth < 768) toggleSidebar();
+            }
+            // Render specific view
+            if(viewId === 'view-dashboard') renderDashboard();
+            if(viewId === 'view-tickets') renderTickets();
+            if(viewId === 'view-technicians') renderTechs();
+            if(viewId === 'view-progress') renderProgress();
+            if(viewId === 'view-company') {
+                const c = getObj('company');
+                document.getElementById('comp-name').value = c.name || '';
+                document.getElementById('comp-phone').value = c.phone || '';
+                document.getElementById('comp-address').value = c.address || '';
+            }
+        }
+
+        // Modals Logic
+        function openModal(id) {
+            document.getElementById('modal-backdrop').classList.remove('hidden');
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            if(id === 'demo-limit-modal' || id === 'premium-modal') {
+                document.getElementById(id).classList.add('hidden');
+                // Check if other general modals are open before hiding backdrop
+                const hasOpenModal = !document.getElementById('ticket-modal').classList.contains('hidden') ||
+                                     !document.getElementById('technician-modal').classList.contains('hidden') ||
+                                     !document.getElementById('progress-modal').classList.contains('hidden') ||
+                                     !document.getElementById('ticket-detail-modal').classList.contains('hidden');
+                if(!hasOpenModal) {
+                    document.getElementById('modal-backdrop').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('modal-backdrop').classList.add('hidden');
+                document.getElementById(id).classList.add('hidden');
+                currentEditId = null;
+            }
+        }
+
+        function showDemoLimitModal() {
+            document.getElementById('modal-backdrop').classList.remove('hidden');
+            document.getElementById('demo-limit-modal').classList.remove('hidden');
+        }
+
+        function showPremiumModal() {
+            document.getElementById('modal-backdrop').classList.remove('hidden');
+            document.getElementById('premium-modal').classList.remove('hidden');
+        }
+
+        // --- DASHBOARD RENDER ---
+        function renderDashboard() {
+            const tk = getDB('tickets');
+            const tc = getDB('techs');
+            const pr = getDB('progress');
+            const cp = getObj('company');
+
+            // Hero
+            document.getElementById('hero-company-name').innerText = cp.name || 'Perusahaan';
+            document.getElementById('hero-company-address').innerText = cp.address || '-';
+            document.getElementById('hero-company-phone').innerText = cp.phone || '-';
+
+            // Summary
+            document.getElementById('count-total').innerText = tk.length;
+            document.getElementById('count-open').innerText = tk.filter(t=>t.status==='Open').length;
+            document.getElementById('count-progress').innerText = tk.filter(t=>t.status==='In Progress').length;
+            document.getElementById('count-done').innerText = tk.filter(t=>t.status==='Selesai').length;
+            document.getElementById('count-tech-active').innerText = tc.filter(t=>t.status==='Aktif').length;
+            document.getElementById('count-tech-inactive').innerText = tc.filter(t=>t.status==='Tidak Aktif').length;
+
+            // Widget Tiket
+            const recTk = [...tk].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,5);
+            document.getElementById('widget-recent-tickets').innerHTML = recTk.map(t => `
+                <div class="flex justify-between items-center py-1">
+                    <div><div class="font-bold text-sm text-slate-700">${t.ticket_no}</div><div class="text-[11px] text-slate-500">${t.customer} • ${t.job_type}</div></div>
+                    <div>${getStatusBadge(t.status)}</div>
+                </div>
+            `).join('') || '<div class="text-xs text-slate-400">Belum ada tiket</div>';
+
+            // Widget Progress
+            const recPr = [...pr].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,5);
+            document.getElementById('widget-recent-progress').innerHTML = recPr.map(p => `
+                <div class="flex justify-between items-center py-1">
+                    <div><div class="font-bold text-sm text-slate-700">${p.ticket_no}</div><div class="text-[11px] text-slate-500 truncate w-48">${p.notes}</div></div>
+                    <div class="font-black text-blue-600 text-sm">${p.percentage}%</div>
+                </div>
+            `).join('') || '<div class="text-xs text-slate-400">Belum ada progress</div>';
+
+            // Widget Tech Aktif
+            const actTc = tc.filter(t=>t.status==='Aktif').slice(0,5);
+            document.getElementById('widget-active-techs').innerHTML = actTc.map(t => `
+                <div class="flex justify-between items-center py-1">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">${t.name.charAt(0)}</div>
+                        <div><div class="font-bold text-sm text-slate-700">${t.name}</div><div class="text-[11px] text-slate-500">${t.skill}</div></div>
+                    </div>
+                    <div class="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded border border-emerald-100">AKTIF</div>
+                </div>
+            `).join('') || '<div class="text-xs text-slate-400">Belum ada teknisi aktif</div>';
+
+            // Widget Top Techs
+            const counts = {};
+            tk.forEach(t => { if(t.technician_id) counts[t.technician_id] = (counts[t.technician_id] || 0) + 1; });
+            const topTc = tc.map(t => ({ name: t.name, count: counts[t.id] || 0 })).sort((a, b) => b.count - a.count).slice(0, 5);
+            document.getElementById('widget-top-techs').innerHTML = topTc.map((t, i) => `
+                <div class="flex justify-between items-center py-1">
+                    <div class="flex items-center gap-3">
+                        <div class="font-black text-slate-300 text-lg w-4">${i+1}.</div>
+                        <div class="font-bold text-sm text-slate-700">${t.name}</div>
+                    </div>
+                    <div class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded">${t.count} Tiket</div>
+                </div>
+            `).join('') || '<div class="text-xs text-slate-400">Data tidak tersedia</div>';
+        }
+
+        // --- TICKETS LOGIC ---
+        function renderTickets(search = '') {
+            const tk = getDB('tickets').filter(t => t.ticket_no.toLowerCase().includes(search) || t.customer.toLowerCase().includes(search));
+            document.getElementById('tickets-tbody').innerHTML = tk.map(t => `
+                <tr class="hover:bg-slate-50/50 transition">
+                    <td class="p-4 font-bold text-slate-700 font-mono text-xs">${t.ticket_no}</td>
+                    <td class="p-4 text-slate-600 text-xs">${t.date}</td>
+                    <td class="p-4">
+                        <div class="font-bold text-slate-800 text-sm">${t.customer}</div>
+                        <div class="text-xs text-slate-500"><i class="fas fa-map-marker-alt mr-1"></i>${t.location}</div>
+                    </td>
+                    <td class="p-4 text-slate-600 text-sm font-medium">${t.job_type}</td>
+                    <td class="p-4 text-slate-600 text-sm">${getTechName(t.technician_id)}</td>
+                    <td class="p-4">${getPriBadge(t.priority)}</td>
+                    <td class="p-4">
+                        <div class="flex justify-between items-center mb-1.5">
+                            ${getStatusBadge(t.status)}
+                            <span class="text-[10px] font-bold text-slate-500">${t.progress}%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 border border-slate-200">
+                            <div class="${t.progress===100?'bg-emerald-500':'bg-blue-500'} h-1.5 rounded-full" style="width: ${t.progress}%"></div>
+                        </div>
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="openTicketDetail('${t.ticket_no}')" class="text-slate-500 hover:text-slate-700 mr-3 transition" title="Riwayat Progress"><i class="fas fa-history"></i></button>
+                        <button onclick="openTicketModal('${t.ticket_no}')" class="text-blue-500 hover:text-blue-700 mr-3 transition" title="Edit Tiket"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteTicket('${t.ticket_no}')" class="text-red-400 hover:text-red-600 transition" title="Hapus Tiket"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('') || `<tr><td colspan="8" class="p-8 text-center text-slate-400 text-sm">Tidak ada data tiket.</td></tr>`;
+        }
+
+        function openTicketDetail(id) {
+            const tk = getDB('tickets').find(t => t.ticket_no === id);
+            if(!tk) return;
+            
+            document.getElementById('det-no').innerText = tk.ticket_no;
+            document.getElementById('det-status').innerHTML = getStatusBadge(tk.status);
+            document.getElementById('det-cust').innerText = tk.customer + ' / ' + tk.location;
+            document.getElementById('det-tech').innerText = getTechName(tk.technician_id);
+            
+            const history = getDB('progress').filter(p => p.ticket_no === id).sort((a,b) => new Date(a.date) - new Date(b.date));
+            
+            document.getElementById('det-history-tbody').innerHTML = history.map(p => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 text-slate-600">${p.date}</td>
+                    <td class="p-3 text-slate-800 font-medium">${getTechName(p.technician_id)}</td>
+                    <td class="p-3 text-slate-600 whitespace-normal max-w-xs">${p.notes}</td>
+                    <td class="p-3 font-bold text-blue-600">${p.percentage}%</td>
+                    <td class="p-3">${getStatusBadge(p.status)}</td>
+                </tr>
+            `).join('') || `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-sm">Belum ada riwayat progress.</td></tr>`;
+            
+            openModal('ticket-detail-modal');
+        }
+
+        function populateTechSelect(id) {
+            const sel = document.getElementById(id);
+            sel.innerHTML = '<option value="">-- Pilih Teknisi --</option>' + getDB('techs').map(t => `<option value="${t.id}">${t.name} ${t.status==='Tidak Aktif'?'(Tidak Aktif)':''}</option>`).join('');
+        }
+
+        function openTicketModal(id = null) {
+            populateTechSelect('ticket-technician');
+            document.getElementById('ticket-form').reset();
+            currentEditId = id;
+            document.getElementById('ticket-modal-title').innerText = id ? 'Edit Tiket' : 'Tambah Tiket';
+            if(id) {
+                const t = getDB('tickets').find(x => x.ticket_no === id);
+                if(t) {
+                    document.getElementById('ticket-no').value = t.ticket_no;
+                    document.getElementById('ticket-date').value = t.date;
+                    document.getElementById('ticket-customer').value = t.customer;
+                    document.getElementById('ticket-location').value = t.location;
+                    document.getElementById('ticket-jobtype').value = t.job_type;
+                    document.getElementById('ticket-desc').value = t.description;
+                    document.getElementById('ticket-technician').value = t.technician_id;
+                    document.getElementById('ticket-priority').value = t.priority;
+                }
+            } else {
+                document.getElementById('ticket-no').value = 'WO-' + Date.now().toString().slice(-6);
+                document.getElementById('ticket-date').value = new Date().toISOString().split('T')[0];
+            }
+            openModal('ticket-modal');
+        }
+
+        document.getElementById('ticket-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            let tk = getDB('tickets');
+            
+            // DEMO LIMIT PROTECTION
+            if(!currentEditId && tk.length >= DEMO_LIMITS.Tickets) {
+                showDemoLimitModal();
+                return;
+            }
+
+            const data = {
+                ticket_no: document.getElementById('ticket-no').value,
+                date: document.getElementById('ticket-date').value,
+                customer: document.getElementById('ticket-customer').value,
+                location: document.getElementById('ticket-location').value,
+                job_type: document.getElementById('ticket-jobtype').value,
+                description: document.getElementById('ticket-desc').value,
+                technician_id: document.getElementById('ticket-technician').value,
+                priority: document.getElementById('ticket-priority').value
+            };
+            if(currentEditId) {
+                const idx = tk.findIndex(x => x.ticket_no === currentEditId);
+                data.progress = tk[idx].progress; 
+                data.status = calcTicketStatus(data.technician_id, data.progress);
+                tk[idx] = data;
+            } else {
+                data.progress = 0; 
+                data.status = calcTicketStatus(data.technician_id, 0);
+                tk.unshift(data);
+            }
+            setDB('tickets', tk); closeModal('ticket-modal'); renderTickets();
+        });
+
+        function deleteTicket(id) {
+            if(confirm('Hapus tiket ini?')) { setDB('tickets', getDB('tickets').filter(t => t.ticket_no !== id)); renderTickets(); }
+        }
+
+        // --- TECHNICIANS LOGIC ---
+        function renderTechs(search = '') {
+            const tc = getDB('techs').filter(t => t.name.toLowerCase().includes(search) || t.skill.toLowerCase().includes(search));
+            document.getElementById('technicians-tbody').innerHTML = tc.map(t => `
+                <tr class="hover:bg-slate-50/50 transition">
+                    <td class="p-4 text-slate-500 font-mono text-xs">${t.id}</td>
+                    <td class="p-4 font-bold text-slate-800 text-sm">${t.name}</td>
+                    <td class="p-4 text-slate-600 text-sm">${t.phone}</td>
+                    <td class="p-4 text-slate-600 text-sm font-medium">${t.skill}</td>
+                    <td class="p-4">${t.status==='Aktif'?'<span class="px-2 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded border border-emerald-200 uppercase">Aktif</span>':'<span class="px-2 py-1 bg-red-50 text-red-600 text-[10px] font-bold rounded border border-red-200 uppercase">Tidak Aktif</span>'}</td>
+                    <td class="p-4 text-center">
+                        <button onclick="openTechnicianModal('${t.id}')" class="text-blue-500 hover:text-blue-700 mr-3 transition"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteTech('${t.id}')" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('') || `<tr><td colspan="6" class="p-8 text-center text-slate-400 text-sm">Tidak ada data teknisi.</td></tr>`;
+        }
+        
+        function openTechnicianModal(id = null) {
+            document.getElementById('technician-form').reset();
+            currentEditId = id;
+            document.getElementById('tech-modal-title').innerText = id ? 'Edit Teknisi' : 'Tambah Teknisi';
+            if(id) {
+                const t = getDB('techs').find(x => x.id === id);
+                if(t) {
+                    document.getElementById('tech-id').value = t.id;
+                    document.getElementById('tech-name').value = t.name;
+                    document.getElementById('tech-phone').value = t.phone;
+                    document.getElementById('tech-skill').value = t.skill;
+                    document.getElementById('tech-status').value = t.status;
+                }
+            } else {
+                document.getElementById('tech-id').value = 'T-' + Date.now().toString().slice(-4);
+            }
+            openModal('technician-modal');
+        }
+
+        document.getElementById('technician-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            let tc = getDB('techs');
+
+            // DEMO LIMIT PROTECTION
+            if(!currentEditId && tc.length >= DEMO_LIMITS.Technicians) {
+                showDemoLimitModal();
+                return;
+            }
+
+            const data = {
+                id: document.getElementById('tech-id').value,
+                name: document.getElementById('tech-name').value,
+                phone: document.getElementById('tech-phone').value,
+                skill: document.getElementById('tech-skill').value,
+                status: document.getElementById('tech-status').value
+            };
+            if(currentEditId) tc[tc.findIndex(x => x.id === currentEditId)] = data;
+            else tc.push(data);
+            setDB('techs', tc); closeModal('technician-modal'); renderTechs();
+        });
+        function deleteTech(id) {
+            if(confirm('Hapus teknisi ini?')) { setDB('techs', getDB('techs').filter(t => t.id !== id)); renderTechs(); }
+        }
+
+        // --- PROGRESS LOGIC ---
+        function renderProgress(search = '') {
+            const pr = getDB('progress').filter(p => p.ticket_no.toLowerCase().includes(search) || p.notes.toLowerCase().includes(search));
+            document.getElementById('progress-tbody').innerHTML = pr.map(p => `
+                <tr class="hover:bg-slate-50/50 transition">
+                    <td class="p-4 text-slate-500 text-xs">${p.date}</td>
+                    <td class="p-4 font-bold text-slate-700 font-mono text-xs">${p.ticket_no}</td>
+                    <td class="p-4 text-slate-600 text-sm font-medium">${getTechName(p.technician_id)}</td>
+                    <td class="p-4 text-slate-600 text-sm max-w-[200px] truncate" title="${p.notes}">${p.notes}</td>
+                    <td class="p-4 font-black text-blue-600 text-sm">${p.percentage}%</td>
+                    <td class="p-4">${getStatusBadge(p.status)}</td>
+                    <td class="p-4 text-center">
+                        <button onclick="openProgressModal('${p.id}')" class="text-blue-500 hover:text-blue-700 mr-3 transition"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteProgress('${p.id}')" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('') || `<tr><td colspan="7" class="p-8 text-center text-slate-400 text-sm">Tidak ada data progress.</td></tr>`;
+        }
+
+        function populateProgSelects() {
+            populateTechSelect('prog-tech');
+            const sel = document.getElementById('prog-ticket');
+            sel.innerHTML = '<option value="">-- Pilih Tiket --</option>' + getDB('tickets').map(t => `<option value="${t.ticket_no}">${t.ticket_no} - ${t.customer}</option>`).join('');
+        }
+
+        function openProgressModal(id = null) {
+            populateProgSelects();
+            document.getElementById('progress-form').reset();
+            document.getElementById('prog-val-display').innerText = '0%';
+            currentEditId = id;
+            document.getElementById('progress-modal-title').innerText = id ? 'Edit Progress' : 'Tambah Progress';
+            if(id) {
+                const p = getDB('progress').find(x => x.id === id);
+                if(p) {
+                    document.getElementById('prog-id').value = p.id;
+                    document.getElementById('prog-ticket').value = p.ticket_no;
+                    document.getElementById('prog-date').value = p.date;
+                    document.getElementById('prog-tech').value = p.technician_id;
+                    document.getElementById('prog-notes').value = p.notes;
+                    document.getElementById('prog-percent').value = p.percentage;
+                    document.getElementById('prog-val-display').innerText = p.percentage + '%';
+                }
+            } else {
+                document.getElementById('prog-id').value = 'PRG-' + Date.now().toString().slice(-5);
+                document.getElementById('prog-date').value = new Date().toISOString().split('T')[0];
+            }
+            openModal('progress-modal');
+        }
+
+        document.getElementById('progress-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            let pr = getDB('progress');
+            
+            // DEMO LIMIT PROTECTION
+            if(!currentEditId && pr.length >= DEMO_LIMITS.Progress) {
+                showDemoLimitModal();
+                return;
+            }
+
+            const pct = parseInt(document.getElementById('prog-percent').value);
+            
+            let tk = getDB('tickets');
+            let tIdx = tk.findIndex(t => t.ticket_no === document.getElementById('prog-ticket').value);
+            let techId = document.getElementById('prog-tech').value;
+
+            const data = {
+                id: document.getElementById('prog-id').value,
+                ticket_no: document.getElementById('prog-ticket').value,
+                date: document.getElementById('prog-date').value,
+                technician_id: techId,
+                notes: document.getElementById('prog-notes').value,
+                percentage: pct,
+                status: calcTicketStatus(techId, pct)
+            };
+
+            if(currentEditId) pr[pr.findIndex(x => x.id === currentEditId)] = data;
+            else pr.unshift(data);
+            setDB('progress', pr);
+
+            // Auto Update Ticket
+            if(tIdx > -1) {
+                tk[tIdx].progress = data.percentage;
+                tk[tIdx].status = calcTicketStatus(tk[tIdx].technician_id, data.percentage);
+                setDB('tickets', tk);
+            }
+            closeModal('progress-modal'); renderProgress();
+        });
+        function deleteProgress(id) {
+            if(confirm('Hapus log progress ini?')) { setDB('progress', getDB('progress').filter(p => p.id !== id)); renderProgress(); }
+        }
+
+        // --- COMPANY LOGIC ---
+        document.getElementById('company-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            setObj('company', {
+                name: document.getElementById('comp-name').value,
+                phone: document.getElementById('comp-phone').value,
+                address: document.getElementById('comp-address').value
+            });
+            alert('Profil berhasil diperbarui!');
+            renderDashboard();
+        });
+
+        // --- SEARCH EVENT LISTENERS ---
+        document.getElementById('search-tickets').addEventListener('input', (e) => renderTickets(e.target.value.toLowerCase()));
+        document.getElementById('search-technicians').addEventListener('input', (e) => renderTechs(e.target.value.toLowerCase()));
+        document.getElementById('search-progress').addEventListener('input', (e) => renderProgress(e.target.value.toLowerCase()));
+
+        // --- EXPORT CSV (PREMIUM FEATURE LOCKED) ---
+        function doExportCSV(type) {
+            // Strictly locking Export feature without downloading anything
+            showPremiumModal();
+            return false;
+        }
+
+        // Init
+        window.onload = () => {
+            initDB();
+            switchView('view-dashboard', document.querySelector('.nav-link.active'));
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UP2BOOKING Lite Demo | GASORA</title>
+    
+    <!-- SEO & DEPLOYMENT STANDARD -->
+    <meta name="author" content="UP2Digital">
+    <link rel="canonical" href="https://gasora-up2booking-demo.up2digital.workers.dev">
+    <meta property="og:title" content="UP2BOOKING Lite Demo | GASORA">
+    <meta property="og:url" content="https://gasora-up2booking-demo.up2digital.workers.dev">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="GASORA">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UP2BOOKING Lite Demo | GASORA">
+    <meta name="twitter:url" content="https://gasora-up2booking-demo.up2digital.workers.dev">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Modal Animation */
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 0.2s, transform 0.2s; }
+
+        /* WATERMARK STANDARD */
+        .demo-watermark {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9999;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='50%25' y='50%25' font-size='48' font-family='sans-serif' font-weight='900' fill='%23000000' opacity='0.08' text-anchor='middle' dominant-baseline='middle' transform='rotate(-30 150 150)'%3EDEMO%3C/text%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- DEMO WATERMARK -->
+    <div class="demo-watermark"></div>
+
+    <!-- TOP NAVBAR (BRANDING STANDARD) -->
+    <nav class="bg-gray-900 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between min-h-[64px] py-2">
+                <!-- Branding -->
+                <div class="flex items-center gap-3">
+                    <button id="mobile-menu-btn" class="bo-nav-element lg:hidden p-2 rounded-md hover:bg-gray-800 focus:outline-none">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                    <!-- Brand Indicator -->
+                    <div class="bo-nav-element bg-red-600 text-white font-bold px-2 py-1 rounded text-sm sm:text-base flex items-center justify-center">
+                        DEMO VERSION
+                    </div>
+                    <!-- Public Mode Indicator -->
+                    <div class="pub-nav-element hidden bg-teal-600 text-white font-bold px-2 py-1 rounded text-sm flex items-center justify-center">
+                        PUBLIC
+                    </div>
+                    <div class="flex flex-col justify-center leading-tight">
+                        <span class="font-bold text-base sm:text-lg text-blue-400">UP2BOOKING LITE</span>
+                        <span class="text-[10px] sm:text-xs text-gray-400 tracking-wider">Booking Management v1.3</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu (BO) -->
+                <div class="bo-nav-element hidden lg:flex items-center space-x-1" id="desktop-nav">
+                    <!-- Nav items injected by JS -->
+                </div>
+
+                <!-- Right Action (Toggle Mode) -->
+                <div class="flex items-center gap-3">
+                    <button onclick="switchView('public')" class="bo-nav-element bg-gray-800 hover:bg-gray-700 text-teal-400 border border-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i class="ph ph-browser text-lg"></i> <span class="hidden sm:inline">Booking Customer</span>
+                    </button>
+                    <button onclick="switchView('dashboard')" class="pub-nav-element hidden bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i class="ph ph-arrow-left text-lg"></i> <span class="hidden sm:inline">Kembali ke BO Admin</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (BO) -->
+        <div id="mobile-menu" class="bo-nav-element hidden bg-gray-800 lg:hidden px-2 pt-2 pb-3 space-y-1">
+            <!-- Mobile nav items injected by JS -->
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 w-full mx-auto p-4 sm:p-6 lg:p-8 overflow-x-hidden relative z-10">
+        
+        <!-- ALERT TOAST -->
+        <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2"></div>
+
+        <!-- ==================== VIEW: PUBLIC BOOKING (CUSTOMER) ==================== -->
+        <div id="view-public" class="app-view hidden max-w-lg mx-auto space-y-6 pt-4 sm:pt-8">
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <!-- Public Hero -->
+                <div class="bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-center text-white relative overflow-hidden">
+                    <i class="ph ph-calendar-star absolute -right-4 -bottom-4 text-gray-700 opacity-30" style="font-size: 8rem;"></i>
+                    <h2 class="text-2xl sm:text-3xl font-bold relative z-10" id="pub-prof-nama">Nama Usaha</h2>
+                    <p class="text-sm text-gray-300 mt-2 relative z-10" id="pub-prof-alamat">Alamat Usaha</p>
+                    <div class="mt-5 inline-flex items-center gap-2 bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-full px-4 py-1.5 text-sm text-blue-300 font-medium relative z-10">
+                        <i class="ph ph-clock text-lg"></i> Jam Operasional: <span id="pub-prof-jam">08:00 - 21:00</span>
+                    </div>
+                </div>
+                
+                <div class="p-6 sm:p-8">
+                    <!-- STEP 1: IDENTITY -->
+                    <div id="pub-step-1" class="space-y-5">
+                        <div class="text-center mb-6">
+                            <h3 class="font-bold text-xl text-gray-800">Informasi Kontak</h3>
+                            <p class="text-sm text-gray-500 mt-1">Lengkapi data untuk keperluan booking.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
+                            <input type="text" id="pub-nama" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="Masukkan nama Anda" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">No HP / WhatsApp <span class="text-red-500">*</span></label>
+                            <input type="text" id="pub-hp" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="Contoh: 08123456789" required>
+                        </div>
+                        <div class="pt-4">
+                            <button onclick="nextPublicStep()" class="w-full bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/20 text-white font-bold py-3.5 rounded-xl transition flex justify-center items-center gap-2">
+                                Lanjut Pilih Jadwal <i class="ph ph-arrow-right font-bold"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: BOOKING DETAILS -->
+                    <div id="pub-step-2" class="hidden space-y-5">
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-800">Detail Booking</h3>
+                                <p class="text-xs text-blue-600 font-semibold" id="pub-display-identitas"></p>
+                            </div>
+                            <button onclick="backPublicStep()" class="text-sm text-gray-500 hover:text-gray-800 font-medium px-3 py-1.5 bg-gray-100 rounded-lg transition"><i class="ph ph-pencil-simple"></i> Ubah</button>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal</label>
+                                <input type="date" id="pub-tgl" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="filterPublicLayanan()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Jam Mulai</label>
+                                <input type="time" id="pub-jam" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="filterPublicLayanan()">
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-800 mb-2">
+                            <i class="ph ph-info font-bold"></i> Pilih Tanggal & Jam terlebih dahulu untuk melihat Layanan yang tersedia.
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Layanan Tersedia</label>
+                            <select id="pub-layanan" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required disabled>
+                                <option value="">-- Pilih Jam Valid Dulu --</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Pilih Resource / Staff</label>
+                            <select id="pub-resource" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <!-- Injected -->
+                            </select>
+                        </div>
+
+                        <div class="pt-4">
+                            <button onclick="submitPublicBooking(event)" class="w-full bg-green-600 hover:bg-green-700 shadow-md shadow-green-600/20 text-white font-bold py-3.5 rounded-xl transition flex justify-center items-center gap-2 text-lg">
+                                <i class="ph ph-check-circle font-bold text-xl"></i> Konfirmasi Booking
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: SUCCESS -->
+                    <div id="pub-step-3" class="hidden text-center py-8">
+                        <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="ph ph-check-circle text-5xl"></i>
+                        </div>
+                        <h3 class="font-bold text-2xl text-gray-800 mb-2">Booking Berhasil!</h3>
+                        <p class="text-gray-500 text-sm mb-6">Jadwal Anda telah otomatis di-Confirmed oleh sistem. Kami tunggu kedatangannya.</p>
+                        
+                        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-left space-y-2 mb-8">
+                            <p class="text-xs text-gray-500">No Booking: <span class="font-bold text-gray-800 float-right" id="pub-res-no"></span></p>
+                            <p class="text-xs text-gray-500">Tanggal: <span class="font-bold text-gray-800 float-right" id="pub-res-tgl"></span></p>
+                            <p class="text-xs text-gray-500">Jam Mulai: <span class="font-bold text-gray-800 float-right" id="pub-res-jam"></span></p>
+                            <p class="text-xs text-gray-500">Status: <span class="font-bold text-green-600 float-right">Confirmed</span></p>
+                        </div>
+
+                        <button onclick="resetPublicFlow()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">
+                            Buat Booking Baru
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== DASHBOARD VIEW (BO ADMIN) ==================== -->
+        <div id="view-dashboard" class="app-view max-w-7xl hidden space-y-6">
+            
+            <!-- Panel Profil Usaha (Hero Dashboard) -->
+            <div class="bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl p-6 text-white shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden">
+                <div class="z-10 w-full">
+                    <h2 class="text-2xl font-bold mb-3" id="dash-prof-nama">Memuat...</h2>
+                    <div class="flex flex-wrap items-center gap-y-2 gap-x-6 text-sm text-gray-300">
+                        <span class="flex items-center gap-2"><i class="ph ph-map-pin text-lg text-blue-400"></i> <span id="dash-prof-alamat">Memuat...</span></span>
+                        <span class="flex items-center gap-2"><i class="ph ph-phone text-lg text-blue-400"></i> <span id="dash-prof-telp">Memuat...</span></span>
+                        <span class="flex items-center gap-2"><i class="ph ph-clock text-lg text-blue-400"></i> <span id="dash-prof-jam">Memuat...</span></span>
+                    </div>
+                </div>
+                <div class="absolute right-0 top-0 h-full opacity-10 pointer-events-none transform translate-x-4">
+                    <i class="ph ph-buildings" style="font-size: 8rem;"></i>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-2">
+                <h2 class="text-xl font-bold text-gray-800">Dashboard</h2>
+                <button onclick="showPremiumModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                    <i class="ph ph-download-simple text-lg"></i> Export CSV <i class="ph ph-lock-key text-white opacity-70"></i>
+                </button>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="ph ph-users text-2xl"></i></div>
+                    <div><p class="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase">Total Customer</p><h3 class="text-xl font-bold" id="dash-total-customer">0</h3></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg"><i class="ph ph-calendar-check text-2xl"></i></div>
+                    <div><p class="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase">Total Booking</p><h3 class="text-xl font-bold" id="dash-total-booking">0</h3></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="p-3 bg-teal-50 text-teal-600 rounded-lg"><i class="ph ph-clock text-2xl"></i></div>
+                    <div><p class="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase">Booking Hari Ini</p><h3 class="text-xl font-bold" id="dash-today-booking">0</h3></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i class="ph ph-calendar-plus text-2xl"></i></div>
+                    <div><p class="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase">Booking Besok</p><h3 class="text-xl font-bold" id="dash-tomorrow-booking">0</h3></div>
+                </div>
+                
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="ph ph-thumbs-up text-2xl"></i></div>
+                    <div><p class="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase">Confirmed</p><h3 class="text-xl font-bold" id="dash-confirmed">0</h3></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="p-3 bg-green-50 text-green-600 rounded-lg"><i class="ph ph-check-circle text-2xl"></i></div>
+                    <div><p class="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase">Completed</p><h3 class="text-xl font-bold" id="dash-completed">0</h3></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="p-3 bg-red-50 text-red-600 rounded-lg"><i class="ph ph-x-circle text-2xl"></i></div>
+                    <div><p class="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase">Cancelled</p><h3 class="text-xl font-bold" id="dash-cancelled">0</h3></div>
+                </div>
+            </div>
+
+            <!-- Two Column Layout for Dashboard Widgets -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                <!-- Jadwal Terdekat Widget -->
+                <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                    <div class="p-4 border-b border-gray-100 bg-gray-50 flex items-center gap-2">
+                        <i class="ph ph-clock-countdown text-blue-600 text-xl"></i>
+                        <h3 class="text-lg font-bold text-gray-800">Jadwal Terdekat</h3>
+                    </div>
+                    <div class="p-4 flex-1 overflow-y-auto max-h-[400px]">
+                        <div id="dash-jadwal-list" class="space-y-3">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Riwayat Booking Terbaru -->
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <h3 class="text-lg font-bold">Riwayat Booking Terbaru</h3>
+                        <div class="relative w-full sm:w-64">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+                            <input type="text" id="dash-search" class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Cari realtime...">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-gray-50 text-gray-600 border-b border-gray-100">
+                                <tr>
+                                    <th class="p-4 font-semibold">No Booking</th>
+                                    <th class="p-4 font-semibold">Tanggal & Jam</th>
+                                    <th class="p-4 font-semibold">Customer</th>
+                                    <th class="p-4 font-semibold">Layanan / Resource</th>
+                                    <th class="p-4 font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-table-body" class="divide-y divide-gray-100">
+                                <!-- Injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CUSTOMER VIEW ==================== -->
+        <div id="view-customer" class="app-view max-w-7xl hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 class="text-2xl font-bold text-gray-800">Master Data Customer</h2>
+                <button onclick="if(!checkDemoLimit('customer')) openModal('customer')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition w-full sm:w-auto justify-center">
+                    <i class="ph ph-plus-bold"></i> Tambah Customer
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4 border-b border-gray-100">
+                    <div class="relative w-full sm:w-80">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+                        <input type="text" id="cust-search" class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Cari Kode, Nama, No HP...">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-gray-50 text-gray-600 border-b border-gray-100">
+                            <tr>
+                                <th class="p-4 font-semibold">Kode</th>
+                                <th class="p-4 font-semibold">Nama Customer</th>
+                                <th class="p-4 font-semibold">No HP</th>
+                                <th class="p-4 font-semibold">Total Booking</th>
+                                <th class="p-4 font-semibold">Catatan</th>
+                                <th class="p-4 font-semibold text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cust-table-body" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== LAYANAN VIEW ==================== -->
+        <div id="view-layanan" class="app-view max-w-7xl hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 class="text-2xl font-bold text-gray-800">Master Layanan</h2>
+                <button onclick="if(!checkDemoLimit('layanan')) openModal('layanan')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition w-full sm:w-auto justify-center">
+                    <i class="ph ph-plus-bold"></i> Tambah Layanan
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4 border-b border-gray-100">
+                    <div class="relative w-full sm:w-80">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+                        <input type="text" id="lyn-search" class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Cari Kode, Nama Layanan...">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-gray-50 text-gray-600 border-b border-gray-100">
+                            <tr>
+                                <th class="p-4 font-semibold">Kode</th>
+                                <th class="p-4 font-semibold">Nama Layanan</th>
+                                <th class="p-4 font-semibold">Durasi</th>
+                                <th class="p-4 font-semibold">Status</th>
+                                <th class="p-4 font-semibold text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lyn-table-body" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== RESOURCE VIEW ==================== -->
+        <div id="view-resource" class="app-view max-w-7xl hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Master Resource</h2>
+                    <p class="text-sm text-gray-500">Staff, Terapis, Lapangan, dll.</p>
+                </div>
+                <button onclick="if(!checkDemoLimit('resource')) openModal('resource')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition w-full sm:w-auto justify-center">
+                    <i class="ph ph-plus-bold"></i> Tambah Resource
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4 border-b border-gray-100">
+                    <div class="relative w-full sm:w-80">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+                        <input type="text" id="res-search" class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Cari Kode, Nama Resource...">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-gray-50 text-gray-600 border-b border-gray-100">
+                            <tr>
+                                <th class="p-4 font-semibold">Kode</th>
+                                <th class="p-4 font-semibold">Nama Resource</th>
+                                <th class="p-4 font-semibold">Status</th>
+                                <th class="p-4 font-semibold text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="res-table-body" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== BOOKING VIEW ==================== -->
+        <div id="view-booking" class="app-view max-w-7xl hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 class="text-2xl font-bold text-gray-800">Master Booking</h2>
+                <button onclick="if(!checkDemoLimit('booking')) openModal('booking')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition w-full sm:w-auto justify-center">
+                    <i class="ph ph-plus-bold"></i> Tambah Booking
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4 border-b border-gray-100">
+                    <div class="relative w-full sm:w-80">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+                        <input type="text" id="book-search" class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Cari No Booking, Customer, Layanan...">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-gray-50 text-gray-600 border-b border-gray-100">
+                            <tr>
+                                <th class="p-4 font-semibold">No Booking</th>
+                                <th class="p-4 font-semibold">Tanggal & Jam</th>
+                                <th class="p-4 font-semibold">Customer</th>
+                                <th class="p-4 font-semibold">Layanan</th>
+                                <th class="p-4 font-semibold">Resource</th>
+                                <th class="p-4 font-semibold">Durasi</th>
+                                <th class="p-4 font-semibold">Status</th>
+                                <th class="p-4 font-semibold text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="book-table-body" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TOOLS & UTILITIES VIEW ==================== -->
+        <div id="view-tools" class="app-view max-w-7xl hidden space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800">Tools & Utilities</h2>
+            <p class="text-sm text-gray-500 mb-4">Fitur pengelolaan tingkat lanjut dan laporan.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-file-csv text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Export CSV</h3><p class="text-xs text-gray-500">Download rekap format CSV</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-file-xls text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Export Excel</h3><p class="text-xs text-gray-500">Download rekap format XLSX</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-file-pdf text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Export PDF</h3><p class="text-xs text-gray-500">Download laporan PDF</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-image text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Export PNG</h3><p class="text-xs text-gray-500">Download grafik & chart</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-download-simple text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Import Data</h3><p class="text-xs text-gray-500">Import data via Excel/CSV</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-database text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Backup Data</h3><p class="text-xs text-gray-500">Simpan cadangan database</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-clock-counter-clockwise text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Restore Data</h3><p class="text-xs text-gray-500">Kembalikan data backup</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-cloud-arrow-up text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Sinkronisasi Cloud</h3><p class="text-xs text-gray-500">Sync data antar perangkat</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-printer text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Cetak Booking</h3><p class="text-xs text-gray-500">Print tiket booking</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+                <button onclick="showPremiumModal()" class="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition rounded-xl p-5 flex flex-col items-start text-left gap-3 relative overflow-hidden group">
+                    <div class="p-3 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition"><i class="ph ph-receipt text-2xl"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Cetak Invoice</h3><p class="text-xs text-gray-500">Generate invoice pembayaran</p></div>
+                    <i class="ph ph-lock-key text-red-500 text-xl absolute top-4 right-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== PROFIL USAHA VIEW ==================== -->
+        <div id="view-profil" class="app-view max-w-7xl hidden space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800">Profil Usaha</h2>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-2xl">
+                <form id="form-profil" onsubmit="saveProfil(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Usaha</label>
+                        <input type="text" id="prof-nama" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Usaha</label>
+                        <textarea id="prof-alamat" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">No Telp</label>
+                        <input type="text" id="prof-telp" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 border-t border-gray-100 pt-4 mt-2">
+                        <div class="col-span-2"><h3 class="font-semibold text-gray-800">Jam Operasional</h3></div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Jam Buka</label>
+                            <input type="time" id="prof-jam-buka" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Jam Tutup</label>
+                            <input type="time" id="prof-jam-tutup" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition w-full sm:w-auto">Simpan Profil</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER (BRANDING STANDARD v2.0) -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-6 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex justify-center items-center gap-2 mb-2">
+                <img src="https://up2digi-app.github.io/up2digital-assets/gasora/logo.png" alt="Logo Gasora" class="h-5 w-auto object-contain">
+                <span class="font-bold text-gray-800 text-sm">UP2BOOKING Lite - Booking Management v1.3</span>
+            </div>
+            <p class="text-xs text-gray-500">
+                Built with Gasora &bull; Part of <a href="https://wa.link/i8w855" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">UP2Digital</a> Ecosystem
+            </p>
+        </div>
+    </footer>
+
+    <!-- ==================== MODALS ==================== -->
+    
+    <!-- Modal Backdrop -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 relative">
+        
+        <!-- Customer Modal -->
+        <div id="modal-customer" class="app-modal bg-white rounded-xl shadow-xl w-full max-w-md hidden overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 class="font-bold text-lg" id="modal-cust-title">Tambah Customer</h3>
+                <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <form id="form-customer" onsubmit="saveCustomer(event)" class="p-6 space-y-4">
+                <input type="hidden" id="fc-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kode Customer</label>
+                    <input type="text" id="fc-kode" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-500 cursor-not-allowed" readonly>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Customer</label>
+                    <input type="text" id="fc-nama" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">No HP</label>
+                    <input type="text" id="fc-hp" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="fc-email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
+                    <textarea id="fc-catatan" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium">Simpan</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Layanan Modal -->
+        <div id="modal-layanan" class="app-modal bg-white rounded-xl shadow-xl w-full max-w-md hidden overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 class="font-bold text-lg" id="modal-lyn-title">Tambah Layanan</h3>
+                <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <form id="form-layanan" onsubmit="saveLayanan(event)" class="p-6 space-y-4">
+                <input type="hidden" id="fl-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kode Layanan</label>
+                    <input type="text" id="fl-kode" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-500 cursor-not-allowed" readonly>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Layanan</label>
+                    <input type="text" id="fl-nama" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required placeholder="Contoh: Hair Cut">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Durasi (Menit)</label>
+                    <input type="number" id="fl-durasi" min="5" step="5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required placeholder="Contoh: 60">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status Aktif</label>
+                    <select id="fl-status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Nonaktif">Nonaktif</option>
+                    </select>
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium">Simpan</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resource Modal -->
+        <div id="modal-resource" class="app-modal bg-white rounded-xl shadow-xl w-full max-w-md hidden overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 class="font-bold text-lg" id="modal-res-title">Tambah Resource</h3>
+                <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <form id="form-resource" onsubmit="saveResource(event)" class="p-6 space-y-4">
+                <input type="hidden" id="fr-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kode Resource</label>
+                    <input type="text" id="fr-kode" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-500 cursor-not-allowed" readonly>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Resource</label>
+                    <input type="text" id="fr-nama" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required placeholder="Contoh: Barber C1">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status Aktif</label>
+                    <select id="fr-status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Nonaktif">Nonaktif</option>
+                    </select>
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium">Simpan</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Booking Modal (BO Admin) -->
+        <div id="modal-booking" class="app-modal bg-white rounded-xl shadow-xl w-full max-w-lg hidden overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 class="font-bold text-lg" id="modal-book-title">Tambah Booking</h3>
+                <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <form id="form-booking" onsubmit="saveBookingBO(event)" class="p-6 space-y-4">
+                <input type="hidden" id="fb-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">No Booking</label>
+                    <input type="text" id="fb-no" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-500 cursor-not-allowed" readonly>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
+                        <input type="date" id="fb-tgl" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="filterBOLayanan()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Jam Mulai</label>
+                        <input type="time" id="fb-jam" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="filterBOLayanan()">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Customer</label>
+                    <select id="fb-customer" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <!-- Injected -->
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Layanan</label>
+                        <select id="fb-layanan" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required disabled onchange="syncBODurasi()">
+                            <option value="">-- Pilih Jam Valid Dulu --</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Durasi (Mnt)</label>
+                        <input type="number" id="fb-durasi" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-500 cursor-not-allowed font-semibold" readonly required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Resource</label>
+                    <select id="fb-resource" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <!-- Injected -->
+                    </select>
+                </div>
+
+                <div id="wrapper-status">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status Booking</label>
+                    <select id="fb-status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
+                    <textarea id="fb-catatan" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium">Simpan Booking</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Premium Feature Modal -->
+        <div id="modal-premium" class="app-modal bg-white rounded-2xl shadow-2xl w-full max-w-sm hidden overflow-hidden transform scale-95 opacity-0 transition-all duration-200 relative">
+            <button type="button" onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"><i class="ph ph-x text-xl"></i></button>
+            <div class="bg-gradient-to-br from-gray-900 to-gray-800 p-6 text-center text-white relative overflow-hidden">
+                <i class="ph ph-crown absolute -right-4 -bottom-4 text-yellow-500 opacity-20" style="font-size: 8rem;"></i>
+                <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg relative z-10">
+                    <i class="ph ph-lock-key text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-xl relative z-10">Fitur Premium</h3>
+            </div>
+            <div class="p-6 text-center space-y-4 bg-white">
+                <p class="text-sm text-gray-600 leading-relaxed">Fitur ini tersedia pada versi <strong class="text-gray-800">UP2BOOKING Lite</strong> atau lebih tinggi. Upgrade sekarang untuk membuka fitur premium dan meningkatkan kapasitas aplikasi.</p>
+                <div class="pt-3">
+                    <a href="https://wa.link/i8w855" target="_blank" rel="noopener noreferrer" class="w-full inline-flex justify-center shadow-lg shadow-blue-600/20 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition gap-2 items-center">
+                        Hubungi UP2Digital <i class="ph ph-whatsapp-logo text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo Limit Modal -->
+        <div id="modal-demo-limit" class="app-modal bg-white rounded-2xl shadow-2xl w-full max-w-sm hidden overflow-hidden transform scale-95 opacity-0 transition-all duration-200 relative">
+            <button type="button" onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"><i class="ph ph-x text-xl"></i></button>
+            <div class="bg-gradient-to-br from-red-600 to-red-800 p-6 text-center text-white relative overflow-hidden">
+                <i class="ph ph-prohibit absolute -right-4 -bottom-4 text-red-900 opacity-20" style="font-size: 8rem;"></i>
+                <div class="w-16 h-16 bg-white text-red-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg relative z-10">
+                    <i class="ph ph-warning text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-xl relative z-10">Batas Versi Demo</h3>
+            </div>
+            <div class="p-6 text-center space-y-4 bg-white">
+                <p class="text-sm text-gray-600 leading-relaxed">Anda telah mencapai batas maksimal untuk versi Demo. Upgrade ke <strong class="text-gray-800">UP2BOOKING Lite</strong> untuk penggunaan lebih lanjut tanpa batasan.</p>
+                <div class="pt-3">
+                    <a href="https://wa.link/i8w855" target="_blank" rel="noopener noreferrer" class="w-full inline-flex justify-center shadow-lg shadow-blue-600/20 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition gap-2 items-center">
+                        Hubungi UP2Digital <i class="ph ph-whatsapp-logo text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        // ==========================================
+        // LOCAL STORAGE UTILS (GASORA STANDARD)
+        // ==========================================
+        const DB_KEY_CUST = 'gasora_booking_customers';
+        const DB_KEY_LAYANAN = 'gasora_booking_services';
+        const DB_KEY_RESOURCE = 'gasora_booking_resources';
+        const DB_KEY_BOOK = 'gasora_booking_bookings';
+        const DB_KEY_PROF = 'gasora_booking_profile';
+
+        // ==========================================
+        // DEMO LIMIT STANDARD
+        // ==========================================
+        const DEMO_LIMITS = {
+            Customers: 10,
+            Services: 5,
+            Resources: 3,
+            Bookings: 20
+        };
+
+        function checkDemoLimit(type) {
+            let key, limit;
+            if(type === 'customer') { key = DB_KEY_CUST; limit = DEMO_LIMITS.Customers; }
+            if(type === 'layanan') { key = DB_KEY_LAYANAN; limit = DEMO_LIMITS.Services; }
+            if(type === 'resource') { key = DB_KEY_RESOURCE; limit = DEMO_LIMITS.Resources; }
+            if(type === 'booking') { key = DB_KEY_BOOK; limit = DEMO_LIMITS.Bookings; }
+            
+            const data = getData(key);
+            if(data.length >= limit) {
+                showDemoLimitModal();
+                return true; 
+            }
+            return false;
+        }
+
+        function getData(key) { return JSON.parse(localStorage.getItem(key)) || []; }
+        function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+        function getObj(key) { return JSON.parse(localStorage.getItem(key)) || {}; }
+        function saveObj(key, obj) { localStorage.setItem(key, JSON.stringify(obj)); }
+
+        // Date Helpers
+        function getTodayStr() {
+            const d = new Date();
+            return `${d.getFullYear()}-${padZero(d.getMonth()+1)}-${padZero(d.getDate())}`;
+        }
+        function getTomorrowStr() {
+            const d = new Date();
+            d.setDate(d.getDate() + 1);
+            return `${d.getFullYear()}-${padZero(d.getMonth()+1)}-${padZero(d.getDate())}`;
+        }
+        function getPastStr() {
+            const d = new Date();
+            d.setDate(d.getDate() - 1);
+            return `${d.getFullYear()}-${padZero(d.getMonth()+1)}-${padZero(d.getDate())}`;
+        }
+
+        function padZero(num, size = 2) { return num.toString().padStart(size, '0'); }
+        function padZero3(num) { return num.toString().padStart(3, '0'); }
+        function formatTimeSS(timeStr) {
+            if (!timeStr) return '';
+            const parts = timeStr.split(':');
+            if (parts.length === 2) return `${timeStr}:00`;
+            return timeStr;
+        }
+        function timeToMins(timeStr) {
+            if(!timeStr) return 0;
+            const parts = timeStr.split(':');
+            return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        }
+
+        // Auto Number Generators
+        function generateAutoNo(key, prefixData, numIndex = 1, padLength = 3) {
+            const data = getData(key);
+            if (data.length === 0) return `${prefixData}${padZero(1, padLength)}`;
+            const lastNum = Math.max(...data.map(c => parseInt(c.id.split('-')[numIndex])));
+            return `${prefixData}${padZero(lastNum + 1, padLength)}`;
+        }
+
+        function generateCustNo() { return generateAutoNo(DB_KEY_CUST, 'CUST-', 1, 3); }
+        function generateLayananNo() { return generateAutoNo(DB_KEY_LAYANAN, 'LYN-', 1, 3); }
+        function generateResourceNo() { return generateAutoNo(DB_KEY_RESOURCE, 'RES-', 1, 3); }
+        
+        function generateBookNo(dateStr) {
+            const d = new Date(dateStr);
+            const yyyy = d.getFullYear();
+            const mm = padZero(d.getMonth() + 1);
+            const prefix = `BK-${yyyy}${mm}-`;
+            const data = getData(DB_KEY_BOOK);
+            const monthBooks = data.filter(b => b.id.startsWith(prefix));
+            if (monthBooks.length === 0) return `${prefix}001`;
+            const lastNum = Math.max(...monthBooks.map(b => parseInt(b.id.split('-')[2])));
+            return `${prefix}${padZero3(lastNum + 1)}`;
+        }
+
+        // Status Styles
+        const statusStyles = {
+            'Confirmed': 'bg-blue-100 text-blue-800',
+            'Completed': 'bg-green-100 text-green-800',
+            'Cancelled': 'bg-red-100 text-red-800',
+            'Aktif': 'bg-green-100 text-green-800',
+            'Nonaktif': 'bg-gray-100 text-gray-800'
+        };
+
+        // Relational Getters
+        function getCustomerName(id) {
+            const f = getData(DB_KEY_CUST).find(c => c.id === id);
+            return f ? f.nama : '<span class="text-red-500 italic">Terhapus</span>';
+        }
+        function getLayananName(id) {
+            const f = getData(DB_KEY_LAYANAN).find(x => x.id === id);
+            return f ? f.nama : '<span class="text-red-500 italic">Terhapus</span>';
+        }
+        function getResourceName(id) {
+            const f = getData(DB_KEY_RESOURCE).find(x => x.id === id);
+            return f ? f.nama : '<span class="text-red-500 italic">Terhapus</span>';
+        }
+
+        // ==========================================
+        // VIEW NAVIGATION LOGIC
+        // ==========================================
+        const navItems = [
+            { id: 'dashboard', icon: 'ph-squares-four', label: 'Dashboard' },
+            { id: 'customer', icon: 'ph-users', label: 'Customer' },
+            { id: 'layanan', icon: 'ph-scissors', label: 'Layanan' },
+            { id: 'resource', icon: 'ph-user-gear', label: 'Resource' },
+            { id: 'booking', icon: 'ph-calendar-plus', label: 'Booking' },
+            { id: 'tools', icon: 'ph-toolbox', label: 'Tools & Utilities' },
+            { id: 'profil', icon: 'ph-storefront', label: 'Profil Usaha' },
+        ];
+
+        function renderNav() {
+            const deskNav = document.getElementById('desktop-nav');
+            const mobNav = document.getElementById('mobile-menu');
+            deskNav.innerHTML = '';
+            mobNav.innerHTML = '';
+
+            const currentView = localStorage.getItem('up2booking_activeView') || 'dashboard';
+
+            // Check if public mode
+            const boEls = document.querySelectorAll('.bo-nav-element');
+            const pubEls = document.querySelectorAll('.pub-nav-element');
+
+            if(currentView === 'public') {
+                boEls.forEach(el => el.classList.add('hidden'));
+                pubEls.forEach(el => el.classList.remove('hidden'));
+            } else {
+                boEls.forEach(el => el.classList.remove('hidden'));
+                pubEls.forEach(el => el.classList.add('hidden'));
+                
+                navItems.forEach(item => {
+                    const isActive = item.id === currentView;
+                    const baseClassDesk = "px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition";
+                    const activeClassDesk = isActive ? "bg-gray-800 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white";
+                    
+                    deskNav.innerHTML += `<button onclick="switchView('${item.id}')" class="${baseClassDesk} ${activeClassDesk}"><i class="ph ${item.icon} text-lg"></i> ${item.label}</button>`;
+
+                    const baseClassMob = "block px-3 py-2 rounded-md text-base font-medium flex items-center gap-3";
+                    const activeClassMob = isActive ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white";
+                    
+                    mobNav.innerHTML += `<button onclick="switchView('${item.id}'); document.getElementById('mobile-menu').classList.add('hidden');" class="w-full text-left ${baseClassMob} ${activeClassMob}"><i class="ph ${item.icon} text-xl"></i> ${item.label}</button>`;
+                });
+            }
+
+            // View swapping
+            document.querySelectorAll('.app-view').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${currentView}`).classList.remove('hidden');
+
+            refreshViewData(currentView);
+        }
+
+        function switchView(viewId) {
+            localStorage.setItem('up2booking_activeView', viewId);
+            renderNav();
+        }
+
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // GLOBAL UI UPDATES (Dashboard & Public Identity)
+        function updateIdentityProfile() {
+            const prof = getObj(DB_KEY_PROF);
+            const nama = prof.nama || 'UP2BOOKING LITE DEMO';
+            const alamat = prof.alamat || 'Silakan lengkapi profil usaha.';
+            const telp = prof.telp || '-';
+            const jamBuka = prof.jamBuka || '08:00';
+            const jamTutup = prof.jamTutup || '21:00';
+            const jamStr = `${jamBuka} - ${jamTutup}`;
+            
+            // BO Dashboard
+            if(document.getElementById('dash-prof-nama')) {
+                document.getElementById('dash-prof-nama').innerText = nama;
+                document.getElementById('dash-prof-alamat').innerText = alamat;
+                document.getElementById('dash-prof-telp').innerText = telp;
+                document.getElementById('dash-prof-jam').innerText = jamStr;
+            }
+
+            // Public Flow
+            if(document.getElementById('pub-prof-nama')) {
+                document.getElementById('pub-prof-nama').innerText = nama;
+                document.getElementById('pub-prof-alamat').innerText = alamat;
+                document.getElementById('pub-prof-jam').innerText = jamStr;
+            }
+        }
+
+        // ==========================================
+        // CORE LOGIC (TIME, OVERLAP, FILTER)
+        // ==========================================
+        function isOverlap(date, time, duration, resourceId, excludeId = null) {
+            const books = getData(DB_KEY_BOOK);
+            const startA = timeToMins(time);
+            const endA = startA + parseInt(duration);
+
+            for (const b of books) {
+                if (b.status === 'Cancelled') continue; 
+                if (b.tanggal !== date) continue;
+                if (b.resourceId !== resourceId) continue;
+                if (excludeId && b.id === excludeId) continue;
+
+                const startB = timeToMins(b.jam);
+                const endB = startB + parseInt(b.durasi);
+
+                if (startA < endB && endA > startB) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function buildLayananOptions(tglId, jamId, selectId) {
+            const jam = document.getElementById(jamId).value;
+            const tgl = document.getElementById(tglId).value;
+            const selectEl = document.getElementById(selectId);
+            
+            if(!jam || !tgl) {
+                selectEl.innerHTML = '<option value="">-- Pilih Jam Valid Dulu --</option>';
+                selectEl.disabled = true;
+                return false;
+            }
+
+            const prof = getObj(DB_KEY_PROF);
+            const jamTutup = prof.jamTutup || '21:00';
+            const jamBuka = prof.jamBuka || '08:00';
+
+            const minsJam = timeToMins(jam);
+            const minsBuka = timeToMins(jamBuka);
+            const minsTutup = timeToMins(jamTutup);
+
+            // 1. Validasi Jam Operasional Awal
+            if(minsJam < minsBuka || minsJam > minsTutup) {
+                showToast(`Booking ditolak. Di luar jam operasional (${jamBuka} - ${jamTutup}).`, 'error');
+                selectEl.innerHTML = '<option value="">-- Pilih Jam Valid Dulu --</option>';
+                selectEl.disabled = true;
+                return false;
+            }
+
+            // 2. Filter Layanan based on Sisa Waktu to Tutup
+            const sisaMins = minsTutup - minsJam;
+            const lyns = getData(DB_KEY_LAYANAN).filter(l => l.status === 'Aktif' && parseInt(l.durasi) <= sisaMins);
+
+            if(lyns.length === 0) {
+                showToast(`Waktu tidak cukup. Layanan terpendek melebihi Jam Tutup (${jamTutup}).`, 'error');
+                selectEl.innerHTML = '<option value="">-- Waktu Tidak Cukup --</option>';
+                selectEl.disabled = true;
+                return false;
+            }
+
+            // Build Options
+            selectEl.innerHTML = '<option value="">-- Pilih Layanan --</option>';
+            lyns.forEach(l => {
+                selectEl.innerHTML += `<option value="${l.id}">${l.nama} (${l.durasi} Menit)</option>`;
+            });
+            selectEl.disabled = false;
+            return true;
+        }
+
+
+        // ==========================================
+        // PUBLIC FLOW LOGIC (MODE CUSTOMER)
+        // ==========================================
+        function resetPublicFlow() {
+            document.getElementById('pub-nama').value = '';
+            document.getElementById('pub-hp').value = '';
+            document.getElementById('pub-tgl').value = '';
+            document.getElementById('pub-jam').value = '';
+            
+            document.getElementById('pub-layanan').innerHTML = '<option value="">-- Pilih Jam Valid Dulu --</option>';
+            document.getElementById('pub-layanan').disabled = true;
+            document.getElementById('pub-resource').innerHTML = '';
+
+            document.getElementById('pub-step-1').classList.remove('hidden');
+            document.getElementById('pub-step-2').classList.add('hidden');
+            document.getElementById('pub-step-3').classList.add('hidden');
+        }
+
+        function loadPublicForm() {
+            updateIdentityProfile();
+            // Load Active Resources
+            const selR = document.getElementById('pub-resource');
+            const res = getData(DB_KEY_RESOURCE).filter(r => r.status === 'Aktif');
+            selR.innerHTML = `<option value="">-- Pilih Resource --</option>`;
+            res.forEach(r => selR.innerHTML += `<option value="${r.id}">${r.nama}</option>`);
+        }
+
+        function nextPublicStep() {
+            const nama = document.getElementById('pub-nama').value.trim();
+            const hp = document.getElementById('pub-hp').value.trim();
+            if(!nama || !hp) {
+                showToast('Validasi: Nama & No HP wajib diisi!', 'error');
+                return;
+            }
+            document.getElementById('pub-display-identitas').innerText = `${nama} (${hp})`;
+            document.getElementById('pub-step-1').classList.add('hidden');
+            document.getElementById('pub-step-2').classList.remove('hidden');
+        }
+
+        function backPublicStep() {
+            document.getElementById('pub-step-2').classList.add('hidden');
+            document.getElementById('pub-step-1').classList.remove('hidden');
+        }
+
+        function filterPublicLayanan() {
+            buildLayananOptions('pub-tgl', 'pub-jam', 'pub-layanan');
+        }
+
+        function submitPublicBooking(e) {
+            e.preventDefault();
+            const nama = document.getElementById('pub-nama').value.trim();
+            const hp = document.getElementById('pub-hp').value.trim();
+            const tgl = document.getElementById('pub-tgl').value;
+            const jam = document.getElementById('pub-jam').value;
+            const layananId = document.getElementById('pub-layanan').value;
+            const resourceId = document.getElementById('pub-resource').value;
+
+            if(!tgl || !jam || !layananId || !resourceId) {
+                showToast('Lengkapi Tanggal, Jam, Layanan, dan Resource.', 'error'); return;
+            }
+
+            // Durasi Check
+            const layanan = getData(DB_KEY_LAYANAN).find(l => l.id === layananId);
+            if(!layanan) return;
+            const durasi = layanan.durasi;
+
+            // Extra Overlap Validation
+            if(isOverlap(tgl, jam, durasi, resourceId)) {
+                showToast('Resource tidak tersedia pada jam tersebut. Silakan pilih jam lain atau resource lain.', 'error');
+                return;
+            }
+
+            // Booking Limit Validation
+            if(getData(DB_KEY_BOOK).length >= DEMO_LIMITS.Bookings) {
+                showDemoLimitModal();
+                return;
+            }
+
+            // Customer Limit Validation
+            let custs = getData(DB_KEY_CUST);
+            let cust = custs.find(c => c.hp === hp);
+            let custId = '';
+            
+            if(cust) {
+                custId = cust.id;
+            } else {
+                if(custs.length >= DEMO_LIMITS.Customers) {
+                    showDemoLimitModal();
+                    return;
+                }
+                custId = generateCustNo();
+                custs.push({
+                    id: custId,
+                    nama: nama,
+                    hp: hp,
+                    email: '',
+                    catatan: 'Booking dari Halaman Public'
+                });
+                saveData(DB_KEY_CUST, custs);
+            }
+
+            // Saving Booking
+            const books = getData(DB_KEY_BOOK);
+            const bookId = generateBookNo(tgl);
+            
+            books.push({
+                id: bookId,
+                tanggal: tgl,
+                jam: jam,
+                customerId: custId,
+                layananId: layananId,
+                resourceId: resourceId,
+                durasi: durasi,
+                status: 'Confirmed', // Auto Confirmed Rule
+                catatan: ''
+            });
+            saveData(DB_KEY_BOOK, books);
+
+            // Show Success UI
+            document.getElementById('pub-step-2').classList.add('hidden');
+            document.getElementById('pub-res-no').innerText = bookId;
+            document.getElementById('pub-res-tgl').innerText = tgl;
+            document.getElementById('pub-res-jam').innerText = formatTimeSS(jam);
+            document.getElementById('pub-step-3').classList.remove('hidden');
+        }
+
+
+        // ==========================================
+        // RENDER DATA LOGIC (BO)
+        // ==========================================
+        function refreshViewData(viewId) {
+            if (viewId === 'dashboard') loadDashboard();
+            if (viewId === 'customer') { loadCustomers(); document.getElementById('cust-search').value = ''; }
+            if (viewId === 'layanan') { loadLayanan(); document.getElementById('lyn-search').value = ''; }
+            if (viewId === 'resource') { loadResource(); document.getElementById('res-search').value = ''; }
+            if (viewId === 'booking') { loadBookings(); document.getElementById('book-search').value = ''; }
+            if (viewId === 'profil') loadProfil();
+            if (viewId === 'public') { resetPublicFlow(); loadPublicForm(); }
+            // tools view doesnt need specific load
+        }
+
+        // --- DASHBOARD ---
+        function loadDashboard() {
+            const custs = getData(DB_KEY_CUST);
+            const books = getData(DB_KEY_BOOK);
+            
+            updateIdentityProfile(); 
+
+            const todayStr = getTodayStr();
+            const tomorrowStr = getTomorrowStr();
+
+            const todayBooks = books.filter(b => b.tanggal === todayStr);
+            const tmrwBooks = books.filter(b => b.tanggal === tomorrowStr);
+
+            document.getElementById('dash-total-customer').innerText = custs.length;
+            document.getElementById('dash-total-booking').innerText = books.length;
+            document.getElementById('dash-today-booking').innerText = todayBooks.length;
+            document.getElementById('dash-tomorrow-booking').innerText = tmrwBooks.length;
+            
+            document.getElementById('dash-confirmed').innerText = books.filter(b => b.status === 'Confirmed').length;
+            document.getElementById('dash-completed').innerText = books.filter(b => b.status === 'Completed').length;
+            document.getElementById('dash-cancelled').innerText = books.filter(b => b.status === 'Cancelled').length;
+
+            renderDashTable(books);
+            renderJadwalTerdekat(books, todayStr);
+        }
+
+        function renderJadwalTerdekat(books, todayStr) {
+            const listEl = document.getElementById('dash-jadwal-list');
+            listEl.innerHTML = '';
+            
+            const activeBooks = books.filter(b => {
+                if(b.status === 'Cancelled' || b.status === 'Completed') return false; 
+                return b.tanggal >= todayStr; 
+            }).sort((a,b) => new Date(`${a.tanggal}T${a.jam}`) - new Date(`${b.tanggal}T${b.jam}`));
+
+            const top5 = activeBooks.slice(0, 6);
+
+            if(top5.length === 0) {
+                listEl.innerHTML = `<div class="text-center text-gray-500 py-6 text-sm"><i class="ph ph-calendar-check text-3xl mb-1 text-gray-300 block"></i> Tidak ada jadwal aktif terdekat.</div>`;
+                return;
+            }
+
+            top5.forEach(b => {
+                const dateLbl = b.tanggal === todayStr ? 'Hari Ini' : b.tanggal;
+                listEl.innerHTML += `
+                    <div class="p-3 border border-gray-100 rounded-lg bg-white shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">${dateLbl} &bull; ${formatTimeSS(b.jam)}</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${statusStyles[b.status]}">${b.status}</span>
+                        </div>
+                        <p class="font-bold text-gray-800 text-sm">${getCustomerName(b.customerId)}</p>
+                        <p class="text-xs text-gray-500 mt-1"><i class="ph ph-scissors"></i> ${getLayananName(b.layananId)} &bull; <i class="ph ph-user"></i> ${getResourceName(b.resourceId)}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function renderDashTable(data) {
+            const tbody = document.getElementById('dash-table-body');
+            tbody.innerHTML = '';
+            const sorted = [...data].sort((a,b) => new Date(`${b.tanggal}T${b.jam}`) - new Date(`${a.tanggal}T${a.jam}`));
+            const query = document.getElementById('dash-search').value.toLowerCase();
+            
+            const filtered = sorted.filter(b => {
+                const cName = getCustomerName(b.customerId).toLowerCase();
+                const lName = getLayananName(b.layananId).toLowerCase();
+                const rName = getResourceName(b.resourceId).toLowerCase();
+                return b.id.toLowerCase().includes(query) || cName.includes(query) || lName.includes(query) || rName.includes(query) || b.status.toLowerCase().includes(query);
+            });
+
+            filtered.slice(0, 10).forEach(b => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4 font-medium">${b.id}</td>
+                        <td class="p-4">${b.tanggal}<br><span class="text-xs text-gray-500">${formatTimeSS(b.jam)}</span></td>
+                        <td class="p-4">${getCustomerName(b.customerId)}</td>
+                        <td class="p-4 text-sm">${getLayananName(b.layananId)}<br><span class="text-xs text-gray-500">${getResourceName(b.resourceId)}</span></td>
+                        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-medium ${statusStyles[b.status]}">${b.status}</span></td>
+                    </tr>
+                `;
+            });
+            if(filtered.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">Tidak ada riwayat booking.</td></tr>`;
+        }
+        document.getElementById('dash-search').addEventListener('input', loadDashboard);
+
+        // --- CUSTOMER ---
+        function loadCustomers() {
+            const data = getData(DB_KEY_CUST);
+            const books = getData(DB_KEY_BOOK);
+            const query = document.getElementById('cust-search').value.toLowerCase();
+            const filtered = data.filter(c => c.id.toLowerCase().includes(query) || c.nama.toLowerCase().includes(query) || c.hp.toLowerCase().includes(query));
+            
+            const tbody = document.getElementById('cust-table-body');
+            tbody.innerHTML = '';
+            filtered.forEach(c => {
+                const totalBook = books.filter(b => b.customerId === c.id).length;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4 font-medium">${c.id}</td>
+                        <td class="p-4">${c.nama}</td>
+                        <td class="p-4">${c.hp}</td>
+                        <td class="p-4"><span class="bg-gray-100 text-gray-700 px-2 py-1 rounded font-semibold text-xs">${totalBook} Booking</span></td>
+                        <td class="p-4 truncate max-w-xs">${c.catatan || '-'}</td>
+                        <td class="p-4 text-right">
+                            <button onclick="editCustomer('${c.id}')" class="text-blue-600 hover:text-blue-800 p-1"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="deleteCustomer('${c.id}')" class="text-red-600 hover:text-red-800 p-1 ml-2"><i class="ph ph-trash text-lg"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(filtered.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Data customer kosong.</td></tr>`;
+        }
+        document.getElementById('cust-search').addEventListener('input', loadCustomers);
+
+        // --- LAYANAN ---
+        function loadLayanan() {
+            const data = getData(DB_KEY_LAYANAN);
+            const query = document.getElementById('lyn-search').value.toLowerCase();
+            const filtered = data.filter(c => c.id.toLowerCase().includes(query) || c.nama.toLowerCase().includes(query));
+            
+            const tbody = document.getElementById('lyn-table-body');
+            tbody.innerHTML = '';
+            filtered.forEach(c => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4 font-medium">${c.id}</td>
+                        <td class="p-4">${c.nama}</td>
+                        <td class="p-4">${c.durasi} Menit</td>
+                        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-medium ${statusStyles[c.status]}">${c.status}</span></td>
+                        <td class="p-4 text-right">
+                            <button onclick="editLayanan('${c.id}')" class="text-blue-600 hover:text-blue-800 p-1"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="deleteLayanan('${c.id}')" class="text-red-600 hover:text-red-800 p-1 ml-2"><i class="ph ph-trash text-lg"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(filtered.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">Data layanan kosong.</td></tr>`;
+        }
+        document.getElementById('lyn-search').addEventListener('input', loadLayanan);
+
+        // --- RESOURCE ---
+        function loadResource() {
+            const data = getData(DB_KEY_RESOURCE);
+            const query = document.getElementById('res-search').value.toLowerCase();
+            const filtered = data.filter(c => c.id.toLowerCase().includes(query) || c.nama.toLowerCase().includes(query));
+            
+            const tbody = document.getElementById('res-table-body');
+            tbody.innerHTML = '';
+            filtered.forEach(c => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4 font-medium">${c.id}</td>
+                        <td class="p-4">${c.nama}</td>
+                        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-medium ${statusStyles[c.status]}">${c.status}</span></td>
+                        <td class="p-4 text-right">
+                            <button onclick="editResource('${c.id}')" class="text-blue-600 hover:text-blue-800 p-1"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="deleteResource('${c.id}')" class="text-red-600 hover:text-red-800 p-1 ml-2"><i class="ph ph-trash text-lg"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(filtered.length === 0) tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">Data resource kosong.</td></tr>`;
+        }
+        document.getElementById('res-search').addEventListener('input', loadResource);
+
+        // --- BOOKING ---
+        function loadBookings() {
+            const data = getData(DB_KEY_BOOK);
+            const query = document.getElementById('book-search').value.toLowerCase();
+            const filtered = data.filter(b => {
+                const cName = getCustomerName(b.customerId).toLowerCase();
+                const lName = getLayananName(b.layananId).toLowerCase();
+                return b.id.toLowerCase().includes(query) || cName.includes(query) || lName.includes(query);
+            });
+            
+            const sorted = filtered.sort((a,b) => new Date(`${b.tanggal}T${b.jam}`) - new Date(`${a.tanggal}T${a.jam}`));
+            const tbody = document.getElementById('book-table-body');
+            tbody.innerHTML = '';
+            sorted.forEach(b => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4 font-medium">${b.id}</td>
+                        <td class="p-4">${b.tanggal}<br><span class="text-xs text-gray-500">${formatTimeSS(b.jam)}</span></td>
+                        <td class="p-4">${getCustomerName(b.customerId)}</td>
+                        <td class="p-4">${getLayananName(b.layananId)}</td>
+                        <td class="p-4">${getResourceName(b.resourceId)}</td>
+                        <td class="p-4">${b.durasi} mnt</td>
+                        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-medium ${statusStyles[b.status]}">${b.status}</span></td>
+                        <td class="p-4 text-right">
+                            <button onclick="editBooking('${b.id}')" class="text-blue-600 hover:text-blue-800 p-1"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="deleteBooking('${b.id}')" class="text-red-600 hover:text-red-800 p-1 ml-2"><i class="ph ph-trash text-lg"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(sorted.length === 0) tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-500">Data booking kosong.</td></tr>`;
+        }
+        document.getElementById('book-search').addEventListener('input', loadBookings);
+
+        // --- PROFIL ---
+        function loadProfil() {
+            const prof = getObj(DB_KEY_PROF);
+            document.getElementById('prof-nama').value = prof.nama || '';
+            document.getElementById('prof-alamat').value = prof.alamat || '';
+            document.getElementById('prof-telp').value = prof.telp || '';
+            document.getElementById('prof-jam-buka').value = prof.jamBuka || '08:00';
+            document.getElementById('prof-jam-tutup').value = prof.jamTutup || '21:00';
+        }
+
+        function saveProfil(e) {
+            e.preventDefault();
+            const prof = {
+                nama: document.getElementById('prof-nama').value,
+                alamat: document.getElementById('prof-alamat').value,
+                telp: document.getElementById('prof-telp').value,
+                jamBuka: document.getElementById('prof-jam-buka').value,
+                jamTutup: document.getElementById('prof-jam-tutup').value
+            };
+            saveObj(DB_KEY_PROF, prof);
+            updateIdentityProfile(); 
+            showToast('Profil Usaha berhasil disimpan!', 'success');
+        }
+
+
+        // ==========================================
+        // MODAL & FORM LOGIC (CRUD BO)
+        // ==========================================
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        
+        function showPremiumModal() {
+            openModalBase('premium');
+        }
+
+        function showDemoLimitModal() {
+            openModalBase('demo-limit');
+        }
+
+        function openModalBase(idStr) {
+            modalBackdrop.classList.remove('hidden');
+            document.querySelectorAll('.app-modal').forEach(m => m.classList.add('hidden'));
+            
+            const m = document.getElementById(`modal-${idStr}`);
+            m.classList.remove('hidden');
+            setTimeout(() => { m.classList.remove('opacity-0', 'scale-95'); }, 10);
+        }
+
+        function openModal(type) {
+            openModalBase(type);
+
+            if(type === 'customer') {
+                document.getElementById('form-customer').reset();
+                document.getElementById('fc-id').value = '';
+                document.getElementById('fc-kode').value = generateCustNo();
+                document.getElementById('modal-cust-title').innerText = 'Tambah Customer';
+            }
+            if(type === 'layanan') {
+                document.getElementById('form-layanan').reset();
+                document.getElementById('fl-id').value = '';
+                document.getElementById('fl-kode').value = generateLayananNo();
+                document.getElementById('fl-status').value = 'Aktif';
+                document.getElementById('modal-lyn-title').innerText = 'Tambah Layanan';
+            }
+            if(type === 'resource') {
+                document.getElementById('form-resource').reset();
+                document.getElementById('fr-id').value = '';
+                document.getElementById('fr-kode').value = generateResourceNo();
+                document.getElementById('fr-status').value = 'Aktif';
+                document.getElementById('modal-res-title').innerText = 'Tambah Resource';
+            }
+            if(type === 'booking') {
+                document.getElementById('form-booking').reset();
+                document.getElementById('fb-id').value = '';
+                
+                const today = getTodayStr();
+                document.getElementById('fb-tgl').value = today;
+                document.getElementById('fb-no').value = generateBookNo(today);
+                
+                // Hide and force Status Confirmed
+                document.getElementById('wrapper-status').classList.add('hidden');
+                document.getElementById('fb-status').value = 'Confirmed';
+
+                document.getElementById('modal-book-title').innerText = 'Tambah Booking';
+                
+                populateDropdownsBO();
+            }
+        }
+
+        function populateDropdownsBO() {
+            const custs = getData(DB_KEY_CUST);
+            const res = getData(DB_KEY_RESOURCE).filter(r => r.status === 'Aktif');
+
+            const selC = document.getElementById('fb-customer');
+            const selL = document.getElementById('fb-layanan');
+            const selR = document.getElementById('fb-resource');
+            
+            selC.innerHTML = `<option value="">-- Pilih Customer --</option>`;
+            custs.forEach(c => selC.innerHTML += `<option value="${c.id}">${c.nama} (${c.hp})</option>`);
+
+            selL.innerHTML = '<option value="">-- Pilih Jam Valid Dulu --</option>';
+            selL.disabled = true;
+
+            selR.innerHTML = `<option value="">-- Pilih Resource --</option>`;
+            res.forEach(r => selR.innerHTML += `<option value="${r.id}">${r.nama}</option>`);
+        }
+
+        // Auto update booking number when date changes (for Add mode)
+        document.getElementById('fb-tgl').addEventListener('change', function() {
+            if(!document.getElementById('fb-id').value) { 
+                document.getElementById('fb-no').value = generateBookNo(this.value);
+            }
+        });
+
+        function filterBOLayanan() {
+            buildLayananOptions('fb-tgl', 'fb-jam', 'fb-layanan');
+            document.getElementById('fb-durasi').value = ''; // Reset durasi
+        }
+
+        function syncBODurasi() {
+            const val = document.getElementById('fb-layanan').value;
+            const durasiInput = document.getElementById('fb-durasi');
+            if(!val) { durasiInput.value = ''; return; }
+            
+            const match = getData(DB_KEY_LAYANAN).find(l => l.id === val);
+            if(match) durasiInput.value = match.durasi;
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.app-modal').forEach(m => m.classList.add('opacity-0', 'scale-95'));
+            setTimeout(() => {
+                document.querySelectorAll('.app-modal').forEach(m => m.classList.add('hidden'));
+                modalBackdrop.classList.add('hidden');
+            }, 200);
+        }
+
+        // --- CRUD CUSTOMER ---
+        function saveCustomer(e) {
+            e.preventDefault();
+            const id = document.getElementById('fc-id').value;
+            
+            // Limit check for new insert
+            if(!id && checkDemoLimit('customer')) return;
+
+            const data = getData(DB_KEY_CUST);
+            const obj = {
+                id: document.getElementById('fc-kode').value,
+                nama: document.getElementById('fc-nama').value,
+                hp: document.getElementById('fc-hp').value,
+                email: document.getElementById('fc-email').value,
+                catatan: document.getElementById('fc-catatan').value
+            };
+
+            if(id) {
+                const idx = data.findIndex(c => c.id === id);
+                if(idx > -1) data[idx] = obj;
+                showToast('Customer diupdate.', 'success');
+            } else {
+                data.push(obj);
+                showToast('Customer ditambah.', 'success');
+            }
+            saveData(DB_KEY_CUST, data); closeModal(); loadCustomers();
+        }
+
+        function editCustomer(id) {
+            const c = getData(DB_KEY_CUST).find(x => x.id === id);
+            if(!c) return;
+            openModal('customer');
+            document.getElementById('modal-cust-title').innerText = 'Edit Customer';
+            document.getElementById('fc-id').value = c.id;
+            document.getElementById('fc-kode').value = c.id;
+            document.getElementById('fc-nama').value = c.nama;
+            document.getElementById('fc-hp').value = c.hp;
+            document.getElementById('fc-email').value = c.email || '';
+            document.getElementById('fc-catatan').value = c.catatan || '';
+        }
+
+        function deleteCustomer(id) {
+            const books = getData(DB_KEY_BOOK);
+            if (books.some(b => b.customerId === id)) {
+                showToast('Gagal! Customer digunakan di data Booking.', 'error'); return;
+            }
+            if(confirm(`Yakin hapus customer ${id}?`)) {
+                let data = getData(DB_KEY_CUST);
+                saveData(DB_KEY_CUST, data.filter(c => c.id !== id));
+                loadCustomers(); showToast('Dihapus.', 'success');
+            }
+        }
+
+        // --- CRUD LAYANAN ---
+        function saveLayanan(e) {
+            e.preventDefault();
+            const id = document.getElementById('fl-id').value;
+
+            // Limit check for new insert
+            if(!id && checkDemoLimit('layanan')) return;
+
+            const data = getData(DB_KEY_LAYANAN);
+            const obj = {
+                id: document.getElementById('fl-kode').value,
+                nama: document.getElementById('fl-nama').value,
+                durasi: document.getElementById('fl-durasi').value,
+                status: document.getElementById('fl-status').value
+            };
+            if(id) {
+                const idx = data.findIndex(c => c.id === id);
+                if(idx > -1) data[idx] = obj;
+                showToast('Layanan diupdate.', 'success');
+            } else {
+                data.push(obj); showToast('Layanan ditambah.', 'success');
+            }
+            saveData(DB_KEY_LAYANAN, data); closeModal(); loadLayanan();
+        }
+        function editLayanan(id) {
+            const c = getData(DB_KEY_LAYANAN).find(x => x.id === id);
+            if(!c) return;
+            openModal('layanan');
+            document.getElementById('modal-lyn-title').innerText = 'Edit Layanan';
+            document.getElementById('fl-id').value = c.id;
+            document.getElementById('fl-kode').value = c.id;
+            document.getElementById('fl-nama').value = c.nama;
+            document.getElementById('fl-durasi').value = c.durasi;
+            document.getElementById('fl-status').value = c.status;
+        }
+        function deleteLayanan(id) {
+            const books = getData(DB_KEY_BOOK);
+            if (books.some(b => b.layananId === id)) {
+                showToast('Gagal! Layanan digunakan di data Booking.', 'error'); return;
+            }
+            if(confirm(`Yakin hapus layanan ${id}?`)) {
+                saveData(DB_KEY_LAYANAN, getData(DB_KEY_LAYANAN).filter(c => c.id !== id));
+                loadLayanan(); showToast('Dihapus.', 'success');
+            }
+        }
+
+        // --- CRUD RESOURCE ---
+        function saveResource(e) {
+            e.preventDefault();
+            const id = document.getElementById('fr-id').value;
+
+            // Limit check for new insert
+            if(!id && checkDemoLimit('resource')) return;
+
+            const data = getData(DB_KEY_RESOURCE);
+            const obj = {
+                id: document.getElementById('fr-kode').value,
+                nama: document.getElementById('fr-nama').value,
+                status: document.getElementById('fr-status').value
+            };
+            if(id) {
+                const idx = data.findIndex(c => c.id === id);
+                if(idx > -1) data[idx] = obj;
+                showToast('Resource diupdate.', 'success');
+            } else {
+                data.push(obj); showToast('Resource ditambah.', 'success');
+            }
+            saveData(DB_KEY_RESOURCE, data); closeModal(); loadResource();
+        }
+        function editResource(id) {
+            const c = getData(DB_KEY_RESOURCE).find(x => x.id === id);
+            if(!c) return;
+            openModal('resource');
+            document.getElementById('modal-res-title').innerText = 'Edit Resource';
+            document.getElementById('fr-id').value = c.id;
+            document.getElementById('fr-kode').value = c.id;
+            document.getElementById('fr-nama').value = c.nama;
+            document.getElementById('fr-status').value = c.status;
+        }
+        function deleteResource(id) {
+            const books = getData(DB_KEY_BOOK);
+            if (books.some(b => b.resourceId === id)) {
+                showToast('Gagal! Resource digunakan di data Booking.', 'error'); return;
+            }
+            if(confirm(`Yakin hapus resource ${id}?`)) {
+                saveData(DB_KEY_RESOURCE, getData(DB_KEY_RESOURCE).filter(c => c.id !== id));
+                loadResource(); showToast('Dihapus.', 'success');
+            }
+        }
+
+        // --- CRUD BOOKING (BO) ---
+        function saveBookingBO(e) {
+            e.preventDefault();
+            const id = document.getElementById('fb-id').value;
+
+            // Limit check for new insert
+            if(!id && checkDemoLimit('booking')) return;
+
+            const tgl = document.getElementById('fb-tgl').value;
+            const jam = document.getElementById('fb-jam').value;
+            const custId = document.getElementById('fb-customer').value;
+            const layananId = document.getElementById('fb-layanan').value;
+            const resourceId = document.getElementById('fb-resource').value;
+            const durasi = document.getElementById('fb-durasi').value;
+            const status = document.getElementById('fb-status').value;
+            
+            if(!tgl || !jam || !custId || !layananId || !resourceId || !durasi) {
+                showToast('Lengkapi semua field!', 'error'); return;
+            }
+
+            if(status !== 'Cancelled' && isOverlap(tgl, jam, durasi, resourceId, id)) {
+                showToast('Resource tidak tersedia pada jam tersebut (Bentrok). Silakan pilih jam/resource lain.', 'error'); return;
+            }
+
+            const data = getData(DB_KEY_BOOK);
+            const obj = {
+                id: id || generateBookNo(tgl),
+                tanggal: tgl,
+                jam: jam,
+                customerId: custId,
+                layananId: layananId,
+                resourceId: resourceId,
+                durasi: durasi,
+                status: status,
+                catatan: document.getElementById('fb-catatan').value
+            };
+
+            if(id) {
+                const idx = data.findIndex(b => b.id === id);
+                if(idx > -1) data[idx] = obj;
+                showToast('Booking diupdate.', 'success');
+            } else {
+                data.push(obj);
+                showToast('Booking berhasil ditambah (Confirmed).', 'success');
+            }
+            saveData(DB_KEY_BOOK, data); closeModal(); loadBookings();
+        }
+
+        function editBooking(id) {
+            const b = getData(DB_KEY_BOOK).find(x => x.id === id);
+            if(!b) return;
+            openModal('booking');
+            document.getElementById('modal-book-title').innerText = 'Edit Booking';
+            
+            // Show Status Wrapper to allow changing to Completed / Cancelled
+            document.getElementById('wrapper-status').classList.remove('hidden');
+
+            const selL = document.getElementById('fb-layanan');
+            // Popoulate just this matching if inactive
+            selL.disabled = false;
+            selL.innerHTML = ''; // reset
+            getData(DB_KEY_LAYANAN).forEach(l => {
+                selL.innerHTML += `<option value="${l.id}">${l.nama} (${l.durasi} Mnt) ${l.status === 'Nonaktif' ? '[Nonaktif]' : ''}</option>`;
+            });
+
+            const selR = document.getElementById('fb-resource');
+            if(![...selR.options].some(o => o.value === b.resourceId)) {
+                selR.innerHTML += `<option value="${b.resourceId}">${getResourceName(b.resourceId)} (Nonaktif)</option>`;
+            }
+
+            document.getElementById('fb-id').value = b.id;
+            document.getElementById('fb-no').value = b.id;
+            document.getElementById('fb-tgl').value = b.tanggal;
+            document.getElementById('fb-jam').value = b.jam; 
+            document.getElementById('fb-customer').value = b.customerId;
+            document.getElementById('fb-layanan').value = b.layananId;
+            document.getElementById('fb-resource').value = b.resourceId;
+            document.getElementById('fb-durasi').value = b.durasi;
+            document.getElementById('fb-status').value = b.status;
+            document.getElementById('fb-catatan').value = b.catatan || '';
+        }
+
+        function deleteBooking(id) {
+            if(confirm(`Yakin hapus booking ${id}?`)) {
+                saveData(DB_KEY_BOOK, getData(DB_KEY_BOOK).filter(b => b.id !== id));
+                loadBookings(); showToast('Dihapus.', 'success');
+            }
+        }
+
+        // ==========================================
+        // UI UTILS (TOAST)
+        // ==========================================
+        function showToast(msg, type='info') {
+            const tc = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            
+            let color = 'bg-gray-800'; let icon = 'ph-info';
+            if(type === 'success') { color = 'bg-green-600'; icon = 'ph-check-circle'; }
+            if(type === 'error') { color = 'bg-red-600'; icon = 'ph-warning-circle'; }
+
+            t.className = `${color} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm font-medium opacity-0 transition-opacity duration-300`;
+            t.innerHTML = `<i class="ph ${icon} text-xl"></i> ${msg}`;
+            
+            tc.appendChild(t);
+            setTimeout(() => { t.classList.remove('opacity-0'); t.classList.add('opacity-100'); }, 10);
+            setTimeout(() => {
+                t.classList.remove('opacity-100'); t.classList.add('opacity-0');
+                setTimeout(() => t.remove(), 300);
+            }, 4000);
+        }
+
+        // ==========================================
+        // SEED DATA DEMO
+        // ==========================================
+        function seedDemoData() {
+            if (getObj(DB_KEY_PROF).nama) return; // Prevent overwriting if already seeded
+
+            saveObj(DB_KEY_PROF, {
+                nama: "UP2BOOKING Lite Demo",
+                alamat: "Graha Gasora, Lt. 5, Jakarta Selatan",
+                telp: "081234567890",
+                jamBuka: "08:00",
+                jamTutup: "21:00"
+            });
+
+            saveData(DB_KEY_CUST, [
+                { id: "CUST-001", nama: "Budi Santoso", hp: "0811111111", email: "budi@mail.com", catatan: "Langganan" },
+                { id: "CUST-002", nama: "Siti Aminah", hp: "0822222222", email: "siti@mail.com", catatan: "VIP" },
+                { id: "CUST-003", nama: "Andi Wijaya", hp: "0833333333", email: "andi@mail.com", catatan: "" }
+            ]);
+
+            saveData(DB_KEY_LAYANAN, [
+                { id: "LYN-001", nama: "Konsultasi Basic", durasi: "30", status: "Aktif" },
+                { id: "LYN-002", nama: "Layanan Reguler", durasi: "60", status: "Aktif" },
+                { id: "LYN-003", nama: "Paket Premium", durasi: "120", status: "Aktif" }
+            ]);
+
+            saveData(DB_KEY_RESOURCE, [
+                { id: "RES-001", nama: "Staff Alpha", status: "Aktif" },
+                { id: "RES-002", nama: "Staff Beta", status: "Aktif" }
+            ]);
+
+            const tdy = getTodayStr();
+            const tmrw = getTomorrowStr();
+            const pst = getPastStr();
+
+            saveData(DB_KEY_BOOK, [
+                { id: "BK-DEMO-001", tanggal: pst, jam: "09:00", customerId: "CUST-001", layananId: "LYN-001", resourceId: "RES-001", durasi: "30", status: "Completed", catatan: "" },
+                { id: "BK-DEMO-002", tanggal: pst, jam: "10:00", customerId: "CUST-002", layananId: "LYN-002", resourceId: "RES-002", durasi: "60", status: "Completed", catatan: "" },
+                { id: "BK-DEMO-003", tanggal: pst, jam: "14:00", customerId: "CUST-003", layananId: "LYN-003", resourceId: "RES-001", durasi: "120", status: "Cancelled", catatan: "Reschedule user" },
+                
+                { id: "BK-DEMO-004", tanggal: tdy, jam: "08:00", customerId: "CUST-001", layananId: "LYN-001", resourceId: "RES-002", durasi: "30", status: "Completed", catatan: "" },
+                { id: "BK-DEMO-005", tanggal: tdy, jam: "10:00", customerId: "CUST-002", layananId: "LYN-002", resourceId: "RES-001", durasi: "60", status: "Confirmed", catatan: "Member VIP" },
+                { id: "BK-DEMO-006", tanggal: tdy, jam: "13:00", customerId: "CUST-003", layananId: "LYN-001", resourceId: "RES-002", durasi: "30", status: "Confirmed", catatan: "" },
+                { id: "BK-DEMO-007", tanggal: tdy, jam: "15:00", customerId: "CUST-001", layananId: "LYN-003", resourceId: "RES-001", durasi: "120", status: "Cancelled", catatan: "Batal by sistem" },
+                
+                { id: "BK-DEMO-008", tanggal: tmrw, jam: "09:00", customerId: "CUST-002", layananId: "LYN-002", resourceId: "RES-002", durasi: "60", status: "Confirmed", catatan: "" },
+                { id: "BK-DEMO-009", tanggal: tmrw, jam: "11:00", customerId: "CUST-003", layananId: "LYN-001", resourceId: "RES-001", durasi: "30", status: "Confirmed", catatan: "" },
+                { id: "BK-DEMO-010", tanggal: tmrw, jam: "14:00", customerId: "CUST-001", layananId: "LYN-002", resourceId: "RES-002", durasi: "60", status: "Confirmed", catatan: "" }
+            ]);
+        }
+
+        // INIT APP
+        document.addEventListener('DOMContentLoaded', () => {
+            seedDemoData();
+            updateIdentityProfile();
+            renderNav();
+        });
+
+    </script>
+</body>
+</html>

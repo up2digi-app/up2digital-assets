@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- GASORA SEO & DEPLOYMENT STANDARD v1.0 -->
+    <title>UP2CRM Lite Demo | GASORA</title>
+    <meta name="description" content="Tingkatkan penjualan dan kelola pelanggan lebih mudah dengan UP2CRM Lite Demo. Solusi CRM sederhana, cepat, dan efektif dari UP2Digital.">
+    <meta name="keywords" content="CRM, UP2CRM, Aplikasi CRM, Manajemen Pelanggan, Software CRM, UP2Digital, Gasora">
+    <meta name="author" content="UP2Digital">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://gasora-up2crm-demo.up2digital.workers.dev">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="UP2CRM Lite Demo | GASORA">
+    <meta property="og:description" content="Kelola prospek dan pelanggan dengan mudah menggunakan UP2CRM Lite.">
+    <meta property="og:url" content="https://gasora-up2crm-demo.up2digital.workers.dev">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="GASORA">
+    <meta property="og:image" content="https://up2digi-app.github.io/up2digital-assets/gasora/banner-crm.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UP2CRM Lite Demo | GASORA">
+    <meta name="twitter:description" content="Kelola prospek dan pelanggan dengan mudah menggunakan UP2CRM Lite.">
+    <meta name="twitter:url" content="https://gasora-up2crm-demo.up2digital.workers.dev">
+    <meta name="twitter:image" content="https://up2digi-app.github.io/up2digital-assets/gasora/banner-crm.png">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://up2digi-app.github.io/up2digital-assets/gasora/favicon.png" type="image/png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* GASORA Watermark Standard - Improved Opacity */
+        .bg-watermark {
+            background-image: url("data:image/svg+xml;utf8,<svg width='250' height='250' xmlns='http://www.w3.org/2000/svg'><text x='50%' y='50%' font-size='32' fill='%230f172a' fill-opacity='0.08' font-family='sans-serif' font-weight='900' text-anchor='middle' dominant-baseline='middle' transform='rotate(-35, 125, 125)'>DEMO</text></svg>");
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: 40;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-slate-800 relative">
+
+    <!-- Watermark Overlay -->
+    <div class="bg-watermark"></div>
+
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden lg:hidden transition-opacity" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-100 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col shadow-2xl">
+        <!-- Branding Ecosystem (GASORA Branding Standard) -->
+        <div class="p-6 border-b border-slate-700/50 bg-slate-800/50">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded bg-primary-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shrink-0">
+                    CRM
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="font-bold text-lg leading-tight tracking-wide text-white">UP2CRM LITE</h1>
+                    <p class="text-[10px] text-amber-400 font-bold tracking-widest mt-0.5">DEMO VERSION</p>
+                    <p class="text-[9px] text-slate-400 font-medium tracking-wide mt-0.5">Customer Relationship Management v1.1</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 relative z-50">
+            <a href="#" onclick="switchView('dashboard')" class="nav-btn flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" data-target="dashboard">
+                <i class="ph ph-squares-four text-xl"></i> Dashboard
+            </a>
+            <div class="pt-4 pb-2 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Modul Utama</div>
+            <a href="#" onclick="switchView('customer')" class="nav-btn flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" data-target="customer">
+                <i class="ph ph-users text-xl"></i> Master Customer
+            </a>
+            <a href="#" onclick="switchView('followup')" class="nav-btn flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" data-target="followup">
+                <i class="ph ph-phone-call text-xl"></i> Follow Up
+            </a>
+            <a href="#" onclick="switchView('aktivitas')" class="nav-btn flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" data-target="aktivitas">
+                <i class="ph ph-activity text-xl"></i> Aktivitas
+            </a>
+            <div class="pt-4 pb-2 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Pengaturan</div>
+            <a href="#" onclick="switchView('profil')" class="nav-btn flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" data-target="profil">
+                <i class="ph ph-buildings text-xl"></i> Profil Perusahaan
+            </a>
+
+            <!-- Premium Tools & Utilities -->
+            <div class="pt-6 pb-2 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+                <span>Tools & Utilities</span>
+            </div>
+            <a href="#" onclick="showPremiumModal()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-amber-400 transition-colors">
+                <i class="ph-fill ph-lock text-amber-500 text-lg"></i> Export CSV
+            </a>
+            <a href="#" onclick="showPremiumModal()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-amber-400 transition-colors">
+                <i class="ph-fill ph-lock text-amber-500 text-lg"></i> Export Excel
+            </a>
+            <a href="#" onclick="showPremiumModal()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-amber-400 transition-colors">
+                <i class="ph-fill ph-lock text-amber-500 text-lg"></i> Export PDF
+            </a>
+            <a href="#" onclick="showPremiumModal()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-amber-400 transition-colors">
+                <i class="ph-fill ph-lock text-amber-500 text-lg"></i> Export PNG
+            </a>
+            <a href="#" onclick="showPremiumModal()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-amber-400 transition-colors">
+                <i class="ph-fill ph-lock text-amber-500 text-lg"></i> Import Data
+            </a>
+            <a href="#" onclick="showPremiumModal()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-amber-400 transition-colors">
+                <i class="ph-fill ph-lock text-amber-500 text-lg"></i> Backup Data
+            </a>
+            <a href="#" onclick="showPremiumModal()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-amber-400 transition-colors">
+                <i class="ph-fill ph-lock text-amber-500 text-lg"></i> Restore Data
+            </a>
+            <a href="#" onclick="showPremiumModal()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800 hover:text-amber-400 transition-colors">
+                <i class="ph-fill ph-lock text-amber-500 text-lg"></i> Sinkronisasi CRM Hub
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50 relative z-30">
+        <!-- Topbar Mobile (GASORA Branding Standard) -->
+        <header class="lg:hidden bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 z-10">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded bg-primary-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                    CRM
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-slate-800 leading-tight">UP2CRM LITE</span>
+                    <span class="text-[9px] text-amber-500 font-bold leading-tight tracking-widest mt-0.5">DEMO VERSION</span>
+                    <span class="text-[8px] text-slate-500 font-medium leading-tight">Customer Relationship Management v1.1</span>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()" class="text-slate-500 hover:text-slate-700 focus:outline-none p-2">
+                <i class="ph ph-list text-2xl"></i>
+            </button>
+        </header>
+
+        <!-- Dynamic View Container -->
+        <div class="flex-1 overflow-auto p-4 lg:p-8 relative" id="main-container">
+            
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="view-section hidden space-y-6">
+                <!-- Hero Perusahaan -->
+                <div class="bg-gradient-to-r from-primary-700 to-primary-900 rounded-2xl p-6 lg:p-8 text-white shadow-lg relative overflow-hidden">
+                    <div class="absolute top-0 right-0 opacity-10">
+                        <i class="ph ph-buildings text-9xl -mt-4 -mr-4"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <h2 class="text-2xl lg:text-3xl font-bold mb-2" id="hero-nama-perusahaan">Memuat...</h2>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-primary-100 text-sm">
+                            <span class="flex items-center gap-2"><i class="ph ph-map-pin"></i> <span id="hero-alamat">Memuat...</span></span>
+                            <span class="flex items-center gap-2"><i class="ph ph-phone"></i> <span id="hero-telepon">Memuat...</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Card -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <p class="text-xs text-slate-500 font-medium mb-1">Total Customer</p>
+                        <h3 class="text-2xl font-bold text-slate-800" id="sum-total-customer">0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <p class="text-xs text-slate-500 font-medium mb-1">Total Prospect</p>
+                        <h3 class="text-2xl font-bold text-blue-600" id="sum-prospect">0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <p class="text-xs text-slate-500 font-medium mb-1">Customer Aktif</p>
+                        <h3 class="text-2xl font-bold text-green-600" id="sum-aktif">0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <p class="text-xs text-slate-500 font-medium mb-1">Total VIP</p>
+                        <h3 class="text-2xl font-bold text-purple-600" id="sum-vip">0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <p class="text-xs text-slate-500 font-medium mb-1">Total Reseller</p>
+                        <h3 class="text-2xl font-bold text-amber-600" id="sum-reseller">0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <p class="text-xs text-slate-500 font-medium mb-1">Total Partner</p>
+                        <h3 class="text-2xl font-bold text-indigo-600" id="sum-partner">0</h3>
+                    </div>
+                </div>
+
+                <!-- Grid Widgets -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Reminder Follow Up -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full lg:col-span-2 relative z-10">
+                        <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-amber-50 rounded-t-xl">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2 text-amber-900">
+                                <i class="ph-fill ph-bell-ringing text-amber-600"></i> Reminder Follow Up Hari Ini
+                            </h3>
+                        </div>
+                        <div class="p-0 flex-1 overflow-auto hide-scroll" style="max-height: 300px;">
+                            <ul class="divide-y divide-slate-100" id="widget-reminder"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Top Customer Aktif (Ranking) -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full relative z-10">
+                        <div class="p-5 border-b border-slate-100 bg-primary-50 rounded-t-xl">
+                            <h3 class="font-bold text-primary-900 flex items-center gap-2">
+                                <i class="ph-fill ph-trophy text-primary-600"></i> Top Customer
+                            </h3>
+                            <p class="text-xs text-primary-600 mt-1">Berdasarkan jumlah aktivitas</p>
+                        </div>
+                        <div class="p-0 flex-1 overflow-auto hide-scroll" style="max-height: 300px;">
+                            <ul class="divide-y divide-slate-100" id="widget-ranking"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Customer Terbaru -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full lg:col-span-1 relative z-10">
+                        <div class="p-5 border-b border-slate-100">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                                <i class="ph-fill ph-users-three text-blue-500"></i> Customer Terbaru
+                            </h3>
+                        </div>
+                        <div class="p-0 flex-1 overflow-auto hide-scroll" style="max-height: 300px;">
+                            <ul class="divide-y divide-slate-100" id="widget-new-customer"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Aktivitas Terbaru -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full lg:col-span-2 relative z-10">
+                        <div class="p-5 border-b border-slate-100">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                                <i class="ph-fill ph-activity text-green-500"></i> Aktivitas Terbaru
+                            </h3>
+                        </div>
+                        <div class="p-0 flex-1 overflow-auto hide-scroll" style="max-height: 300px;">
+                            <ul class="divide-y divide-slate-100" id="widget-new-aktivitas"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: CUSTOMER -->
+            <div id="view-customer" class="view-section hidden h-full flex flex-col">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Master Customer</h2>
+                        <p class="text-sm text-slate-500">Pusat data pelanggan Ecosystem.</p>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto relative z-20">
+                        <button onclick="showPremiumModal()" class="flex-1 sm:flex-none px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                            <i class="ph-fill ph-lock text-amber-500"></i> Export Master
+                        </button>
+                        <button onclick="openModal('customer')" class="flex-1 sm:flex-none px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                            <i class="ph ph-plus"></i> Tambah
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex-1 flex flex-col overflow-hidden relative z-10">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+                        <div class="relative">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+                            <input type="text" id="search-customer" placeholder="Cari kode, nama, perusahaan, hp, email..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none text-sm transition">
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-auto">
+                        <table class="w-full text-left border-collapse whitespace-nowrap min-w-[900px]">
+                            <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                                <tr>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Kode</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Customer</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Kontak</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Segmen & Kategori</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-customer" class="divide-y divide-slate-100 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: FOLLOW UP -->
+            <div id="view-followup" class="view-section hidden h-full flex flex-col">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Follow Up</h2>
+                        <p class="text-sm text-slate-500">Jadwal dan riwayat interaksi penawaran.</p>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto relative z-20">
+                        <button onclick="showPremiumModal()" class="flex-1 sm:flex-none px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                            <i class="ph-fill ph-lock text-amber-500"></i> Export CSV
+                        </button>
+                        <button onclick="openModal('followup')" class="flex-1 sm:flex-none px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                            <i class="ph ph-plus"></i> Tambah
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex-1 flex flex-col overflow-hidden relative z-10">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+                        <div class="relative">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+                            <input type="text" id="search-followup" placeholder="Cari nama customer, jenis, hasil..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none text-sm transition">
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-auto">
+                        <table class="w-full text-left border-collapse whitespace-nowrap min-w-[900px]">
+                            <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                                <tr>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Tgl Follow Up</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Customer</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Jenis & Hasil</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Tgl Berikutnya</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-followup" class="divide-y divide-slate-100 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: AKTIVITAS -->
+            <div id="view-aktivitas" class="view-section hidden h-full flex flex-col">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Riwayat Aktivitas</h2>
+                        <p class="text-sm text-slate-500">Catatan interaksi harian dengan customer.</p>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto relative z-20">
+                        <button onclick="showPremiumModal()" class="flex-1 sm:flex-none px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                            <i class="ph-fill ph-lock text-amber-500"></i> Export CSV
+                        </button>
+                        <button onclick="openModal('aktivitas')" class="flex-1 sm:flex-none px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                            <i class="ph ph-plus"></i> Tambah
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex-1 flex flex-col overflow-hidden relative z-10">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+                        <div class="relative">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+                            <input type="text" id="search-aktivitas" placeholder="Cari aktivitas, keterangan..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none text-sm transition">
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-auto">
+                        <table class="w-full text-left border-collapse whitespace-nowrap min-w-[800px]">
+                            <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                                <tr>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Tanggal</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Customer</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Jenis Aktivitas</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase">Keterangan</th>
+                                    <th class="p-4 text-xs font-semibold text-slate-500 uppercase text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-aktivitas" class="divide-y divide-slate-100 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: PROFIL PERUSAHAAN -->
+            <div id="view-profil" class="view-section hidden relative z-20">
+                <div class="max-w-2xl mx-auto">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-slate-800">Profil Perusahaan</h2>
+                        <p class="text-sm text-slate-500">Data ini ditampilkan di dashboard dan kop ekspor CSV.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                        <form id="form-profil" onsubmit="saveProfil(event)">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Nama Perusahaan</label>
+                                    <input type="text" id="prof-nama" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Alamat</label>
+                                    <textarea id="prof-alamat" required rows="3" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Telepon</label>
+                                    <input type="text" id="prof-telepon" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition">
+                                </div>
+                            </div>
+                            <div class="mt-6 flex justify-end">
+                                <button type="submit" class="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium transition shadow-sm">
+                                    Simpan Profil
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Ecosystem (GASORA Footer Standard) -->
+        <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500 z-30 relative">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2">
+                <img src="https://up2digi-app.github.io/up2digital-assets/gasora/logo.png" alt="Gasora Logo" class="h-5 object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all">
+                <span>UP2CRM Lite - Customer Relationship Management v1.1</span>
+            </div>
+            <div class="mt-1">
+                Built with Gasora • Part of <a href="https://wa.link/i8w855" target="_blank" class="text-primary-600 hover:text-primary-800 font-medium hover:underline">UP2Digital</a> Ecosystem
+            </div>
+        </footer>
+    </main>
+
+    <!-- MODAL CUSTOMER -->
+    <div id="modal-customer" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800" id="modal-customer-title">Form Customer</h3>
+                <button onclick="closeModal('customer')" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <form id="form-customer" onsubmit="saveCustomer(event)" class="space-y-4">
+                    <input type="hidden" id="cust-id">
+                    <input type="hidden" id="cust-kode">
+                    <input type="hidden" id="cust-created">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Customer *</label>
+                            <input type="text" id="cust-nama" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Perusahaan</label>
+                            <input type="text" id="cust-perusahaan" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nomor HP *</label>
+                            <input type="text" id="cust-hp" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                            <input type="email" id="cust-email" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Kota</label>
+                            <input type="text" id="cust-kota" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Customer Segment *</label>
+                            <select id="cust-segment" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none bg-white">
+                                <option value="Pelanggan Baru">Pelanggan Baru</option>
+                                <option value="Pelanggan Aktif">Pelanggan Aktif</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Reseller">Reseller</option>
+                                <option value="Partner">Partner</option>
+                                <option value="Dormant">Dormant</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Customer Source *</label>
+                            <select id="cust-source" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none bg-white">
+                                <option value="Facebook">Facebook</option>
+                                <option value="Instagram">Instagram</option>
+                                <option value="TikTok">TikTok</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                                <option value="Referral">Referral</option>
+                                <option value="Website">Website</option>
+                                <option value="Marketplace">Marketplace</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Kategori (Legacy) *</label>
+                            <select id="cust-kategori" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none bg-white">
+                                <option value="Prospect">Prospect</option>
+                                <option value="Customer">Customer</option>
+                                <option value="Reseller">Reseller</option>
+                                <option value="Partner">Partner</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Status *</label>
+                            <select id="cust-status" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none bg-white">
+                                <option value="Aktif">Aktif</option>
+                                <option value="Tidak Aktif">Tidak Aktif</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label>
+                        <textarea id="cust-catatan" rows="3" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none"></textarea>
+                    </div>
+                    <div class="mt-6 flex justify-end gap-2 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="closeModal('customer')" class="px-5 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition">Batal</button>
+                        <button type="submit" class="px-5 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CUSTOMER DETAIL -->
+    <div id="modal-customer-detail" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[95vh]">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg">
+                        <i class="ph ph-user"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 leading-tight" id="det-nama">Nama Customer</h3>
+                        <p class="text-xs text-primary-600 font-medium" id="det-kode">CUST-0000</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('customer-detail')" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            
+            <div class="p-0 overflow-y-auto flex-1 bg-slate-50">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
+                    <!-- Left: Profile & Stats -->
+                    <div class="space-y-6 lg:col-span-1">
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
+                            <h4 class="font-bold text-slate-800 border-b border-slate-100 pb-2 mb-3 text-sm">Profil Customer</h4>
+                            <div class="space-y-3 text-sm">
+                                <div><span class="text-slate-500 block text-xs">Perusahaan</span><span class="font-medium text-slate-800" id="det-perusahaan">-</span></div>
+                                <div><span class="text-slate-500 block text-xs">Nomor HP</span><span class="font-medium text-slate-800" id="det-hp">-</span></div>
+                                <div><span class="text-slate-500 block text-xs">Email</span><span class="font-medium text-slate-800" id="det-email">-</span></div>
+                                <div><span class="text-slate-500 block text-xs">Kota</span><span class="font-medium text-slate-800" id="det-kota">-</span></div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div><span class="text-slate-500 block text-xs">Kategori</span><span class="font-medium text-slate-800" id="det-kategori">-</span></div>
+                                    <div><span class="text-slate-500 block text-xs">Status</span><span class="font-medium text-slate-800" id="det-status">-</span></div>
+                                    <div><span class="text-slate-500 block text-xs">Segment</span><span class="font-medium text-slate-800" id="det-segment">-</span></div>
+                                    <div><span class="text-slate-500 block text-xs">Source</span><span class="font-medium text-slate-800" id="det-source">-</span></div>
+                                </div>
+                                <div><span class="text-slate-500 block text-xs">Catatan</span><p class="text-slate-700 bg-slate-50 p-2 rounded text-xs mt-1" id="det-catatan">-</p></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
+                            <h4 class="font-bold text-slate-800 border-b border-slate-100 pb-2 mb-3 text-sm">Statistik Interaksi</h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between items-center"><span class="text-slate-500">Total Follow Up</span><span class="font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded" id="det-tot-fu">0</span></div>
+                                <div class="flex justify-between items-center"><span class="text-slate-500">Total Aktivitas</span><span class="font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded" id="det-tot-act">0</span></div>
+                                <div class="border-t border-slate-100 pt-2 mt-2"></div>
+                                <div class="flex flex-col"><span class="text-slate-400 text-xs">Follow Up Terakhir</span><span class="font-medium text-slate-700" id="det-last-fu">-</span></div>
+                                <div class="flex flex-col"><span class="text-slate-400 text-xs">Aktivitas Terakhir</span><span class="font-medium text-slate-700" id="det-last-act">-</span></div>
+                                <div class="flex flex-col"><span class="text-slate-400 text-xs">Tgl Dibuat</span><span class="font-medium text-slate-700" id="det-created">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: History -->
+                    <div class="space-y-6 lg:col-span-2">
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-64">
+                            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="ph-fill ph-phone-call text-blue-500"></i> Riwayat Follow Up</h4>
+                            </div>
+                            <div class="flex-1 overflow-auto p-0">
+                                <table class="w-full text-left whitespace-nowrap">
+                                    <thead class="bg-white sticky top-0 border-b border-slate-100">
+                                        <tr>
+                                            <th class="p-3 text-[11px] font-semibold text-slate-500 uppercase">Tgl</th>
+                                            <th class="p-3 text-[11px] font-semibold text-slate-500 uppercase">Jenis</th>
+                                            <th class="p-3 text-[11px] font-semibold text-slate-500 uppercase">Hasil</th>
+                                            <th class="p-3 text-[11px] font-semibold text-slate-500 uppercase">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="det-table-fu" class="divide-y divide-slate-50 text-xs"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-64">
+                            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="ph-fill ph-activity text-green-500"></i> Riwayat Aktivitas</h4>
+                            </div>
+                            <div class="flex-1 overflow-auto p-0">
+                                <table class="w-full text-left whitespace-nowrap">
+                                    <thead class="bg-white sticky top-0 border-b border-slate-100">
+                                        <tr>
+                                            <th class="p-3 text-[11px] font-semibold text-slate-500 uppercase w-24">Tgl</th>
+                                            <th class="p-3 text-[11px] font-semibold text-slate-500 uppercase w-24">Jenis</th>
+                                            <th class="p-3 text-[11px] font-semibold text-slate-500 uppercase">Keterangan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="det-table-act" class="divide-y divide-slate-50 text-xs"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FOLLOW UP -->
+    <div id="modal-followup" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800" id="modal-followup-title">Form Follow Up</h3>
+                <button onclick="closeModal('followup')" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <form id="form-followup" onsubmit="saveFollowup(event)" class="space-y-4">
+                    <input type="hidden" id="fu-id">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal *</label>
+                        <input type="date" id="fu-tanggal" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Customer *</label>
+                        <select id="fu-customer" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none bg-white"></select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Jenis *</label>
+                            <select id="fu-jenis" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none bg-white">
+                                <option value="Telepon">Telepon</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                                <option value="Meeting">Meeting</option>
+                                <option value="Email">Email</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Status *</label>
+                            <select id="fu-status" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none bg-white">
+                                <option value="Pending">Pending</option>
+                                <option value="Follow Up">Follow Up</option>
+                                <option value="Deal">Deal</option>
+                                <option value="Tidak Deal">Tidak Deal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Hasil / Catatan</label>
+                        <textarea id="fu-hasil" rows="2" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Follow Up Berikutnya</label>
+                        <input type="date" id="fu-next" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none">
+                    </div>
+                    <div class="mt-6 flex justify-end gap-2 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="closeModal('followup')" class="px-5 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition">Batal</button>
+                        <button type="submit" class="px-5 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AKTIVITAS -->
+    <div id="modal-aktivitas" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800" id="modal-aktivitas-title">Form Aktivitas</h3>
+                <button onclick="closeModal('aktivitas')" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <form id="form-aktivitas" onsubmit="saveAktivitas(event)" class="space-y-4">
+                    <input type="hidden" id="act-id">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal *</label>
+                        <input type="date" id="act-tanggal" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Customer *</label>
+                        <select id="act-customer" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none bg-white"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Aktivitas *</label>
+                        <select id="act-jenis" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none bg-white">
+                            <option value="Telepon">Telepon</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                            <option value="Meeting">Meeting</option>
+                            <option value="Email">Email</option>
+                            <option value="Kunjungan">Kunjungan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Keterangan *</label>
+                        <textarea id="act-keterangan" required rows="3" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-primary-500 outline-none"></textarea>
+                    </div>
+                    <div class="mt-6 flex justify-end gap-2 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="closeModal('aktivitas')" class="px-5 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition">Batal</button>
+                        <button type="submit" class="px-5 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DEMO LIMIT -->
+    <div id="modal-demo-limit" class="fixed inset-0 bg-slate-900/60 z-[60] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col text-center p-6">
+            <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ph-fill ph-warning-circle text-3xl"></i>
+            </div>
+            <h3 class="font-bold text-xl text-slate-800 mb-2">Batas Versi Demo</h3>
+            <p class="text-sm text-slate-600 mb-6">Anda telah mencapai batas versi Demo. Upgrade ke UP2CRM Lite untuk penggunaan lebih lanjut.</p>
+            <div class="flex flex-col gap-3">
+                <a href="https://wa.link/i8w855" target="_blank" class="w-full py-2.5 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition flex justify-center items-center gap-2 shadow-sm">
+                    Hubungi UP2Digital
+                </a>
+                <button onclick="closeDemoLimitModal()" class="w-full py-2.5 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PREMIUM FEATURE -->
+    <div id="modal-premium" class="fixed inset-0 bg-slate-900/60 z-[60] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col text-center p-6">
+            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ph-fill ph-crown text-3xl"></i>
+            </div>
+            <h3 class="font-bold text-xl text-slate-800 mb-2">Fitur Premium</h3>
+            <p class="text-sm text-slate-600 mb-6">Fitur ini tersedia pada versi UP2CRM Lite atau lebih tinggi. Upgrade sekarang untuk membuka fitur premium dan meningkatkan kapasitas aplikasi.</p>
+            <div class="flex flex-col gap-3">
+                <a href="https://wa.link/i8w855" target="_blank" class="w-full py-2.5 bg-amber-500 text-white rounded-lg font-medium hover:bg-amber-600 transition flex justify-center items-center gap-2 shadow-sm">
+                    Hubungi UP2Digital
+                </a>
+                <button onclick="closePremiumModal()" class="w-full py-2.5 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Logic -->
+    <script>
+        // CORE DB PREFIX (GASORA Local Storage Standard)
+        const DB_PREFIX = 'gasora_crm_';
+        
+        // DEMO LIMIT STANDARD
+        const DEMO_LIMITS = {
+            Customer: 5,
+            Lead: 5,
+            Aktivitas: 10,
+            FollowUp: 10
+        };
+        
+        // UTILS: Get & Save Data
+        const getDB = (table) => JSON.parse(localStorage.getItem(DB_PREFIX + table)) || [];
+        const setDB = (table, data) => localStorage.setItem(DB_PREFIX + table, JSON.stringify(data));
+        const genId = (prefix) => prefix + '-' + new Date().getTime();
+        const formatDate = (dateString) => {
+            if(!dateString) return '-';
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        };
+        const getCustomerName = (id) => {
+            const c = getDB('customers').find(x => x.id === id);
+            return c ? c.nama : 'Unknown';
+        };
+        const getCustomerKode = (id) => {
+            const c = getDB('customers').find(x => x.id === id);
+            return c ? c.kode : '-';
+        };
+
+        // Auto Generate Internal Customer ID
+        function generateCustomerId() {
+            const customers = getDB('customers');
+            if(customers.length === 0) return 'CUST-ID-0001';
+            
+            let maxNum = 0;
+            customers.forEach(c => {
+                if(c.id && c.id.startsWith('CUST-ID-')) {
+                    let num = parseInt(c.id.replace('CUST-ID-', ''));
+                    if(!isNaN(num) && num > maxNum) maxNum = num;
+                }
+            });
+            return 'CUST-ID-' + String(maxNum + 1).padStart(4, '0');
+        }
+
+        // Auto Generate Master Kode Customer
+        function generateCustomerKode() {
+            const customers = getDB('customers');
+            if(customers.length === 0) return 'CUST-0001';
+            
+            let maxNum = 0;
+            customers.forEach(c => {
+                if(c.kode && c.kode.startsWith('CUST-')) {
+                    let num = parseInt(c.kode.replace('CUST-', ''));
+                    if(!isNaN(num) && num > maxNum) maxNum = num;
+                }
+            });
+            return 'CUST-' + String(maxNum + 1).padStart(4, '0');
+        }
+
+        // INITIALIZE APP
+        function initApp() {
+            // Cek Jika Database Kosong
+            if (!localStorage.getItem(DB_PREFIX + 'customers')) {
+                generateDummyData();
+            }
+            
+            // Setup Search Listeners
+            document.getElementById('search-customer').addEventListener('input', (e) => renderCustomers(e.target.value));
+            document.getElementById('search-followup').addEventListener('input', (e) => renderFollowups(e.target.value));
+            document.getElementById('search-aktivitas').addEventListener('input', (e) => renderAktivitas(e.target.value));
+
+            // Default View
+            switchView('dashboard');
+        }
+
+        // GENERATE DUMMY DATA (GASORA SEED LIMIT STANDARD: 4 Customers)
+        function generateDummyData() {
+            setDB('profile', {
+                nama: 'Toko Sukses Jaya',
+                alamat: 'Jl. Merdeka No. 45, Jakarta Pusat',
+                telepon: '0812-3456-7890'
+            });
+
+            const todayStr = new Date().toISOString();
+            const cIDs = ['CUST-ID-0001', 'CUST-ID-0002', 'CUST-ID-0003', 'CUST-ID-0004'];
+            
+            // Limit Total Customer = 4 (2 Customer/Reseller, 2 Prospect/Lead)
+            const customers = [
+                { id: cIDs[0], kode: 'CUST-0001', nama: 'Budi Santoso', perusahaan: 'PT Maju Terus', hp: '08111222333', email: 'budi@maju.com', kota: 'Jakarta', kategori: 'Customer', status: 'Aktif', segment: 'VIP', source: 'WhatsApp', catatan: 'Pelanggan loyal', createdAt: todayStr },
+                { id: cIDs[1], kode: 'CUST-0002', nama: 'Siti Aminah', perusahaan: 'CV Berkah', hp: '08222333444', email: 'siti@berkah.com', kota: 'Bandung', kategori: 'Prospect', status: 'Aktif', segment: 'Pelanggan Baru', source: 'Instagram', catatan: 'Tertarik produk A', createdAt: todayStr },
+                { id: cIDs[2], kode: 'CUST-0003', nama: 'Andi Wijaya', perusahaan: 'Toko Andijaya', hp: '08333444555', email: 'andi@toko.com', kota: 'Surabaya', kategori: 'Reseller', status: 'Aktif', segment: 'Reseller', source: 'Referral', catatan: 'Target Q3', createdAt: todayStr },
+                { id: cIDs[3], kode: 'CUST-0004', nama: 'Joko Anwar', perusahaan: 'PT Sinar', hp: '08555666777', email: 'joko@sinar.com', kota: 'Medan', kategori: 'Prospect', status: 'Tidak Aktif', segment: 'Dormant', source: 'Facebook', catatan: 'Lost contact', createdAt: todayStr }
+            ];
+            setDB('customers', customers);
+
+            const today = new Date();
+            const yest = new Date(today); yest.setDate(yest.getDate() - 1);
+            const tmrw = new Date(today); tmrw.setDate(tmrw.getDate() + 1);
+            const past = new Date(today); past.setDate(past.getDate() - 3);
+
+            const fToday = today.toISOString().split('T')[0];
+            const fYest = yest.toISOString().split('T')[0];
+            const fTmrw = tmrw.toISOString().split('T')[0];
+            const fPast = past.toISOString().split('T')[0];
+
+            // 4 Followups
+            const followups = [
+                { id: 'FU-1', tanggal: fPast, customerId: cIDs[1], jenis: 'Telepon', hasil: 'Minta dihubungi lagi', status: 'Pending', tanggalNext: fToday },
+                { id: 'FU-2', tanggal: fYest, customerId: cIDs[0], jenis: 'WhatsApp', hasil: 'Kirim penawaran', status: 'Follow Up', tanggalNext: fTmrw },
+                { id: 'FU-3', tanggal: fYest, customerId: cIDs[2], jenis: 'Meeting', hasil: 'Sepakat harga', status: 'Deal', tanggalNext: '' },
+                { id: 'FU-4', tanggal: fPast, customerId: cIDs[3], jenis: 'Email', hasil: 'Ditolak', status: 'Tidak Deal', tanggalNext: '' }
+            ];
+            setDB('followups', followups);
+
+            // 4 Aktivitas
+            const aktivitas = [
+                { id: 'ACT-1', tanggal: fPast, customerId: cIDs[0], jenis: 'Kunjungan', keterangan: 'Kunjungan toko bulanan' },
+                { id: 'ACT-2', tanggal: fYest, customerId: cIDs[1], jenis: 'Telepon', keterangan: 'Follow up proposal' },
+                { id: 'ACT-3', tanggal: fYest, customerId: cIDs[2], jenis: 'Meeting', keterangan: 'Meeting nego harga' },
+                { id: 'ACT-4', tanggal: fToday, customerId: cIDs[3], jenis: 'Email', keterangan: 'Kirim invoice' }
+            ];
+            setDB('activities', aktivitas);
+        }
+
+        // INITIAL CHECK FOR MODAL OPENING
+        function checkLimit(type) {
+            if (type === 'customer') {
+                const customers = getDB('customers');
+                if (customers.length >= DEMO_LIMITS.Customer) return false;
+            } else if (type === 'followup') {
+                const followups = getDB('followups');
+                if (followups.length >= DEMO_LIMITS.FollowUp) return false;
+            } else if (type === 'aktivitas') {
+                const activities = getDB('activities');
+                if (activities.length >= DEMO_LIMITS.Aktivitas) return false;
+            }
+            return true;
+        }
+
+        function showDemoLimitModal() {
+            document.getElementById('modal-demo-limit').classList.remove('hidden');
+        }
+
+        function showPremiumModal() {
+            document.getElementById('modal-premium').classList.remove('hidden');
+        }
+
+        function closeDemoLimitModal() {
+            document.getElementById('modal-demo-limit').classList.add('hidden');
+        }
+
+        function closePremiumModal() {
+            document.getElementById('modal-premium').classList.add('hidden');
+        }
+
+        // VIEW CONTROLLER
+        function switchView(viewName) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.dataset.target === viewName) {
+                    btn.classList.add('bg-primary-600', 'text-white');
+                    btn.classList.remove('text-slate-300', 'hover:bg-slate-800');
+                } else {
+                    btn.classList.remove('bg-primary-600', 'text-white');
+                    btn.classList.add('text-slate-300', 'hover:bg-slate-800');
+                }
+            });
+
+            document.querySelectorAll('.view-section').forEach(view => view.classList.add('hidden'));
+            document.getElementById('view-' + viewName).classList.remove('hidden');
+            
+            if(viewName === 'dashboard') renderDashboard();
+            if(viewName === 'customer') renderCustomers();
+            if(viewName === 'followup') renderFollowups();
+            if(viewName === 'aktivitas') renderAktivitas();
+            if(viewName === 'profil') renderProfil();
+
+            if(window.innerWidth < 1024) toggleSidebar();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        // ==========================================
+        // DASHBOARD RENDERER
+        // ==========================================
+        function renderDashboard() {
+            const profil = getDB('profile');
+            const customers = getDB('customers');
+            const followups = getDB('followups');
+            const aktivitas = getDB('activities');
+
+            document.getElementById('hero-nama-perusahaan').textContent = profil.nama || 'Nama Perusahaan';
+            document.getElementById('hero-alamat').textContent = profil.alamat || 'Alamat Belum Diset';
+            document.getElementById('hero-telepon').textContent = profil.telepon || 'Telepon Belum Diset';
+
+            document.getElementById('sum-total-customer').textContent = customers.length;
+            document.getElementById('sum-prospect').textContent = customers.filter(c => c.kategori === 'Prospect').length;
+            document.getElementById('sum-aktif').textContent = customers.filter(c => c.status === 'Aktif').length;
+            document.getElementById('sum-vip').textContent = customers.filter(c => c.segment === 'VIP').length;
+            document.getElementById('sum-reseller').textContent = customers.filter(c => c.segment === 'Reseller').length;
+            document.getElementById('sum-partner').textContent = customers.filter(c => c.segment === 'Partner').length;
+
+            const todayStr = new Date().toISOString().split('T')[0];
+            const reminders = followups.filter(f => f.tanggalNext && f.tanggalNext <= todayStr && f.status !== 'Deal' && f.status !== 'Tidak Deal');
+            
+            let reminderHtml = '';
+            if(reminders.length === 0) reminderHtml = '<li class="p-5 text-center text-slate-500 text-sm">Tidak ada reminder follow up hari ini.</li>';
+            reminders.forEach(r => {
+                reminderHtml += `
+                <li class="p-4 hover:bg-slate-50 transition flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-slate-800">${getCustomerName(r.customerId)}</p>
+                        <p class="text-xs text-slate-500 flex items-center gap-1 mt-1"><i class="ph ph-phone"></i> ${r.jenis} - ${r.hasil}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-md font-medium border border-amber-200">
+                            ${formatDate(r.tanggalNext)}
+                        </span>
+                    </div>
+                </li>`;
+            });
+            document.getElementById('widget-reminder').innerHTML = reminderHtml;
+
+            const newCusts = [...customers].reverse().slice(0, 5);
+            let nCustHtml = '';
+            if(newCusts.length === 0) nCustHtml = '<li class="p-5 text-center text-slate-500 text-sm">Belum ada customer.</li>';
+            newCusts.forEach(c => {
+                nCustHtml += `
+                <li class="p-4 hover:bg-slate-50 transition">
+                    <p class="font-semibold text-slate-800 text-sm">${c.nama}</p>
+                    <p class="text-xs text-slate-500">${c.kode || '-'} • ${c.segment || c.kategori}</p>
+                </li>`;
+            });
+            document.getElementById('widget-new-customer').innerHTML = nCustHtml;
+
+            const newActs = [...aktivitas].sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 5);
+            let nActHtml = '';
+            if(newActs.length === 0) nActHtml = '<li class="p-5 text-center text-slate-500 text-sm">Belum ada aktivitas.</li>';
+            newActs.forEach(a => {
+                let icon = 'ph-activity';
+                if(a.jenis==='WhatsApp') icon='ph-whatsapp-logo text-green-500';
+                if(a.jenis==='Telepon') icon='ph-phone text-blue-500';
+                if(a.jenis==='Meeting') icon='ph-users text-purple-500';
+                
+                nActHtml += `
+                <li class="p-4 hover:bg-slate-50 transition flex gap-3 items-start">
+                    <div class="mt-0.5"><i class="ph ${icon} text-lg"></i></div>
+                    <div>
+                        <p class="text-sm text-slate-800"><span class="font-semibold">${getCustomerName(a.customerId)}</span></p>
+                        <p class="text-xs text-slate-600 mt-0.5">${a.keterangan}</p>
+                        <p class="text-[10px] text-slate-400 mt-1">${formatDate(a.tanggal)}</p>
+                    </div>
+                </li>`;
+            });
+            document.getElementById('widget-new-aktivitas').innerHTML = nActHtml;
+
+            const countMap = {};
+            aktivitas.forEach(a => {
+                countMap[a.customerId] = (countMap[a.customerId] || 0) + 1;
+            });
+            
+            const ranked = Object.keys(countMap).map(cId => {
+                const c = customers.find(x => x.id === cId);
+                return { 
+                    id: cId, 
+                    name: c ? c.nama : 'Unknown', 
+                    segment: c ? c.segment : '',
+                    count: countMap[cId] 
+                };
+            }).sort((a,b) => b.count - a.count).slice(0, 5);
+
+            let rankHtml = '';
+            if(ranked.length === 0) rankHtml = '<li class="p-5 text-center text-slate-500 text-sm">Belum ada data ranking.</li>';
+            ranked.forEach((r, idx) => {
+                let medal = `<span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0">${idx+1}</span>`;
+                if(idx===0) medal = `<span class="w-6 h-6 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center text-xs font-bold border border-yellow-300 shrink-0">1</span>`;
+                if(idx===1) medal = `<span class="w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-xs font-bold border border-slate-300 shrink-0">2</span>`;
+                if(idx===2) medal = `<span class="w-6 h-6 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-xs font-bold border border-orange-300 shrink-0">3</span>`;
+                
+                rankHtml += `
+                <li class="p-4 hover:bg-slate-50 transition flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        ${medal}
+                        <div>
+                            <span class="font-medium text-sm text-slate-800 block leading-tight">${r.name}</span>
+                            <span class="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">${r.segment || '-'}</span>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold bg-primary-50 text-primary-700 px-2 py-1 rounded border border-primary-100">${r.count} Aktv</span>
+                </li>`;
+            });
+            document.getElementById('widget-ranking').innerHTML = rankHtml;
+        }
+
+        // ==========================================
+        // CUSTOMER LOGIC
+        // ==========================================
+        function renderCustomers(search = '') {
+            const data = getDB('customers');
+            const tbody = document.getElementById('table-customer');
+            tbody.innerHTML = '';
+
+            const filtered = data.filter(c => 
+                (c.kode || '').toLowerCase().includes(search.toLowerCase()) ||
+                c.nama.toLowerCase().includes(search.toLowerCase()) || 
+                (c.perusahaan || '').toLowerCase().includes(search.toLowerCase()) ||
+                c.hp.includes(search) || 
+                (c.email || '').toLowerCase().includes(search.toLowerCase())
+            );
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">Data tidak ditemukan.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(c => {
+                let badgeSeg = 'bg-slate-100 text-slate-700';
+                if(c.segment==='VIP') badgeSeg = 'bg-purple-100 text-purple-700';
+                if(c.segment==='Pelanggan Baru') badgeSeg = 'bg-blue-100 text-blue-700';
+                if(c.segment==='Pelanggan Aktif') badgeSeg = 'bg-green-100 text-green-700';
+                if(c.segment==='Reseller') badgeSeg = 'bg-amber-100 text-amber-700';
+                if(c.segment==='Partner') badgeSeg = 'bg-indigo-100 text-indigo-700';
+                if(c.segment==='Dormant') badgeSeg = 'bg-rose-100 text-rose-700';
+                
+                let badgeStatus = c.status === 'Aktif' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200';
+
+                tbody.innerHTML += `
+                <tr class="hover:bg-slate-50/50 transition">
+                    <td class="p-4 border-b border-slate-100 font-bold text-primary-700 text-xs">${c.kode || '-'}</td>
+                    <td class="p-4 border-b border-slate-100">
+                        <div class="font-medium text-slate-800">${c.nama}</div>
+                        <div class="text-xs text-slate-500 mt-0.5">${c.perusahaan || '-'}</div>
+                    </td>
+                    <td class="p-4 border-b border-slate-100">
+                        <div class="text-sm text-slate-700"><i class="ph ph-phone mr-1 text-slate-400"></i>${c.hp}</div>
+                        <div class="text-xs text-slate-500 mt-0.5"><i class="ph ph-envelope-simple mr-1 text-slate-400"></i>${c.email || '-'}</div>
+                    </td>
+                    <td class="p-4 border-b border-slate-100">
+                        <div class="mb-1"><span class="px-2 py-0.5 text-[10px] rounded-md font-bold uppercase tracking-wider ${badgeSeg}">${c.segment || 'Unknown'}</span></div>
+                        <div class="text-xs text-slate-500">${c.kategori}</div>
+                    </td>
+                    <td class="p-4 border-b border-slate-100">
+                        <span class="px-2 py-0.5 text-[11px] rounded uppercase font-bold border ${badgeStatus}">${c.status}</span>
+                    </td>
+                    <td class="p-4 border-b border-slate-100 text-right space-x-1">
+                        <button onclick="showCustomerDetail('${c.id}')" class="p-1.5 text-slate-600 hover:bg-slate-100 rounded transition border border-slate-200 text-xs font-medium inline-flex items-center gap-1"><i class="ph ph-eye"></i> Detail</button>
+                        <button onclick="editCustomer('${c.id}')" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition border border-blue-100" title="Edit"><i class="ph ph-pencil-simple"></i></button>
+                        <button onclick="deleteCustomer('${c.id}')" class="p-1.5 text-red-600 hover:bg-red-50 rounded transition border border-red-100" title="Hapus"><i class="ph ph-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        function saveCustomer(e) {
+            e.preventDefault();
+            const id = document.getElementById('cust-id').value;
+            const payload = {
+                id: id || generateCustomerId(),
+                kode: document.getElementById('cust-kode').value || generateCustomerKode(),
+                nama: document.getElementById('cust-nama').value,
+                perusahaan: document.getElementById('cust-perusahaan').value,
+                hp: document.getElementById('cust-hp').value,
+                email: document.getElementById('cust-email').value,
+                kota: document.getElementById('cust-kota').value,
+                kategori: document.getElementById('cust-kategori').value,
+                segment: document.getElementById('cust-segment').value,
+                source: document.getElementById('cust-source').value,
+                status: document.getElementById('cust-status').value,
+                catatan: document.getElementById('cust-catatan').value,
+                createdAt: document.getElementById('cust-created').value || new Date().toISOString()
+            };
+
+            const data = getDB('customers');
+            let futureData = [...data];
+            
+            if(id) {
+                const idx = futureData.findIndex(x => x.id === id);
+                if (idx > -1) futureData[idx] = payload;
+            } else {
+                futureData.push(payload);
+            }
+
+            // Validasi Total Customer Limit
+            if (futureData.length > DEMO_LIMITS.Customer) {
+                showDemoLimitModal();
+                return;
+            }
+
+            // Validasi Limit Prospect / Lead
+            const prospectCountAfterSave = futureData.filter(c => c.kategori === 'Prospect').length;
+            if (prospectCountAfterSave > DEMO_LIMITS.Lead) {
+                showDemoLimitModal();
+                return;
+            }
+
+            setDB('customers', futureData);
+            closeModal('customer');
+            renderCustomers();
+        }
+
+        function editCustomer(id) {
+            const c = getDB('customers').find(x => x.id === id);
+            if(!c) return;
+            
+            document.getElementById('modal-customer-title').textContent = 'Edit Customer';
+            document.getElementById('cust-id').value = c.id;
+            document.getElementById('cust-kode').value = c.kode || '';
+            document.getElementById('cust-created').value = c.createdAt || '';
+            
+            document.getElementById('cust-nama').value = c.nama;
+            document.getElementById('cust-perusahaan').value = c.perusahaan || '';
+            document.getElementById('cust-hp').value = c.hp;
+            document.getElementById('cust-email').value = c.email || '';
+            document.getElementById('cust-kota').value = c.kota || '';
+            
+            document.getElementById('cust-kategori').value = c.kategori;
+            document.getElementById('cust-segment').value = c.segment || 'Pelanggan Baru';
+            document.getElementById('cust-source').value = c.source || 'Lainnya';
+            document.getElementById('cust-status').value = c.status;
+            document.getElementById('cust-catatan').value = c.catatan || '';
+            
+            document.getElementById('modal-customer').classList.remove('hidden');
+        }
+
+        function deleteCustomer(id) {
+            if(confirm('Yakin hapus customer ini? Data tidak bisa dikembalikan.')) {
+                let data = getDB('customers');
+                data = data.filter(x => x.id !== id);
+                setDB('customers', data);
+                renderCustomers();
+            }
+        }
+
+        function showCustomerDetail(id) {
+            const c = getDB('customers').find(x => x.id === id);
+            if(!c) return;
+            
+            const followups = getDB('followups').filter(f => f.customerId === id).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+            const aktivitas = getDB('activities').filter(a => a.customerId === id).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+            document.getElementById('det-nama').textContent = c.nama;
+            document.getElementById('det-kode').textContent = c.kode || '-';
+            document.getElementById('det-perusahaan').textContent = c.perusahaan || '-';
+            document.getElementById('det-hp').textContent = c.hp || '-';
+            document.getElementById('det-email').textContent = c.email || '-';
+            document.getElementById('det-kota').textContent = c.kota || '-';
+            document.getElementById('det-kategori').textContent = c.kategori || '-';
+            document.getElementById('det-status').innerHTML = c.status === 'Aktif' ? '<span class="text-emerald-600 font-bold">Aktif</span>' : '<span class="text-slate-500">Tidak Aktif</span>';
+            document.getElementById('det-segment').textContent = c.segment || '-';
+            document.getElementById('det-source').textContent = c.source || '-';
+            document.getElementById('det-catatan').textContent = c.catatan || 'Tidak ada catatan.';
+            
+            document.getElementById('det-tot-fu').textContent = followups.length;
+            document.getElementById('det-tot-act').textContent = aktivitas.length;
+            document.getElementById('det-last-fu').textContent = followups.length > 0 ? formatDate(followups[0].tanggal) : 'Belum pernah';
+            document.getElementById('det-last-act').textContent = aktivitas.length > 0 ? formatDate(aktivitas[0].tanggal) : 'Belum pernah';
+            document.getElementById('det-created').textContent = c.createdAt ? formatDate(c.createdAt) : '-';
+
+            const tbFu = document.getElementById('det-table-fu');
+            tbFu.innerHTML = '';
+            if(followups.length === 0) tbFu.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">Tidak ada data.</td></tr>';
+            followups.forEach(f => {
+                tbFu.innerHTML += `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3">${formatDate(f.tanggal)}</td>
+                    <td class="p-3 font-medium">${f.jenis}</td>
+                    <td class="p-3 truncate max-w-[150px]" title="${f.hasil}">${f.hasil || '-'}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded border bg-slate-100 text-[10px] font-bold uppercase">${f.status}</span></td>
+                </tr>`;
+            });
+
+            const tbAct = document.getElementById('det-table-act');
+            tbAct.innerHTML = '';
+            if(aktivitas.length === 0) tbAct.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">Tidak ada data.</td></tr>';
+            aktivitas.forEach(a => {
+                tbAct.innerHTML += `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3">${formatDate(a.tanggal)}</td>
+                    <td class="p-3 font-medium">${a.jenis}</td>
+                    <td class="p-3 truncate max-w-[250px]" title="${a.keterangan}">${a.keterangan}</td>
+                </tr>`;
+            });
+
+            document.getElementById('modal-customer-detail').classList.remove('hidden');
+        }
+
+        // ==========================================
+        // FOLLOW UP LOGIC
+        // ==========================================
+        function populateCustomerSelect(selectId, selectedVal = '') {
+            const customers = getDB('customers');
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">-- Pilih Customer --</option>';
+            customers.forEach(c => {
+                select.innerHTML += `<option value="${c.id}" ${c.id === selectedVal ? 'selected' : ''}>[${c.kode||'-'}] ${c.nama} ${c.perusahaan ? `(${c.perusahaan})` : ''}</option>`;
+            });
+        }
+
+        function renderFollowups(search = '') {
+            const data = getDB('followups');
+            const tbody = document.getElementById('table-followup');
+            tbody.innerHTML = '';
+
+            const filtered = data.filter(f => 
+                getCustomerName(f.customerId).toLowerCase().includes(search.toLowerCase()) || 
+                f.jenis.toLowerCase().includes(search.toLowerCase()) ||
+                (f.hasil||'').toLowerCase().includes(search.toLowerCase())
+            ).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">Data tidak ditemukan.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(f => {
+                let badgeStatus = 'bg-slate-100 text-slate-700';
+                if(f.status==='Pending') badgeStatus = 'bg-amber-100 text-amber-700 border-amber-200';
+                if(f.status==='Follow Up') badgeStatus = 'bg-blue-100 text-blue-700 border-blue-200';
+                if(f.status==='Deal') badgeStatus = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+                if(f.status==='Tidak Deal') badgeStatus = 'bg-rose-100 text-rose-700 border-rose-200';
+
+                tbody.innerHTML += `
+                <tr class="hover:bg-slate-50/50 transition">
+                    <td class="p-4 border-b border-slate-100 text-sm text-slate-700">${formatDate(f.tanggal)}</td>
+                    <td class="p-4 border-b border-slate-100 font-medium text-slate-800">
+                        ${getCustomerName(f.customerId)}
+                        <div class="text-[10px] text-slate-400">${getCustomerKode(f.customerId)}</div>
+                    </td>
+                    <td class="p-4 border-b border-slate-100">
+                        <div class="text-sm font-medium text-slate-700">${f.jenis}</div>
+                        <div class="text-xs text-slate-500 mt-0.5 truncate max-w-[200px]" title="${f.hasil}">${f.hasil || '-'}</div>
+                    </td>
+                    <td class="p-4 border-b border-slate-100">
+                        <span class="px-2 py-0.5 text-[11px] rounded uppercase font-bold border ${badgeStatus}">${f.status}</span>
+                    </td>
+                    <td class="p-4 border-b border-slate-100 text-sm text-slate-700">${formatDate(f.tanggalNext)}</td>
+                    <td class="p-4 border-b border-slate-100 text-right">
+                        <button onclick="editFollowup('${f.id}')" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition"><i class="ph ph-pencil-simple text-lg"></i></button>
+                        <button onclick="deleteFollowup('${f.id}')" class="p-1.5 text-red-600 hover:bg-red-50 rounded transition"><i class="ph ph-trash text-lg"></i></button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        function saveFollowup(e) {
+            e.preventDefault();
+            const id = document.getElementById('fu-id').value;
+            const payload = {
+                id: id || genId('FU'),
+                tanggal: document.getElementById('fu-tanggal').value,
+                customerId: document.getElementById('fu-customer').value,
+                jenis: document.getElementById('fu-jenis').value,
+                status: document.getElementById('fu-status').value,
+                hasil: document.getElementById('fu-hasil').value,
+                tanggalNext: document.getElementById('fu-next').value
+            };
+
+            const data = getDB('followups');
+            let futureData = [...data];
+            
+            if(id) {
+                const idx = futureData.findIndex(x => x.id === id);
+                if (idx > -1) futureData[idx] = payload;
+            } else {
+                futureData.push(payload);
+            }
+
+            if (futureData.length > DEMO_LIMITS.FollowUp) {
+                showDemoLimitModal();
+                return;
+            }
+
+            setDB('followups', futureData);
+            closeModal('followup');
+            renderFollowups();
+        }
+
+        function editFollowup(id) {
+            const f = getDB('followups').find(x => x.id === id);
+            if(!f) return;
+            populateCustomerSelect('fu-customer', f.customerId);
+            document.getElementById('modal-followup-title').textContent = 'Edit Follow Up';
+            document.getElementById('fu-id').value = f.id;
+            document.getElementById('fu-tanggal').value = f.tanggal;
+            document.getElementById('fu-jenis').value = f.jenis;
+            document.getElementById('fu-status').value = f.status;
+            document.getElementById('fu-hasil').value = f.hasil || '';
+            document.getElementById('fu-next').value = f.tanggalNext || '';
+            document.getElementById('modal-followup').classList.remove('hidden');
+        }
+
+        function deleteFollowup(id) {
+            if(confirm('Hapus log follow up ini?')) {
+                let data = getDB('followups');
+                data = data.filter(x => x.id !== id);
+                setDB('followups', data);
+                renderFollowups();
+            }
+        }
+
+        // ==========================================
+        // AKTIVITAS LOGIC
+        // ==========================================
+        function renderAktivitas(search = '') {
+            const data = getDB('activities');
+            const tbody = document.getElementById('table-aktivitas');
+            tbody.innerHTML = '';
+
+            const filtered = data.filter(a => 
+                getCustomerName(a.customerId).toLowerCase().includes(search.toLowerCase()) || 
+                a.jenis.toLowerCase().includes(search.toLowerCase()) ||
+                (a.keterangan||'').toLowerCase().includes(search.toLowerCase())
+            ).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">Data tidak ditemukan.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(a => {
+                tbody.innerHTML += `
+                <tr class="hover:bg-slate-50/50 transition">
+                    <td class="p-4 border-b border-slate-100 text-sm text-slate-700 whitespace-nowrap">${formatDate(a.tanggal)}</td>
+                    <td class="p-4 border-b border-slate-100 font-medium text-slate-800">
+                        ${getCustomerName(a.customerId)}
+                        <div class="text-[10px] text-slate-400">${getCustomerKode(a.customerId)}</div>
+                    </td>
+                    <td class="p-4 border-b border-slate-100 text-sm text-slate-700">${a.jenis}</td>
+                    <td class="p-4 border-b border-slate-100 text-sm text-slate-600 truncate max-w-xs" title="${a.keterangan}">${a.keterangan}</td>
+                    <td class="p-4 border-b border-slate-100 text-right">
+                        <button onclick="editAktivitas('${a.id}')" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition"><i class="ph ph-pencil-simple text-lg"></i></button>
+                        <button onclick="deleteAktivitas('${a.id}')" class="p-1.5 text-red-600 hover:bg-red-50 rounded transition"><i class="ph ph-trash text-lg"></i></button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        function saveAktivitas(e) {
+            e.preventDefault();
+            const id = document.getElementById('act-id').value;
+            const payload = {
+                id: id || genId('ACT'),
+                tanggal: document.getElementById('act-tanggal').value,
+                customerId: document.getElementById('act-customer').value,
+                jenis: document.getElementById('act-jenis').value,
+                keterangan: document.getElementById('act-keterangan').value
+            };
+
+            const data = getDB('activities');
+            let futureData = [...data];
+            
+            if(id) {
+                const idx = futureData.findIndex(x => x.id === id);
+                if (idx > -1) futureData[idx] = payload;
+            } else {
+                futureData.push(payload);
+            }
+
+            if (futureData.length > DEMO_LIMITS.Aktivitas) {
+                showDemoLimitModal();
+                return;
+            }
+
+            setDB('activities', futureData);
+            closeModal('aktivitas');
+            renderAktivitas();
+        }
+
+        function editAktivitas(id) {
+            const a = getDB('activities').find(x => x.id === id);
+            if(!a) return;
+            populateCustomerSelect('act-customer', a.customerId);
+            document.getElementById('modal-aktivitas-title').textContent = 'Edit Aktivitas';
+            document.getElementById('act-id').value = a.id;
+            document.getElementById('act-tanggal').value = a.tanggal;
+            document.getElementById('act-jenis').value = a.jenis;
+            document.getElementById('act-keterangan').value = a.keterangan || '';
+            document.getElementById('modal-aktivitas').classList.remove('hidden');
+        }
+
+        function deleteAktivitas(id) {
+            if(confirm('Hapus log aktivitas ini?')) {
+                let data = getDB('activities');
+                data = data.filter(x => x.id !== id);
+                setDB('activities', data);
+                renderAktivitas();
+            }
+        }
+
+        // ==========================================
+        // PROFIL LOGIC
+        // ==========================================
+        function renderProfil() {
+            const p = getDB('profile');
+            document.getElementById('prof-nama').value = p.nama || '';
+            document.getElementById('prof-alamat').value = p.alamat || '';
+            document.getElementById('prof-telepon').value = p.telepon || '';
+        }
+
+        function saveProfil(e) {
+            e.preventDefault();
+            setDB('profile', {
+                nama: document.getElementById('prof-nama').value,
+                alamat: document.getElementById('prof-alamat').value,
+                telepon: document.getElementById('prof-telepon').value
+            });
+            alert('Profil berhasil disimpan!');
+            renderDashboard();
+        }
+
+        // ==========================================
+        // MODAL HANDLER
+        // ==========================================
+        function openModal(type) {
+            if (!checkLimit(type)) {
+                showDemoLimitModal();
+                return;
+            }
+
+            document.getElementById(`form-${type}`).reset();
+            
+            if(type === 'customer') {
+                document.getElementById('cust-id').value = '';
+                document.getElementById('cust-kode').value = '';
+                document.getElementById('cust-created').value = '';
+                document.getElementById('modal-customer-title').textContent = 'Tambah Customer';
+            }
+            if(type === 'followup') {
+                document.getElementById('fu-id').value = '';
+                document.getElementById('fu-tanggal').valueAsDate = new Date();
+                populateCustomerSelect('fu-customer');
+                document.getElementById('modal-followup-title').textContent = 'Tambah Follow Up';
+            }
+            if(type === 'aktivitas') {
+                document.getElementById('act-id').value = '';
+                document.getElementById('act-tanggal').valueAsDate = new Date();
+                populateCustomerSelect('act-customer');
+                document.getElementById('modal-aktivitas-title').textContent = 'Tambah Aktivitas';
+            }
+
+            document.getElementById(`modal-${type}`).classList.remove('hidden');
+        }
+
+        function closeModal(type) {
+            document.getElementById(`modal-${type}`).classList.add('hidden');
+        }
+
+        // START APP
+        window.onload = initApp;
+    </script>
+</body>
+</html>
