@@ -1,9 +1,0 @@
-User-agent: *
-Allow: /
-
-# Cegah bot merayapi folder internal/API (sesuaikan jika ada)
-Disallow: /api/
-Disallow: /admin/
-
-# Lokasi Sitemap
-Sitemap: https://desainai.up2digital.id/sitemap.xml
